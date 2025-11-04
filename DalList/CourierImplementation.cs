@@ -9,14 +9,14 @@ public class CourierImplementation : ICourier
     public void Create(Courier item)
     {
         if(Read(item.Id) != null)
-            throw new NotImplementedException();
+            throw new Exception($"Courier with ID={item.Id} already exists"); // ID must be unique
         DataSource.Couriers.Add(item);
     }
 
     public void Delete(int id)
     {
         if (Read(id) == null)
-            throw new NotImplementedException();
+            throw new Exception($"Courier with ID={id} doesn't exist"); //  cannot delete non-existing object
         DataSource.Couriers.Remove(Read(id));
     }
 
@@ -46,7 +46,7 @@ public class CourierImplementation : ICourier
     public void Update(Courier item)
     {
         if (Read(item.Id) == null)
-            throw new NotImplementedException();
+            throw new Exception($"Courier with ID={item.Id} doesn't exist"); // cannot update non-existing object
         Delete(item.Id);
         DataSource.Couriers.Add(item);
     }
