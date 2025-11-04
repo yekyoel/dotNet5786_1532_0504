@@ -1,33 +1,36 @@
 ﻿
 namespace Dal;
+/// <summary>
+/// Class for configuration settings in the DAL.
+/// </summary> 
 
 internal static class Config
 {
     internal const int deliveryId = 0;  ///the number of deliveries 
-    private static int delId = deliveryId;
-    internal static int NextDeliveryId { get => delId++; }
+    private static int delId = deliveryId; //counter for delivery IDs
+    internal static int NextDeliveryId { get => delId++; } //property to get the next delivery ID
 
     internal const int orderId = 0;     ///the num of orders
-    private static int ordId = orderId;
-    internal static int NextOrderId { get => ordId++; }
+    private static int ordId = orderId; //counter for order IDs
+    internal static int NextOrderId { get => ordId++; } //property to get the next order ID
 
-    internal static DateTime Clock { get; set; } = DateTime.Now;
-   
-    internal static int AdminId;
+    internal static DateTime Clock { get; set; } = DateTime.Now; //the current time in the system
 
-    internal static string? CompanyName = null;
+    internal static int AdminId; // the admin ID
 
-    internal static double? Latitude = null;
-    internal static double? Longitude = null;
-    internal static double? MaxDistance = null;
-    internal static double AvgCarMPH;
-    internal static double AvgMotorBikeMPH;
-    internal static double AvgBikeMPH;
-    internal static double AvgWalkMPH;
+    internal static string? CompanyName = null; //the company name
 
-    internal static TimeSpan MaxDelTime;
-    internal static TimeSpan RiskRange;
-    internal static TimeSpan DownTime;
+    internal static double? Latitude = null; //the latitude
+    internal static double? Longitude = null; //the longitude
+    internal static double? MaxDist = null; //the maximum distance for deliveries
+    internal static double AvgCarMPH; //the average car speed in miles per hour
+    internal static double AvgMotorcycleMPH; //the average motorcycle speed in miles per hour
+    internal static double AvgBicycleMPH; //the average bicycle speed in miles per hour
+    internal static double AvgWalkMPH; //the average walking speed in miles per hour
+
+    internal static TimeSpan MaxDelTime; //the maximum delivery time
+    internal static TimeSpan RiskRange; //the risk range time
+    internal static TimeSpan DownTime; //the downtime duration
 
     internal static void Reset()
     {
@@ -38,10 +41,10 @@ internal static class Config
         CompanyName = null;
         Latitude = null; 
         Longitude = null;
-        MaxDistance = null;
+        MaxDist = null;
         AvgCarMPH = 0;
-        AvgMotorBikeMPH = 0 ;
-        AvgBikeMPH = 0;
+        AvgMotorcycleMPH = 0 ;
+        AvgBicycleMPH = 0;
         AvgWalkMPH = 0;
         MaxDelTime = TimeSpan.Zero;
         RiskRange = TimeSpan.Zero;
