@@ -13,5 +13,8 @@ public record Courier
     double? MaxDist = null,
     //enum DELTYPE { CAR , MOTORBIKE, BIKE, ONFOOT},
     DateTime? DayStarted = null   /// check
-    );
+    )
+{
+    public Courier() : this(0, "", "", "", ""){ }
+}
 

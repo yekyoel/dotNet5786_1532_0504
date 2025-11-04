@@ -16,6 +16,5 @@ public record Delivery
     /// <summary>
     /// Default constructor for stage 3
     /// </summary>
-    public Delivery() :this(0,0,0, new DateTime(2025, 11, 4)) { }
+    public Delivery() :this(0,0,0, new DateTime(0, 0, 0)) { }
 }
-

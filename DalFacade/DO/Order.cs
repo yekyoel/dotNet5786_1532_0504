@@ -5,12 +5,15 @@ public record Order
 (
     int Id, //**
     // enum OrderType
-    string FullAdd,
     double Latitude,
     double Longitude,
+    double Weight,
+    string FullAdd,
     string CustFullName,
     string CusNum,
-    double Weight,
     DateTime StartTimeForOrdering,
     string? Description = null
-);
+)
+{
+    public Order() : this(0,0,0,0,"","","",new(0,0,0)) { }
+}
