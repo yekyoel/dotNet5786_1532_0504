@@ -15,7 +15,7 @@ namespace DO;
 /// <param name="Food">Optional type of food ordered</param>
 public record Order
 (
-    int Id, 
+    int Id,
     double Latitude, 
     double Longitude, 
     double Weight, 
@@ -24,7 +24,8 @@ public record Order
     string CusNum, 
     DateTime? StartTimeForOrdering = null,  
     string? Description = null,  
-    OrderType? Food = null  
+    OrderType? Food = null 
+    
 )
 /// <summary>
 /// Default constructor initializing an Order with default values.
