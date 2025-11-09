@@ -113,7 +113,6 @@ internal class Program
                         FullName = fullName,
                         PhoneNum = phone,
                         Email = email,
-                        Password = password,
                         IsActive = isActive,
                         MaxDist = double.IsNaN(maxDist) || maxDist == 0 ? null : maxDist
                     };
@@ -167,7 +166,6 @@ internal class Program
                             FullName = string.IsNullOrWhiteSpace(nName) ? exist.FullName : nName,
                             PhoneNum = string.IsNullOrWhiteSpace(nPhone) ? exist.PhoneNum : nPhone,
                             Email = string.IsNullOrWhiteSpace(nEmail) ? exist.Email : nEmail,
-                            Password = string.IsNullOrWhiteSpace(nPass) ? exist.Password : nPass,
                             IsActive = string.IsNullOrWhiteSpace(activeStr) ? exist.IsActive : (activeStr.Trim().ToLower() == "y"),
                             MaxDist = string.IsNullOrWhiteSpace(nMaxStr) ? exist.MaxDist : nMax
                         };
@@ -540,7 +538,7 @@ internal class Program
     private static void SeedSampleData()
     {
         // Small helper to add sample records to DAL for testing
-        s_dalCourier?.Create(new Courier { Id = 1, FullName = "Sample Courier", PhoneNum = "000-000-0000", Email = "sample@courier.com", Password = "pass", IsActive = true });
+        s_dalCourier?.Create(new Courier { Id = 1, FullName = "Sample Courier", PhoneNum = "000-000-0000", Email = "sample@courier.com", IsActive = true });
         s_dalOrder?.Create(new Order { Id = 1, Description = "Sample Order" });
         s_dalDelivery?.Create(new Delivery { Id = 1, CourierId = 1, OrderId = 1 });
         Console.WriteLine("Sample data seeded.");

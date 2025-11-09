@@ -7,7 +7,6 @@ namespace DO;
 /// <param name="FullName">Full name of the courier</param>
 /// <param name="PhoneNum">Contact phone number of the courier</param>
 /// <param name="Email">Contact email address of the courier</param>
-/// <param name="Password">Password for courier's account</param>
 /// <param name="IsActive">Indicates if the courier is currently active</param>
 /// <param name="MaxDist">Maximum distance the courier is willing to travel</param>
 /// <param name="PreferredShippingMethod">Preferred method of shipping for the courier</param>
@@ -18,7 +17,7 @@ public record Courier
     string FullName, 
     string PhoneNum, 
     string Email, 
-    string Password, 
+    //string Password, 
     bool IsActive = false,  
     double? MaxDist = null,
     ShippingMethod? PreferredShippingMethod = null, 

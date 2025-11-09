@@ -62,29 +62,6 @@ public class ConfigImplementation : IConfig
         set => Config.AvgWalkMPH = value;
     }
 
-    public int AdminId
-    {
-        get => Config.AdminId;
-        set => Config.AdminId = value;
-    }
-
-    public string CompanyName
-    {
-        get => Config.CompanyName!;
-        set => Config.CompanyName = value;
-    }
-
-    public double? Latitude
-    {
-        get => Config.Latitude;
-        set => Config.Latitude = value;
-    }
-
-    public double? Longitude
-    {
-        get => Config.Longitude;
-        set => Config.Longitude = value;
-    }
 
     public TimeSpan MaxDelTime
     {
@@ -111,3 +88,28 @@ public class ConfigImplementation : IConfig
     }
 
 }
+
+/*    public int AdminId
+    {
+        get => Config.AdminId;
+        set => Config.AdminId = value;
+    }
+
+    public string CompanyName
+    {
+        get => Config.CompanyName!;
+        set => Config.CompanyName = value;
+    }
+
+    public double? Latitude
+    {
+        get => Config.Latitude;
+        set => Config.Latitude = value;
+    }
+
+    public double? Longitude
+    {
+        get => Config.Longitude;
+        set => Config.Longitude = value;
+    }
+*/
