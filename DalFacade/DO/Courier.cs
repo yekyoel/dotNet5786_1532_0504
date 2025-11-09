@@ -29,6 +29,6 @@ public record Courier
 /// Default constructor for Courier with default values.
 /// <summary>
 {
-    public Courier() : this(0, "", "", "", ""){ }
+    public Courier() : this(0, "", "", ""){ }
 }
 

@@ -19,10 +19,10 @@ public class ConfigImplementation : IConfig
         get => Config.MaxDist;
         set => Config.MaxDist = value;
     }
-    public int NextDeliveryId
-    {
-        get => Config.NextDeliveryId;
-    }
+   // public int NextDeliveryId
+   // {
+    //    get => Config.NextDeliveryId;
+    //}
     public double AvgCarMPH
     {
         get => Config.AvgCarMPH;
@@ -43,6 +43,49 @@ public class ConfigImplementation : IConfig
         get => Config.AvgWalkMPH;
         set => Config.AvgWalkMPH = value;
     }
+
+    public int AdminId
+    {
+        get => Config.AdminId;
+        set => Config.AdminId = value;
+    }
+
+    public string CompanyName
+    {
+        get => Config.CompanyName!;
+        set => Config.CompanyName = value;
+    }
+
+    public double? Latitude
+    {
+        get => Config.Latitude;
+        set => Config.Latitude = value;
+    }
+
+    public double? Longitude
+    {
+        get => Config.Longitude;
+        set => Config.Longitude = value;
+    }
+
+    public TimeSpan MaxDelTime
+    {
+        get => Config.MaxDelTime;
+        set => Config.MaxDelTime = value;
+    }
+
+    public TimeSpan RiskRange
+    {
+        get => Config.RiskRange;
+        set => Config.RiskRange = value;
+    }
+
+    public TimeSpan DownTime
+    {
+        get => Config.DownTime;
+        set => Config.DownTime = value;
+    }
+
     // resets the configuration settings to their default values.
     public void Reset()
     {
