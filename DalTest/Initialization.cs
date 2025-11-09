@@ -4,6 +4,7 @@ using System;
 using DalApi;
 using DO;
 
+
 public static  class Initialization
 {
     private static IConfig? s_dalConfig;
@@ -13,9 +14,40 @@ public static  class Initialization
 
     private static readonly Random s_rand = new();
 
+
+    private static double DegreeToRad(double deg) => deg * (Math.PI / 180.0);
+    private static double HaversineDistanceKm(double lat1, double lon1, double lat2, double lon2)
+    {
+        //Radius of Earth Glob
+        double R = 6371;
+        double dLat = DegreeToRad(lat2 - lat1);
+        double dLon = DegreeToRad(lon2 - lon1);
+        double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
+                   Math.Cos(DegreeToRad(lat1)) * Math.Cos(DegreeToRad(lat2)) *
+                   Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
+        double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+        return R * c;
+    }
+
+
     public static void CreateConfig() 
     {
-       
+        s_dalConfig.AdminId = 123456789; // Fixed admin ID for testing
+        s_dalConfig.CompanyName = "FastFood4You";
+
+        //"Ha-Va'ad Ha-Leumi, Jerusalem"
+        s_dalConfig.Latitude = 31.76417;
+        s_dalConfig.Longitude = 35.22534;
+
+        s_dalConfig.MaxDelTime = TimeSpan.FromMinutes(40);// 30 minutes
+        s_dalConfig.RiskRange = TimeSpan.FromMinutes(10); // 10 minutes
+        s_dalConfig.DownTime = TimeSpan.FromMinutes(20); // 20 minutes
+                                                   
+        s_dalConfig.MaxDist = 20.0;
+        s_dalConfig.AvgCarMPH = 70.0;
+        s_dalConfig.AvgMotorcycleMPH = 50.0;
+        s_dalConfig.AvgBicycleMPH = 15.0;
+        s_dalConfig.AvgWalkMPH = 5.0;
 
     }
 
@@ -96,46 +128,44 @@ public static  class Initialization
         // Current time (using your system or DAL clock)
         DateTime now = s_dalConfig.Clock;
 
-        // Choose a "start" boundary — say, up to 30 days ago
-        int maxDaysBack = 30;
-
-        // Pick a random number of days/hours/minutes ago
-        int daysBack = s_rand.Next(maxDaysBack);        // 0–29 days
+    
+        // Pick a random number of hours/minutes ago
         int hoursBack = s_rand.Next(24);                // 0–23 hours
         int minutesBack = s_rand.Next(60);              // 0–59 minutes
 
         // Subtract that random offset from now
-        DateTime randomTime = now.AddDays(-daysBack)
-                                 .AddHours(-hoursBack)
-                                 .AddMinutes(-minutesBack);
+        DateTime randomTime = now  .AddHours(-hoursBack)
+                                   .AddMinutes(-minutesBack);
 
         return randomTime;
     }
+
 
     private static Delivery createDeliveries(int x)
     {
         // Random preferred shipping method (enum values assumed 0..3)
         ShippingMethod preferred = (ShippingMethod)s_rand.Next(0, 4);
 
-        DateTime delStartTime? = RandomDeliveryOpenTime();
-        DateTime delEndTime? = RandomDeliveryOpenTime();
+        DateTime delStartTime = RandomDeliveryOpenTime();
+        DateTime delEndTime = RandomDeliveryOpenTime();
         while (delEndTime <= delStartTime)
         {
             delEndTime = RandomDeliveryOpenTime();
         }
 
         CompletionType? end = null;
+
         if (x <= 20)
         {
-            end = 0; // Pending
+            end = CompletionType.Pending;
         }
-        else if (x > 20 && x <= 30)
+        else if (x <= 30)
         {
-            end = 1; // enroute
+            end = CompletionType.EnRoute;
         }
         else
         {
-            end = s_rand.Next(2, 5); // Delivered, Cancelled, Failed
+            end = (CompletionType)s_rand.Next(2, 5); // Random between Delivered–Failed
         }
 
         return new Delivery
@@ -143,7 +173,7 @@ public static  class Initialization
             CourierId = s_rand.Next(200_000_000, 400_000_000),
             ShippingMethod = preferred,
             DeliveryStartTime = delStartTime,
-            Distance = Math.Round(1.0 + s_rand.NextDouble() * 49.0, 1), // 1.0 .. 50.0 km  FIX!!!
+            Distance = Math.Round(HaversineDistanceKm("2lung 2 lats")), 
             End = end,
             DeliveryEndTime = delEndTime
         };
