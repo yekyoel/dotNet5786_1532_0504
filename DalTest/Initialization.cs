@@ -168,12 +168,18 @@ public static  class Initialization
             end = (CompletionType)s_rand.Next(2, 5); // Random between Delivered–Failed
         }
 
+        // Generate random coordinates for start and end points
+        double lat1 = s_dalConfig.Latitude ?? 0.0;
+        double lon1 = s_dalConfig.Longitude ?? 0.0;
+        double lat2 = lat1 + (s_rand.NextDouble() - 0.5) * 0.2; // within ~20km
+        double lon2 = lon1 + (s_rand.NextDouble() - 0.5) * 0.2;
+
         return new Delivery
         {
             CourierId = s_rand.Next(200_000_000, 400_000_000),
             ShippingMethod = preferred,
             DeliveryStartTime = delStartTime,
-            Distance = Math.Round(HaversineDistanceKm("2lung 2 lats")), 
+            Distance = Math.Round(HaversineDistanceKm(lat1, lon1, lat2, lon2), 2),
             End = end,
             DeliveryEndTime = delEndTime
         };

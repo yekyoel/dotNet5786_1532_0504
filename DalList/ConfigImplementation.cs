@@ -1,6 +1,4 @@
-﻿
-
-using Dal;
+﻿using Dal;
 namespace DalApi;
 
 /// <summary>
@@ -13,6 +11,26 @@ public class ConfigImplementation : IConfig
     {
         get => Config.Clock;
         set => Config.Clock = value;
+    }
+    public int AdminId
+    {
+        get => Config.AdminId;
+        set => Config.AdminId = value;
+    }
+    public string CompanyName
+    {
+        get => Config.CompanyName ?? string.Empty;
+        set => Config.CompanyName = value;
+    }
+    public double? Longitude
+    {
+        get => Config.Longitude;
+        set => Config.Longitude = value;
+    }
+    public double? Latitude
+    {
+        get => Config.Latitude;
+        set => Config.Latitude = value;
     }
     public double? MaxDist
     {
@@ -42,6 +60,21 @@ public class ConfigImplementation : IConfig
     {
         get => Config.AvgWalkMPH;
         set => Config.AvgWalkMPH = value;
+    }
+    public TimeSpan MaxDelTime
+    {
+        get => Config.MaxDelTime;
+        set => Config.MaxDelTime = value;
+    }
+    public TimeSpan RiskRange
+    {
+        get => Config.RiskRange;
+        set => Config.RiskRange = value;
+    }
+    public TimeSpan DownTime
+    {
+        get => Config.DownTime;
+        set => Config.DownTime = value;
     }
     // resets the configuration settings to their default values.
     public void Reset()
