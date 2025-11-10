@@ -364,58 +364,32 @@ public static  class Initialization
         s_delivery.Create(delivery);
         s_order.Delete(order.Id);
     }
-    /*private static Delivery createDeliveries()
-    {
-        // Random preferred shipping method (enum values assumed 0..3)
-        ShippingMethod preferred = (ShippingMethod)s_rand.Next(0, 4);
-
-        DateTime delStartTime = RandomDeliveryOpenTime();
-        DateTime delEndTime = RandomDeliveryOpenTime();
-        while (delEndTime <= delStartTime)
-        {
-            delEndTime = RandomDeliveryOpenTime();
-        }
-
-        CompletionType? end = null;
-
-        if (x <= 20)
-        {
-            end = CompletionType.Pending;
-        }
-        else if (x <= 30)
-        {
-            end = CompletionType.EnRoute;
-        }
-        else
-        {
-            end = (CompletionType)s_rand.Next(2, 5); // Random between Delivered–Failed
-        }
-
-        // Generate random coordinates for start and end points
-        double lat1 = s_dalConfig.Latitude ?? 0.0;
-        double lon1 = s_dalConfig.Longitude ?? 0.0;
-        double lat2 = lat1 + (s_rand.NextDouble() - 0.5) * 0.2; // within ~20km
-        double lon2 = lon1 + (s_rand.NextDouble() - 0.5) * 0.2;
-
-        return new Delivery
-        {
-            CourierId = s_rand.Next(200_000_000, 400_000_000),
-            ShippingMethod = preferred,
-            DeliveryStartTime = delStartTime,
-            Distance = Math.Round(HaversineDistanceKm(lat1, lon1, lat2, lon2), 2),
-            End = end,
-            DeliveryEndTime = delEndTime
-        };
-    }*/
-
     
 
-    public static void ResetAll()
+
+    public static void Do(IConfig? dalConfig, ICourier? dalCourier, IOrder? dalOrder, IDelivery? dalDelivery)
     {
+        s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL can not be null!");
+        s_courier = dalCourier ?? throw new NullReferenceException("DAL Courier can not be null!");
+        s_order = dalOrder ?? throw new NullReferenceException("DAL Order can not be null!");
+        s_delivery = dalDelivery ?? throw new NullReferenceException("DAL Delivery can not be null!");
+
+        Console.WriteLine("Reset Configuration values and List values...");
         s_dalConfig.Reset();
         s_courier.DeleteAll();
-        s_delivery.DeleteAll();
         s_order.DeleteAll();
+        s_delivery.DeleteAll();
+
+        Console.WriteLine("Initializing Couriers list ...");
+        CreateCourier();
+        Console.WriteLine("Initializing Orders list ...");
+        CreateOrder();
+        Console.WriteLine("Initializing Deliveries list ...");
+        CreateDelivery();
+        Console.WriteLine("Initializing Config ...");
+        CreateConfig();
+
+
     }
 }
 

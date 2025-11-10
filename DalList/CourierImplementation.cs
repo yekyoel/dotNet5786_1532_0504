@@ -22,9 +22,10 @@ public class CourierImplementation : ICourier
 
     public void DeleteAll()
     {
-        foreach (Courier itr in DataSource.Couriers)
-            DataSource.Couriers.Clear();
-
+        foreach (Courier itr in DataSource.Couriers.ToArray()) // to avoid modifying collection during iteration
+        {
+            DataSource.Couriers.Remove(itr); // remove each courier
+        }
     }
 
     public Courier? Read(int id)

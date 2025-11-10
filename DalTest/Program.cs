@@ -74,7 +74,8 @@ internal class Program
             return;
         }
 
-        CHOICE c = (CHOICE)choiceInt;
+        // cast integer to CHOICE enum
+        CHOICE c = (CHOICE)choiceInt; 
 
         try
         {
@@ -89,22 +90,25 @@ internal class Program
                     int.TryParse(Console.ReadLine(), out var newId);
 
                     Console.Write("Full Name: ");
-                    var fullName = Console.ReadLine() ?? "";
+                    var fullName = Console.ReadLine() ?? ""; // avoid null
 
                     Console.Write("Phone Number: ");
-                    var phone = Console.ReadLine() ?? "";
+                    var phone = Console.ReadLine() ?? ""; // same as above
 
                     Console.Write("Email: ");
                     var email = Console.ReadLine() ?? "";
-
-                    Console.Write("Password: ");
-                    var password = Console.ReadLine() ?? "";
 
                     Console.Write("Is Active? (y/N): ");
                     var isActive = (Console.ReadLine() ?? "").Trim().ToLower() == "y";
 
                     Console.Write("Max Distance (optional): ");
-                    double.TryParse(Console.ReadLine(), out var maxDist);
+                    double.TryParse(Console.ReadLine(), out var maxDist); // store only if valid
+
+                    Console.Write("Preferred Shipping Method (Car/Motorcycle/Bike/Onfoot): ");
+                    var prefMethodStr = Console.ReadLine() ?? "";
+
+                    Console.Write("Day Started (dd/MM/yyyy): ");
+                    DateTime.TryParse(Console.ReadLine(), out var dayStarted); // store date only if valid
 
                     // Create Courier record and save via DAL
                     var courier = new Courier
@@ -114,7 +118,18 @@ internal class Program
                         PhoneNum = phone,
                         Email = email,
                         IsActive = isActive,
-                        MaxDist = double.IsNaN(maxDist) || maxDist == 0 ? null : maxDist
+                        MaxDist = double.IsNaN(maxDist) || maxDist == 0 ? null : maxDist, // if zero or invalid, store null
+                        PreferredShippingMethod = prefMethodStr.ToLower() switch
+                        {
+                            "car" => ShippingMethod.Car,
+                            "motorcycle" => ShippingMethod.Motorcycle,
+                            "bike" => ShippingMethod.Bike,
+                            "onfoot" => ShippingMethod.OnFoot,
+                            _ => ShippingMethod.Car // unrecognized input stores default value
+                        },
+
+                        DayStarted = dayStarted == DateTime.MinValue ? (DateTime?)null : dayStarted.Date // store only date part, null if invalid
+
                     };
                     s_dalCourier?.Create(courier);
                     Console.WriteLine("Courier created.");
@@ -215,12 +230,13 @@ internal class Program
                 "5: Delete Order\n" +
                 "0: Return to Main Menu");
 
+        // Defensive input parsing
         if (!int.TryParse(Console.ReadLine(), out var choiceInt) || choiceInt < 0 || choiceInt > 6)
         {
             Console.WriteLine("Invalid selection.");
             return;
         }
-
+        // Cast to CHOICE enum
         CHOICE o = (CHOICE)choiceInt;
 
         try
@@ -256,6 +272,10 @@ internal class Program
                     Console.Write("Description (optional): ");
                     var desc = Console.ReadLine();
 
+                    Console.Write("Order Type (Food): ");
+                    var orderTypeStr = Console.ReadLine() ?? "";
+
+                    // Create Order record and save via DAL
                     var order = new Order
                     {
                         Id = newId,
@@ -266,9 +286,19 @@ internal class Program
                         CustFullName = custName,
                         CusNum = custNum,
                         StartTimeForOrdering = DateTime.Now,
-                        Description = string.IsNullOrWhiteSpace(desc) ? null : desc
+                        Description = string.IsNullOrWhiteSpace(desc) ? null : desc,
+
+                        // map string input to OrderType enum, default to Pizza if unrecognized
+                        Food = orderTypeStr.ToLower() switch
+                        {
+                            "pizza" => OrderType.Pizza,
+                            "hamburger" => OrderType.Hamburger,
+                            "fries" => OrderType.Fries,
+                            "icecream" => OrderType.IceCream,
+                            _ => OrderType.Pizza // unrecognized input stores default value
+                        }
                     };
-                    s_dalOrder?.Create(order);
+                    s_dalOrder?.Create(order); // save order
                     Console.WriteLine("Order created.");
                     break;
 
@@ -276,12 +306,12 @@ internal class Program
                     Console.Write("Enter Order Id to read: ");
                     if (int.TryParse(Console.ReadLine(), out var readId))
                     {
-                        var r = s_dalOrder?.Read(readId);
-                        Console.WriteLine(r is null ? "Order not found." : r.ToString()!);
+                        var r = s_dalOrder?.Read(readId); // read order by id
+                        Console.WriteLine(r is null ? "Order not found." : r.ToString()!); // print order or not found
                     }
                     else Console.WriteLine("Invalid id.");
                     break;
-
+                // Read all orders
                 case CHOICE.ReadAll:
                     var all = s_dalOrder?.ReadAll();
                     if (all is null || all.Count == 0) Console.WriteLine("No orders.");
@@ -332,7 +362,9 @@ internal class Program
             Console.WriteLine($"Operation failed: {ex.Message}");
         }
     }
-      static private void DMenu()
+
+    // Delivery submenu: create/read/readall/update/delete
+    static private void DMenu()
     {
         // Delivery submenu: create/read/readall/update/delete
         Console.WriteLine("Delivery Menu Selected");
@@ -372,13 +404,33 @@ internal class Program
                     Console.Write("Distance (optional): ");
                     double.TryParse(Console.ReadLine(), out var distance);
 
+                    Console.Write("Delivery Start Time (dd/MM/yyyy HH:mm) or Enter for now: ");
+                    var startTimeStr = Console.ReadLine() ?? "";
+
+                    Console.Write(" Delivery End Time (dd/MM/yyyy HH:mm) or Enter for now: ");
+                    var endTimeStr = Console.ReadLine() ?? "";
+
+                    Console.WriteLine("Current Delivery Status: ");
+                    var statusStr = Console.ReadLine() ?? "";
+
                     var delivery = new Delivery
                     {
                         Id = newId,
                         OrderId = orderId,
                         CourierId = courierId,
                         Distance = double.IsNaN(distance) || distance == 0 ? null : distance,
-                        DeliveryStartTime = DateTime.Now
+                        DeliveryStartTime = string.IsNullOrEmpty (startTimeStr) ? DateTime.Now : DateTime.Parse(startTimeStr),
+                        DeliveryEndTime = string.IsNullOrWhiteSpace(endTimeStr) ? (DateTime?)null : DateTime.Parse(endTimeStr),
+                    
+                        End = statusStr.ToLower() switch
+                        {
+                            "pending" => CompletionType.Pending,
+                            "enroute" => CompletionType.EnRoute,
+                            "delivered" => CompletionType.Delivered,
+                            "cancelled" => CompletionType.Cancelled,
+                            "failed" => CompletionType.Failed,
+                            _ => CompletionType.Pending // default if unrecognized
+                        },           
                     };
                     s_dalDelivery?.Create(delivery);
                     Console.WriteLine("Delivery created.");
@@ -458,7 +510,7 @@ internal class Program
 
     // Main menu loop: choose entity/submenu or perform global actions
     static private void menu()
-    {
+    { // infinite loop until user exits
         while (true)
         {
             Console.WriteLine("\n===== MAIN MENU =====");
@@ -466,7 +518,7 @@ internal class Program
             Console.WriteLine("1: Courier");
             Console.WriteLine("2: Order");
             Console.WriteLine("3: Delivery");
-            Console.WriteLine("4: Initialize (seed data)");
+            Console.WriteLine("4: Initialize");
             Console.WriteLine("5: Delete All");
             Console.WriteLine("6: Config (clock)");
             Console.WriteLine("7: Reset Config");
@@ -474,7 +526,6 @@ internal class Program
             Console.Write("Choose option: ");
             string? input = Console.ReadLine();
 
-            // ניסיון להמיר ל־enum ENTITY
             // Parse user input to ENTITY enum safely
             if (!Enum.TryParse<ENTITY>(input, out var entity) || !Enum.IsDefined(typeof(ENTITY), entity))
             {
@@ -501,9 +552,7 @@ internal class Program
                     break;
 
                 case ENTITY.Initialize:
-                    // Seed sample data (safe helper)
-                    Console.WriteLine("Initializing sample data...");
-                    SeedSampleData();
+                    Initialization.Do(s_dalConfig, s_dalCourier, s_dalOrder, s_dalDelivery);
                     break;
 
                 case ENTITY.All:
@@ -535,13 +584,4 @@ internal class Program
             }
         }
     }
-    private static void SeedSampleData()
-    {
-        // Small helper to add sample records to DAL for testing
-        s_dalCourier?.Create(new Courier { Id = 1, FullName = "Sample Courier", PhoneNum = "000-000-0000", Email = "sample@courier.com", IsActive = true });
-        s_dalOrder?.Create(new Order { Id = 1, Description = "Sample Order" });
-        s_dalDelivery?.Create(new Delivery { Id = 1, CourierId = 1, OrderId = 1 });
-        Console.WriteLine("Sample data seeded.");
-    }
-
 }

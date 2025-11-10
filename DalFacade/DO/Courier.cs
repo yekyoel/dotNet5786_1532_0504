@@ -17,7 +17,6 @@ public record Courier
     string FullName, 
     string PhoneNum, 
     string Email, 
-    //string Password, 
     bool IsActive = false,  
     double? MaxDist = null,
     ShippingMethod? PreferredShippingMethod = null, 

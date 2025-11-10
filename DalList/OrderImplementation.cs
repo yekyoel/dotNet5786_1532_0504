@@ -22,9 +22,7 @@ public class OrderImplementation : IOrder
 
     public void DeleteAll()
     {
-        foreach (Order itr in DataSource.Orders)
-       
-            DataSource.Orders.Clear(); ;
+       DataSource.Orders.Clear(); ;
     }
 
     public Order? Read(int id)
