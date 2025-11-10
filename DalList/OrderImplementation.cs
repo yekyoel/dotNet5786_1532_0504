@@ -4,7 +4,7 @@ using DalApi;
 using DO;
 using System.Collections.Generic;
 
-public class OrderImplementation : IOrder
+internal class OrderImplementation : IOrder
 { 
     public void Create(Order item)
     {

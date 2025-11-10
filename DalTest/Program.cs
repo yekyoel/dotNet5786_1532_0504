@@ -35,10 +35,12 @@ internal class Program
     }
 
     // DAL interfaces (may be null if implementations fail). These are used to call into DAL logic.
-    private static ICourier? s_dalCourier = new CourierImplementation(); //stage 1
-    private static IOrder? s_dalOrder = new OrderImplementation(); //stage 1
-    private static IDelivery? s_dalDelivery = new DeliveryImplementation(); //stage 1
-    private static IConfig? s_dalConfig = new ConfigImplementation(); //stage 1
+    //private static ICourier? s_dalCourier = new CourierImplementation(); //stage 1
+    //private static IOrder? s_dalOrder = new OrderImplementation(); //stage 1
+    //private static IDelivery? s_dalDelivery = new DeliveryImplementation(); //stage 1
+    //private static IConfig? s_dalConfig = new ConfigImplementation(); //stage 1
+    static readonly IDal s_dal = new DalList(); //stage 2
+
 
     public static ENTITY COURIER { get; private set; } // unused property but left for compatibility. In case needed later.
 
@@ -131,7 +133,7 @@ internal class Program
                         DayStarted = dayStarted == DateTime.MinValue ? (DateTime?)null : dayStarted.Date // store only date part, null if invalid
 
                     };
-                    s_dalCourier?.Create(courier);
+                    s_dal!.Courier.Create(courier);
                     Console.WriteLine("Courier created.");
                     break;
 
@@ -140,7 +142,7 @@ internal class Program
                     Console.Write("Enter Courier Id to read: ");
                     if (int.TryParse(Console.ReadLine(), out var readId))
                     {
-                        var r = s_dalCourier?.Read(readId);
+                        var r = s_dal!.Courier.Read(readId);
                         Console.WriteLine(r is null ? "Courier not found." : r.ToString()!);
                     }
                     else Console.WriteLine("Invalid id.");
@@ -148,7 +150,7 @@ internal class Program
 
                 case CHOICE.ReadAll:
                     // Read all couriers and print them
-                    var all = s_dalCourier?.ReadAll();
+                    var all = s_dal!.Courier.ReadAll();
                     if (all is null || all.Count == 0) Console.WriteLine("No couriers.");
                     else foreach (var it in all) Console.WriteLine(it);
                     break;
@@ -158,7 +160,7 @@ internal class Program
                     Console.Write("Enter Courier Id to update: ");
                     if (int.TryParse(Console.ReadLine(), out var upId))
                     {
-                        var exist = s_dalCourier?.Read(upId);
+                        var exist = s_dal!.Courier.Read(upId);
                         if (exist is null) { Console.WriteLine("Courier not found."); break; }
 
                         Console.Write($"New Full Name (Enter to keep '{exist.FullName}'): ");
@@ -184,7 +186,7 @@ internal class Program
                             IsActive = string.IsNullOrWhiteSpace(activeStr) ? exist.IsActive : (activeStr.Trim().ToLower() == "y"),
                             MaxDist = string.IsNullOrWhiteSpace(nMaxStr) ? exist.MaxDist : nMax
                         };
-                        s_dalCourier?.Update(updated);
+                        s_dal!.Courier.Update(updated);
                         Console.WriteLine("Courier updated.");
                     }
                     else Console.WriteLine("Invalid id.");
@@ -195,7 +197,7 @@ internal class Program
                     Console.Write("Enter Courier Id to delete: ");
                     if (int.TryParse(Console.ReadLine(), out var delId))
                     {
-                        s_dalCourier?.Delete(delId);
+                        s_dal!.Courier.Delete(delId);
                         Console.WriteLine("Courier deleted (if it existed).");
                     }
                     else Console.WriteLine("Invalid id.");
@@ -203,7 +205,7 @@ internal class Program
 
                 case CHOICE.DeleteAll:
                     // Delete all couriers
-                    s_dalCourier?.DeleteAll();
+                    s_dal!.Courier.DeleteAll();
                     Console.WriteLine("All couriers deleted.");
                     break;
 
@@ -298,7 +300,7 @@ internal class Program
                             _ => OrderType.Pizza // unrecognized input stores default value
                         }
                     };
-                    s_dalOrder?.Create(order); // save order
+                    s_dal!.Order.Create(order); // save order
                     Console.WriteLine("Order created.");
                     break;
 
@@ -306,14 +308,14 @@ internal class Program
                     Console.Write("Enter Order Id to read: ");
                     if (int.TryParse(Console.ReadLine(), out var readId))
                     {
-                        var r = s_dalOrder?.Read(readId); // read order by id
+                        var r = s_dal!.Order.Read(readId); // read order by id
                         Console.WriteLine(r is null ? "Order not found." : r.ToString()!); // print order or not found
                     }
                     else Console.WriteLine("Invalid id.");
                     break;
                 // Read all orders
                 case CHOICE.ReadAll:
-                    var all = s_dalOrder?.ReadAll();
+                    var all = s_dal!.Order.ReadAll();
                     if (all is null || all.Count == 0) Console.WriteLine("No orders.");
                     else foreach (var it in all) Console.WriteLine(it);
                     break;
@@ -322,7 +324,7 @@ internal class Program
                     Console.Write("Enter Order Id to update: ");
                     if (int.TryParse(Console.ReadLine(), out var upId))
                     {
-                        var exist = s_dalOrder?.Read(upId);
+                        var exist = s_dal!.Order.Read(upId);
                         if (exist is null) { Console.WriteLine("Order not found."); break; }
 
                         Console.Write($"New Full Address (Enter to keep '{exist.FullAdd}'): ");
@@ -335,7 +337,7 @@ internal class Program
                             FullAdd = string.IsNullOrWhiteSpace(nFullAdd) ? exist.FullAdd : nFullAdd,
                             Description = string.IsNullOrWhiteSpace(nDesc) ? exist.Description : nDesc
                         };
-                        s_dalOrder?.Update(updated);
+                        s_dal!.Order?.Update(updated);
                         Console.WriteLine("Order updated.");
                     }
                     else Console.WriteLine("Invalid id.");
@@ -345,14 +347,14 @@ internal class Program
                     Console.Write("Enter Order Id to delete: ");
                     if (int.TryParse(Console.ReadLine(), out var delId))
                     {
-                        s_dalOrder?.Delete(delId);
+                        s_dal!.Order?.Delete(delId);
                         Console.WriteLine("Order deleted (if it existed).");
                     }
                     else Console.WriteLine("Invalid id.");
                     break;
 
                 case CHOICE.DeleteAll:
-                    s_dalOrder?.DeleteAll();
+                    s_dal!.Order?.DeleteAll();
                     Console.WriteLine("All orders deleted.");
                     break;
             }
@@ -432,7 +434,7 @@ internal class Program
                             _ => CompletionType.Pending // default if unrecognized
                         },           
                     };
-                    s_dalDelivery?.Create(delivery);
+                    s_dal!.Delivery.Create(delivery);
                     Console.WriteLine("Delivery created.");
                     break;
 
@@ -440,14 +442,14 @@ internal class Program
                     Console.Write("Enter Delivery Id to read: ");
                     if (int.TryParse(Console.ReadLine(), out var readId))
                     {
-                        var r = s_dalDelivery?.Read(readId);
+                        var r = s_dal!.Delivery.Read(readId);
                         Console.WriteLine(r is null ? "Delivery not found." : r.ToString()!);
                     }
                     else Console.WriteLine("Invalid id.");
                     break;
 
                 case CHOICE.ReadAll:
-                    var all = s_dalDelivery?.ReadAll();
+                    var all = s_dal!.Delivery.ReadAll();
                     if (all is null || all.Count == 0) Console.WriteLine("No deliveries.");
                     else foreach (var it in all) Console.WriteLine(it);
                     break;
@@ -456,7 +458,7 @@ internal class Program
                     Console.Write("Enter Delivery Id to update: ");
                     if (int.TryParse(Console.ReadLine(), out var upId))
                     {
-                        var exist = s_dalDelivery?.Read(upId);
+                        var exist = s_dal!.Delivery.Read(upId);
                         if (exist is null) { Console.WriteLine("Delivery not found."); break; }
 
                         Console.Write($"New Distance (Enter to keep '{exist.Distance ?? 0}'): ");
@@ -480,7 +482,7 @@ internal class Program
                             DeliveryEndTime = endTime,
                             End = endType
                         };
-                        s_dalDelivery?.Update(updated);
+                        s_dal!.Delivery.Update(updated);
                         Console.WriteLine("Delivery updated.");
                     }
                     else Console.WriteLine("Invalid id.");
@@ -490,14 +492,14 @@ internal class Program
                     Console.Write("Enter Delivery Id to delete: ");
                     if (int.TryParse(Console.ReadLine(), out var delId))
                     {
-                        s_dalDelivery?.Delete(delId);
+                        s_dal!.Delivery.Delete(delId);
                         Console.WriteLine("Delivery deleted (if it existed).");
                     }
                     else Console.WriteLine("Invalid id.");
                     break;
 
                 case CHOICE.DeleteAll:
-                    s_dalDelivery?.DeleteAll();
+                    s_dal!.Delivery.DeleteAll();
                     Console.WriteLine("All deliveries deleted.");
                     break;
             }
@@ -552,33 +554,34 @@ internal class Program
                     break;
 
                 case ENTITY.Initialize:
-                    Initialization.Do(s_dalConfig, s_dalCourier, s_dalOrder, s_dalDelivery);
+                    //Initialization.Do(s_dalConfig, s_dalCourier, s_dalOrder, s_dalDelivery);
+                    Initialization.Do(s_dal);
                     break;
 
                 case ENTITY.All:
                     // Delete all entities across DALs
                     Console.WriteLine("Deleting all entities...");
-                    s_dalCourier!.DeleteAll();
-                    s_dalOrder!.DeleteAll();
-                    s_dalDelivery!.DeleteAll();
+                    s_dal!.Courier.DeleteAll();
+                    s_dal!.Order.DeleteAll();
+                    s_dal!.Delivery.DeleteAll();
                     Console.WriteLine("✅ All data deleted.");
                     break;
 
                 case ENTITY.Config:
                     // View and optionally set the DAL clock
-                    Console.WriteLine($"Current Clock: {s_dalConfig!.Clock:dd/MM/yyyy HH:mm:ss}");
+                    Console.WriteLine($"Current Clock: {s_dal!.Config.Clock:dd/MM/yyyy HH:mm:ss}");
                     Console.Write("Set new clock (or Enter to keep): ");
                     var s = Console.ReadLine();
                     if (!string.IsNullOrWhiteSpace(s) && DateTime.TryParse(s, out var newClock))
                     {
-                        s_dalConfig.Clock = newClock;
+                        s_dal!.Config.Clock = newClock;
                         Console.WriteLine("✅ Clock updated.");
                     }
                     break;
 
                 case ENTITY.Reset:
                     // Reset configuration to defaults
-                    s_dalConfig!.Reset();
+                    s_dal!.Config.Reset();
                     Console.WriteLine("✅ Config reset.");
                     break;
             }

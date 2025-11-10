@@ -4,7 +4,7 @@ namespace DalApi;
 /// <summary>
 /// Config Implementation class that implements the IConfig interface for managing configuration settings.
 /// </summary>
-public class ConfigImplementation : IConfig
+internal class ConfigImplementation : IConfig
 {
     // Properties to get and set configuration values from the Config class.
     public DateTime Clock

@@ -9,12 +9,14 @@ using System.Net;
 
 public static  class Initialization
 {
-    private static IConfig? s_dalConfig;
-    private static ICourier? s_courier;
-    private static IDelivery? s_delivery;
-    private static IOrder? s_order;
-
+    //private static IConfig? s_dalConfig; //stage 1
+    //private static ICourier? s_courier; //stage 1
+    //private static IDelivery? s_delivery; //stage 1
+    //private static IOrder? s_order; //stage 1
+    private static IDal? s_dal; //stage 2
     private static readonly Random s_rand = new();
+    private const int MIN_ID = 200000000;
+    private const int MAX_ID = 400000000;
 
 
 
@@ -34,22 +36,22 @@ public static  class Initialization
 
     public static void CreateConfig() 
     {
-        s_dalConfig.AdminId = 123456789; // Fixed admin ID for testing
-        s_dalConfig.CompanyName = "FastFood4You";
+        s_dal!.Config.AdminId = 123456789; // Fixed admin ID for testing
+        s_dal!.Config.CompanyName = "FastFood4You";
 
         //"Ha-Va'ad Ha-Leumi, Jerusalem"
-        s_dalConfig.Latitude = 31.76417;
-        s_dalConfig.Longitude = 35.22534;
+        s_dal!.Config.Latitude = 31.76417;
+        s_dal!.Config.Longitude = 35.22534;
 
-        s_dalConfig.MaxDelTime = TimeSpan.FromMinutes(40);// 30 minutes
-        s_dalConfig.RiskRange = TimeSpan.FromMinutes(10); // 10 minutes
-        s_dalConfig.DownTime = TimeSpan.FromMinutes(20); // 20 minutes
+        s_dal!.Config.MaxDelTime = TimeSpan.FromMinutes(40);// 30 minutes
+        s_dal!.Config.RiskRange = TimeSpan.FromMinutes(10); // 10 minutes
+        s_dal!.Config.DownTime = TimeSpan.FromMinutes(20); // 20 minutes
                                                    
-        s_dalConfig.MaxDist = 20.0;
-        s_dalConfig.AvgCarMPH = 70.0;
-        s_dalConfig.AvgMotorcycleMPH = 50.0;
-        s_dalConfig.AvgBicycleMPH = 15.0;
-        s_dalConfig.AvgWalkMPH = 5.0;
+        s_dal!.Config.MaxDist = 20.0;
+        s_dal!.Config.AvgCarMPH = 70.0;
+        s_dal!.Config.AvgMotorcycleMPH = 50.0;
+        s_dal!.Config.AvgBicycleMPH = 15.0;
+        s_dal!.Config.AvgWalkMPH = 5.0;
 
     }
 
@@ -60,16 +62,16 @@ public static  class Initialization
         for (int i = 0; i < 20; i++)
         {
             Courier cr = createCouriers();
-            if (s_courier?.Read(cr.Id) == null)
-                s_courier?.Create(cr);
+            if (s_dal!.Courier.Read(cr.Id) == null)
+                s_dal!.Courier.Create(cr);
         }
         
     }
 
     public static DateTime randDate()
     {
-        DateTime start = new DateTime(s_dalConfig.Clock.Year - 2, 1, 1);
-        int range = (s_dalConfig.Clock - start ).Days;
+        DateTime start = new DateTime(s_dal!.Config.Clock.Year - 2, 1, 1);
+        int range = (s_dal!.Config.Clock - start ).Days;
         return start.AddDays(s_rand.Next(range));
     }
 
@@ -100,7 +102,7 @@ public static  class Initialization
 
         // MaxDist: choose a reasonable random value (not too far).
         // Use config max if set, otherwise default cap 30 km. Minimum 1 km.
-        double configCap = s_dalConfig?.MaxDist ?? 30.0;
+        double configCap = s_dal!.Config.MaxDist ?? 30.0;
         double cap = Math.Min(Math.Max(configCap, 1.0), 30.0); // ensure between 1 and 30
         double maxDist = Math.Round(1.0 + s_rand.NextDouble() * (cap - 1.0), 1); // 1.0 .. cap, 1 decimal place
 
@@ -173,7 +175,7 @@ public static  class Initialization
     public static DateTime RandomDeliveryOpenTime()
     {
         // Current time (using your system or DAL clock)
-        DateTime now = s_dalConfig.Clock;
+        DateTime now = s_dal!.Config.Clock;
 
 
         // Pick a random number of hours/minutes ago
@@ -192,8 +194,8 @@ public static  class Initialization
         for (int i = 0; i < 50; i++)
         {
             Order cr = createOrders();
-            if (s_order?.Read(cr.Id) == null)
-                s_order?.Create(cr);
+            if (s_dal!.Order.Read(cr.Id) == null)
+               s_dal!.Order.Create(cr);
         }
     }
 
@@ -260,18 +262,18 @@ public static  class Initialization
     {
         // assume s_dalConfig, s_order, s_courier, s_delivery and other values are correct and non-null
 
-        var orders = s_order.ReadAll();
+        var orders = s_dal!.Order.ReadAll();
         if (orders == null || orders.Count == 0) return;
 
-        var couriers = s_courier.ReadAll();
-        var existingDeliveries = s_delivery.ReadAll() ?? new List<Delivery>();
+        var couriers = s_dal!.Courier.ReadAll();
+        var existingDeliveries = s_dal!.Delivery.ReadAll() ?? new List<Delivery>();
 
         // pick one random order from the list
         var order = orders[s_rand.Next(orders.Count)];
 
         // compute distance from store to customer
-        double storeLat = s_dalConfig.Latitude ?? 0.0;
-        double storeLon = s_dalConfig.Longitude ?? 0.0;
+        double storeLat = s_dal!.Config.Latitude ?? 0.0;
+        double storeLon = s_dal!.Config.Longitude ?? 0.0;
         double distanceKm = Math.Round(HaversineDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude), 2);
 
         // eligible couriers: active and within max distance
@@ -283,7 +285,7 @@ public static  class Initialization
         var courier = eligible[s_rand.Next(eligible.Count)];
 
         // compute courier available-from based on existing deliveries (avoid overlapping assignments)
-        DateTime courierAvailableFrom = s_dalConfig.Clock;
+        DateTime courierAvailableFrom = s_dal!.Config.Clock;
         var courierDeliveries = existingDeliveries.Where(d => d.CourierId == courier.Id).ToList();
         if (courierDeliveries.Count > 0)
         {
@@ -298,25 +300,25 @@ public static  class Initialization
                         var method = d.ShippingMethod ?? courier.PreferredShippingMethod ?? ShippingMethod.Car;
                         double speedKmh = method switch
                         {
-                            ShippingMethod.Car => s_dalConfig.AvgCarMPH,
-                            ShippingMethod.Motorcycle => s_dalConfig.AvgMotorcycleMPH,
-                            ShippingMethod.Bike => s_dalConfig.AvgBicycleMPH,
-                            ShippingMethod.OnFoot => s_dalConfig.AvgWalkMPH,
-                            _ => s_dalConfig.AvgCarMPH
+                            ShippingMethod.Car => s_dal!.Config.AvgCarMPH,
+                            ShippingMethod.Motorcycle => s_dal!.Config.AvgMotorcycleMPH,
+                            ShippingMethod.Bike => s_dal!.Config.AvgBicycleMPH,
+                            ShippingMethod.OnFoot => s_dal!.Config.AvgWalkMPH,
+                            _ => s_dal!.Config.AvgCarMPH
                         };
                         if (speedKmh <= 0) speedKmh = 30.0;
                         var duration = TimeSpan.FromHours((dKm) / speedKmh);
                         return d.DeliveryStartTime.Value + duration;
                     }
-                    return s_dalConfig.Clock;
+                    return s_dal!.Config.Clock;
                 })
                 .Max();
             courierAvailableFrom = latest;
         }
 
         // earliest start must be after order start and courier availability and after downtime
-        DateTime earliest = (order.StartTimeForOrdering ?? s_dalConfig.Clock) > courierAvailableFrom ? (order.StartTimeForOrdering ?? s_dalConfig.Clock) : courierAvailableFrom;
-        earliest = earliest.Add(s_dalConfig.DownTime);
+        DateTime earliest = (order.StartTimeForOrdering ?? s_dal!.Config.Clock) > courierAvailableFrom ? (order.StartTimeForOrdering ?? s_dal!.Config.Clock) : courierAvailableFrom;
+        earliest = earliest.Add(s_dal!.Config.DownTime);
 
         // small random scheduling delay
         DateTime start = earliest.AddMinutes(s_rand.Next(0, 16));
@@ -325,11 +327,11 @@ public static  class Initialization
         var chosenMethod = courier.PreferredShippingMethod ?? ShippingMethod.Car;
         double speed = chosenMethod switch
         {
-            ShippingMethod.Car => s_dalConfig.AvgCarMPH,
-            ShippingMethod.Motorcycle => s_dalConfig.AvgMotorcycleMPH,
-            ShippingMethod.Bike => s_dalConfig.AvgBicycleMPH,
-            ShippingMethod.OnFoot => s_dalConfig.AvgWalkMPH,
-            _ => s_dalConfig.AvgCarMPH
+            ShippingMethod.Car => s_dal!.Config.AvgCarMPH,
+            ShippingMethod.Motorcycle => s_dal!.Config.AvgMotorcycleMPH,
+            ShippingMethod.Bike => s_dal!.Config.AvgBicycleMPH,
+            ShippingMethod.OnFoot => s_dal!.Config.AvgWalkMPH,
+            _ => s_dal!.Config.AvgCarMPH
         };
         if (speed <= 0) speed = 30.0;
         TimeSpan estimatedDuration = TimeSpan.FromHours(distanceKm / speed);
@@ -361,24 +363,27 @@ public static  class Initialization
         };
 
         // persist delivery and remove order so it won't be reused
-        s_delivery.Create(delivery);
-        s_order.Delete(order.Id);
+        s_dal!.Delivery.Create(delivery);
+        s_dal!.Order.Delete(order.Id);
     }
     
 
 
-    public static void Do(IConfig? dalConfig, ICourier? dalCourier, IOrder? dalOrder, IDelivery? dalDelivery)
+    public static void Do(IDal dal)
     {
-        s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL can not be null!");
-        s_courier = dalCourier ?? throw new NullReferenceException("DAL Courier can not be null!");
-        s_order = dalOrder ?? throw new NullReferenceException("DAL Order can not be null!");
-        s_delivery = dalDelivery ?? throw new NullReferenceException("DAL Delivery can not be null!");
+        //s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL can not be null!");
+        //s_courier = dalCourier ?? throw new NullReferenceException("DAL Courier can not be null!");
+        //s_order = dalOrder ?? throw new NullReferenceException("DAL Order can not be null!");
+        //s_delivery = dalDelivery ?? throw new NullReferenceException("DAL Delivery can not be null!");
+        s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); // stage 2
 
         Console.WriteLine("Reset Configuration values and List values...");
-        s_dalConfig.Reset();
-        s_courier.DeleteAll();
-        s_order.DeleteAll();
-        s_delivery.DeleteAll();
+        //s_dalConfig.Reset();
+        //s_courier.DeleteAll();
+        //s_order.DeleteAll();
+        //s_delivery.DeleteAll();
+
+        s_dal.ResetDB();//stage 2
 
         Console.WriteLine("Initializing Couriers list ...");
         CreateCourier();
