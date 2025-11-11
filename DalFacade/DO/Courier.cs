@@ -25,6 +25,7 @@ public record Courier
 
 /// <summary>
 /// Default constructor for Courier with default values.
+/// initializes non empty "?" properties to their default values.
 /// <summary>
 {
     public Courier() : this(0, "", "", ""){ }

@@ -3,8 +3,6 @@ using DalApi;
 using DO;
 using System;
 
-
-
 namespace DalTest;
 
 internal class Program
@@ -39,7 +37,7 @@ internal class Program
     //private static IOrder? s_dalOrder = new OrderImplementation(); //stage 1
     //private static IDelivery? s_dalDelivery = new DeliveryImplementation(); //stage 1
     //private static IConfig? s_dalConfig = new ConfigImplementation(); //stage 1
-    static readonly IDal s_dal = new DalList(); //stage 2
+    static readonly IDal s_dal = new DalList(); // new DalList implementation instance (stage 2)
 
 
     public static ENTITY COURIER { get; private set; } // unused property but left for compatibility. In case needed later.
@@ -100,8 +98,8 @@ internal class Program
                     Console.Write("Email: ");
                     var email = Console.ReadLine() ?? "";
 
-                    Console.Write("Is Active? (y/N): ");
-                    var isActive = (Console.ReadLine() ?? "").Trim().ToLower() == "y";
+                    Console.Write("Is Active? (Y/N): ");
+                    var isActive = (Console.ReadLine() ?? "").Trim().ToLower() == "Y";
 
                     Console.Write("Max Distance (optional): ");
                     double.TryParse(Console.ReadLine(), out var maxDist); // store only if valid
@@ -151,7 +149,7 @@ internal class Program
                 case CHOICE.ReadAll:
                     // Read all couriers and print them
                     var all = s_dal!.Courier.ReadAll();
-                    if (all is null || all.Count == 0) Console.WriteLine("No couriers.");
+                    if (all is null || all.Count() == 0) Console.WriteLine("No couriers.");
                     else foreach (var it in all) Console.WriteLine(it);
                     break;
 
@@ -316,7 +314,7 @@ internal class Program
                 // Read all orders
                 case CHOICE.ReadAll:
                     var all = s_dal!.Order.ReadAll();
-                    if (all is null || all.Count == 0) Console.WriteLine("No orders.");
+                    if (all is null || all.Count() == 0) Console.WriteLine("No orders.");
                     else foreach (var it in all) Console.WriteLine(it);
                     break;
 
@@ -450,7 +448,7 @@ internal class Program
 
                 case CHOICE.ReadAll:
                     var all = s_dal!.Delivery.ReadAll();
-                    if (all is null || all.Count == 0) Console.WriteLine("No deliveries.");
+                    if (all is null || all.Count() == 0) Console.WriteLine("No deliveries.");
                     else foreach (var it in all) Console.WriteLine(it);
                     break;
 
@@ -465,8 +463,8 @@ internal class Program
                         var nDistStr = Console.ReadLine();
                         double.TryParse(nDistStr, out var nDist);
 
-                        Console.Write("Mark delivery complete? (y/N): ");
-                        var complete = (Console.ReadLine() ?? "").Trim().ToLower() == "y";
+                        Console.Write("Mark delivery complete? (Y/N): ");
+                        var complete = (Console.ReadLine() ?? "").Trim().ToLower() == "Y";
                         DateTime? endTime = exist.DeliveryEndTime;
                         CompletionType? endType = exist.End;
                         if (complete)
@@ -523,15 +521,15 @@ internal class Program
             Console.WriteLine("4: Initialize");
             Console.WriteLine("5: Delete All");
             Console.WriteLine("6: Config (clock)");
-            Console.WriteLine("7: Reset Config");
-
+            Console.WriteLine("7: Reset Config\n");
             Console.Write("Choose option: ");
             string? input = Console.ReadLine();
+            Console.WriteLine("\n");
 
             // Parse user input to ENTITY enum safely
             if (!Enum.TryParse<ENTITY>(input, out var entity) || !Enum.IsDefined(typeof(ENTITY), entity))
             {
-                Console.WriteLine("⚠️ Invalid choice, try again.");
+                Console.WriteLine("Invalid choice, try again.");
                 continue;
             }
 
@@ -564,7 +562,7 @@ internal class Program
                     s_dal!.Courier.DeleteAll();
                     s_dal!.Order.DeleteAll();
                     s_dal!.Delivery.DeleteAll();
-                    Console.WriteLine("✅ All data deleted.");
+                    Console.WriteLine("All data deleted.");
                     break;
 
                 case ENTITY.Config:
@@ -575,14 +573,14 @@ internal class Program
                     if (!string.IsNullOrWhiteSpace(s) && DateTime.TryParse(s, out var newClock))
                     {
                         s_dal!.Config.Clock = newClock;
-                        Console.WriteLine("✅ Clock updated.");
+                        Console.WriteLine("Clock updated.");
                     }
                     break;
 
                 case ENTITY.Reset:
                     // Reset configuration to defaults
                     s_dal!.Config.Reset();
-                    Console.WriteLine("✅ Config reset.");
+                    Console.WriteLine("Config reset.");
                     break;
             }
         }

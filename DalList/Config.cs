@@ -32,6 +32,10 @@ internal static class Config
     internal static TimeSpan RiskRange; //the risk range time
     internal static TimeSpan DownTime; //the downtime duration
 
+
+    /// <summary>
+    /// this method resets the configuration settings to their default values.
+    /// </summary>
     internal static void Reset()
     {
         delId = deliveryId;

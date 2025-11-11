@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Dal;
 using DalApi;
+
+/// <summary>
+/// Provides a data access layer implementation using in-memory lists for couriers, orders, deliveries, and configuration.
+/// </summary>
 
 sealed public class DalList : IDal
 {
@@ -17,6 +16,9 @@ sealed public class DalList : IDal
 
     public IConfig Config { get; } = new ConfigImplementation();
 
+    /// <summary>
+    /// Resets the in-memory database by clearing all couriers, orders, deliveries, and resetting the configuration.
+    /// </summary>
     public void ResetDB()
     {
         Courier.DeleteAll();

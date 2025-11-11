@@ -6,8 +6,6 @@ using DO;
 /// </summary>
 public interface IConfig
 {
-    //int NextDeliveryId { get; } // Gets the next delivery ID. check!!
-    // int NextOrderId { get; } // Gets the next order ID. check!!
     DateTime Clock { get; set; }// Gets or sets the current clock time.
 
     int AdminId { get; set; }// Gets the administrator ID.

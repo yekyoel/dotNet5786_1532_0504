@@ -7,9 +7,10 @@ namespace DalApi;
 internal class ConfigImplementation : IConfig
 {
     // Properties to get and set configuration values from the Config class.
+
     public DateTime Clock
     {
-        get => Config.Clock;
+        get => Config.Clock; 
         set => Config.Clock = value;
     }
     public int AdminId
@@ -37,10 +38,7 @@ internal class ConfigImplementation : IConfig
         get => Config.MaxDist;
         set => Config.MaxDist = value;
     }
-   // public int NextDeliveryId
-   // {
-    //    get => Config.NextDeliveryId;
-    //}
+
     public double AvgCarMPH
     {
         get => Config.AvgCarMPH;
@@ -88,28 +86,3 @@ internal class ConfigImplementation : IConfig
     }
 
 }
-
-/*    public int AdminId
-    {
-        get => Config.AdminId;
-        set => Config.AdminId = value;
-    }
-
-    public string CompanyName
-    {
-        get => Config.CompanyName!;
-        set => Config.CompanyName = value;
-    }
-
-    public double? Latitude
-    {
-        get => Config.Latitude;
-        set => Config.Latitude = value;
-    }
-
-    public double? Longitude
-    {
-        get => Config.Longitude;
-        set => Config.Longitude = value;
-    }
-*/

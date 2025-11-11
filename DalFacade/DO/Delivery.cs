@@ -25,7 +25,8 @@ public record Delivery
 )
 {
     /// <summary>
-    /// Default constructor for Delivery with default values.
-    /// </summary>
+    /// Default constructor for Courier with default values.
+    /// initializes non empty "?" properties to their default values.
+    /// <summary>
     public Delivery() :this(0,0,0) { }
 }

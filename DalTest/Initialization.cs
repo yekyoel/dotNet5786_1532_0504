@@ -4,9 +4,16 @@ using DalApi;
 using DO;
 using System;
 using System.Net;
+using System.Linq; // added for ElementAt, Count, Where, etc.
 
 
-
+/// <summary>
+/// Initialization class to setup initial data in the DAL for testing.
+/// <param name= "s_dal">The data access layer instance to initialize.</param>
+/// <param name= "s_rand">Random number generator for creating random data.</param>
+/// <param name= "MIN_ID">Minimum ID value for generated entities.</param>
+/// <param name= "MAX_ID">Maximum ID value for generated entities.</param>
+/// </summary>
 public static  class Initialization
 {
     //private static IConfig? s_dalConfig; //stage 1
@@ -18,9 +25,22 @@ public static  class Initialization
     private const int MIN_ID = 200000000;
     private const int MAX_ID = 400000000;
 
-
-
+    /// <summary>
+    /// Converts degrees to radians.
+    /// </summary>
+    /// <param name="deg"></param>
+    /// <returns></returns>
     private static double DegreeToRad(double deg) => deg * (Math.PI / 180.0);
+
+    /// <summary>
+    ///  calculates the Haversine distance between two geographic coordinates in kilometers.
+    /// </summary>
+    /// <param name="lat1"></param>
+    /// <param name="lon1"></param>
+    /// <param name="lat2"></param>
+    /// <param name="lon2"></param>
+    /// <returns> double </returns>
+    /// 
     private static double HaversineDistanceKm(double lat1, double lon1, double lat2, double lon2)
     {
         //Radius of Earth Glob
@@ -34,6 +54,21 @@ public static  class Initialization
         return R * c;
     }
 
+    /// <summary>
+    /// Initializes and configures default settings for the application.
+    /// <param name= "AdminId">The admin ID to set in the configuration.</param>
+    /// <param name= "CompanyName">The company name to set in the configuration.</param>
+    /// <param name= "Latitude">The latitude coordinate for the store location.</param>
+    /// <param name="Longitude">The longitude coordinate for the store location.</param>
+    /// <param name= "MaxDelTime">The maximum delivery time allowed.</param>
+    /// <param name= "RiskRange">The risk range for deliveries.</param>
+    /// <param name= "DownTime">The downtime between deliveries.</param>
+    /// <param name= "MaxDist">The maximum distance a courier can travel.</param>
+    /// <param name= "AvgCarMPH">The average speed of a car in miles per hour.</param>
+    /// <param name= "AvgMotorcycleMPH">The average speed of a motorcycle in miles per hour.</param>
+    /// <param name= "AvgBicycleMPH">The average speed of a bicycle in miles per hour.</param>
+    /// <param name= "AvgWalkMPH">The average walking speed in miles per hour.</param>
+    /// <summary>
     public static void CreateConfig() 
     {
         s_dal!.Config.AdminId = 123456789; // Fixed admin ID for testing
@@ -55,19 +90,24 @@ public static  class Initialization
 
     }
 
-
-
+    /// <summary>
+    /// creates and adds random couriers to the DAL for testing purposes.
+    /// </summary>
     public static void CreateCourier() 
     {
         for (int i = 0; i < 20; i++)
         {
-            Courier cr = createCouriers();
-            if (s_dal!.Courier.Read(cr.Id) == null)
-                s_dal!.Courier.Create(cr);
+            Courier cr = createCouriers(); // create a random courier
+            if (s_dal!.Courier.Read(cr.Id) == null) // check for existing courier by ID
+                s_dal!.Courier.Create(cr); 
         }
         
     }
 
+    /// <summary>
+    /// Generates a random date within the last two years from the current DAL clock.
+    /// </summary>
+    /// <returns> DateTime </returns>
     public static DateTime randDate()
     {
         DateTime start = new DateTime(s_dal!.Config.Clock.Year - 2, 1, 1);
@@ -75,6 +115,10 @@ public static  class Initialization
         return start.AddDays(s_rand.Next(range));
     }
 
+    /// <summary>
+    /// Generates a random Courier object with various attributes.
+    /// </summary>
+    /// <returns></returns>
     private static Courier createCouriers()
     {
         string[] firstNames = { "Noam", "Dana", "Avi", "Tamar", "Eli", "Shira", "Ronen", "Yael", "David", "Hila" };
@@ -85,7 +129,7 @@ public static  class Initialization
         string email = name.Replace(" ", ".").ToLower() + "@gmail.com";
 
         // 9-digit random ID
-        int id = s_rand.Next(200_000_000, 400_000_000);
+        int id = s_rand.Next(MIN_ID, MAX_ID);
 
 
         // Phone like 05X-XXXXXXX
@@ -121,10 +165,11 @@ public static  class Initialization
 
 
 
-
-
-
-
+    /// <summary>
+    /// Generates a random order description based on the specified order type.
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
     public static string GenerateRandomOrder(OrderType type)
     {
         string description = type switch
@@ -167,11 +212,20 @@ public static  class Initialization
         return (description);
     }
 
+    /// <summary>
+    /// Selects a random string from the provided array of options.
+    /// </summary>
+    /// <param name="options"></param>
+    /// <returns></returns>
     private static string RandomFrom(string[] options)
     {
         return options[s_rand.Next(options.Length)];
     }
 
+    /// <summary>
+    /// Generates a random delivery open time within the last 24 hours from the current DAL clock.
+    /// </summary>
+    /// <returns></returns>
     public static DateTime RandomDeliveryOpenTime()
     {
         // Current time (using your system or DAL clock)
@@ -189,6 +243,9 @@ public static  class Initialization
         return randomTime;
     }
 
+    /// <summary>
+    /// creates and adds random orders to the DAL for testing purposes.
+    /// </summary>
     public static void CreateOrder()
     {
         for (int i = 0; i < 50; i++)
@@ -199,11 +256,15 @@ public static  class Initialization
         }
     }
 
+    /// <summary>
+    /// Generates a random Order object with various attributes.
+    /// </summary>
+    /// <returns></returns>
     public static Order createOrders()
     {
-        DateTime orderTimeStart = RandomDeliveryOpenTime();
-        OrderType type = (OrderType)s_rand.Next(0,4);
-        string description = GenerateRandomOrder(type);
+        DateTime orderTimeStart = RandomDeliveryOpenTime();// within last 24 hours
+        OrderType type = (OrderType)s_rand.Next(0,4);// enum values 0..3
+        string description = GenerateRandomOrder(type);// description based on type
 
         double weight = Math.Round(0.5 + s_rand.NextDouble() * 4.5, 2); // 0.5 to 5.0 kg
 
@@ -212,7 +273,7 @@ public static  class Initialization
 
         // Random name/email
         string name = $"{firstNames[s_rand.Next(firstNames.Length)]} {lastNames[s_rand.Next(lastNames.Length)]}";
-        string phone = $"05{s_rand.Next(0, 10)}-{s_rand.Next(1_000_000, 10_000_000)}";
+        string phone = $"05{s_rand.Next(0, 10)}-{s_rand.Next(1_000_000, 10_000_000)}";// Phone like 05X-XXXXXXX
 
         string[] addresses = {
             "16 Jaffa St, Jerusalem, Israel",
@@ -225,23 +286,23 @@ public static  class Initialization
             "14 Mount Herzl St, Jerusalem, Israel",
             "10 Har Homa Blvd, Jerusalem, Israel",
             "22 Ben Gurion Blvd, Mevaseret Zion, Israel"
-        };
+        }; // sample addresses in Jerusalem area
 
         double[] latitudes = {
             31.7821, 31.7729, 31.7742, 31.7617, 31.8204,
             31.7519, 31.7464, 31.7613, 31.7191, 31.8060
-        };
+        };// sample latitudes corresponding to addresses
 
         double[] longitudes = {
             35.2193, 35.1877, 35.2031, 35.2248, 35.2009,
             35.2327, 35.2195, 35.1828, 35.2340, 35.1550
-        };
+        };// sample longitudes corresponding to addresses
 
-        int index = s_rand.Next(addresses.Length);
+        int index = s_rand.Next(addresses.Length);// pick a random address
 
-        string address = addresses[index];
-        double lat = latitudes[index];
-        double lon = longitudes[index];
+        string address = addresses[index];// get corresponding address
+        double lat = latitudes[index];// get corresponding latitude
+        double lon = longitudes[index];// get corresponding longitude
 
         return new Order
         {
@@ -257,19 +318,23 @@ public static  class Initialization
         };
     }
 
-
+    /// <summary>
+    /// Calculates the Haversine distance between two geographic coordinates.
+    /// </summary>
     public static void CreateDelivery()
     {
         // assume s_dalConfig, s_order, s_courier, s_delivery and other values are correct and non-null
 
         var orders = s_dal!.Order.ReadAll();
-        if (orders == null || orders.Count == 0) return;
+        if (orders == null) return;
+        int ordersCount = orders.Count();
+        if (ordersCount == 0) return;
 
         var couriers = s_dal!.Courier.ReadAll();
         var existingDeliveries = s_dal!.Delivery.ReadAll() ?? new List<Delivery>();
 
-        // pick one random order from the list
-        var order = orders[s_rand.Next(orders.Count)];
+        // pick one random order from the list using Enumerable.ElementAt (works on IEnumerable)
+        var order = orders.ElementAt(s_rand.Next(ordersCount));
 
         // compute distance from store to customer
         double storeLat = s_dal!.Config.Latitude ?? 0.0;
@@ -289,11 +354,12 @@ public static  class Initialization
         var courierDeliveries = existingDeliveries.Where(d => d.CourierId == courier.Id).ToList();
         if (courierDeliveries.Count > 0)
         {
+            // find latest end time among courier's deliveries
             DateTime latest = courierDeliveries
                 .Select(d =>
                 {
-                    if (d.DeliveryEndTime.HasValue) return d.DeliveryEndTime.Value;
-                    if (d.DeliveryStartTime.HasValue)
+                    if (d.DeliveryEndTime.HasValue) return d.DeliveryEndTime.Value;// use actual end time if available
+                    if (d.DeliveryStartTime.HasValue) // estimate end time if only start time is available
                     {
                         // estimate end using simple speed estimate based on recorded distance and shipping method
                         double dKm = d.Distance ?? distanceKm;
@@ -366,16 +432,21 @@ public static  class Initialization
         s_dal!.Delivery.Create(delivery);
         s_dal!.Order.Delete(order.Id);
     }
-    
 
 
+    /// <summary>
+    /// Initializes the DAL with default configuration and sample data.
+    /// </summary>
+    /// <param name="dal"></param>
+    /// <exception cref="NullReferenceException"></exception>
     public static void Do(IDal dal)
     {
         //s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL can not be null!");
         //s_courier = dalCourier ?? throw new NullReferenceException("DAL Courier can not be null!");
         //s_order = dalOrder ?? throw new NullReferenceException("DAL Order can not be null!");
         //s_delivery = dalDelivery ?? throw new NullReferenceException("DAL Delivery can not be null!");
-        s_dal = dal ?? throw new NullReferenceException("DAL object can not be null!"); // stage 2
+
+        s_dal = dal ?? throw new DalCanNotBeNullException("DAL object can not be null!"); 
 
         Console.WriteLine("Reset Configuration values and List values...");
         //s_dalConfig.Reset();
@@ -383,7 +454,7 @@ public static  class Initialization
         //s_order.DeleteAll();
         //s_delivery.DeleteAll();
 
-        s_dal.ResetDB();//stage 2
+        s_dal.ResetDB(); // reset all data in the DAL
 
         Console.WriteLine("Initializing Couriers list ...");
         CreateCourier();
@@ -393,8 +464,6 @@ public static  class Initialization
         CreateDelivery();
         Console.WriteLine("Initializing Config ...");
         CreateConfig();
-
-
     }
 }
 
