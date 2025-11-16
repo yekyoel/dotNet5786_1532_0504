@@ -16,6 +16,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalList", "DalList\DalList.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalTest", "DalTest\DalTest.csproj", "{A2D1E16A-F712-4DD8-BB13-E900BF4BDD61}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DalXml", "DalXml\DalXml.csproj", "{A27E0175-F55D-4650-9BDF-EB2BCC57A1ED}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml", "xml", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		xml\couriers.xml = xml\couriers.xml
+		xml\data-config.xml = xml\data-config.xml
+		xml\deliveries.xml = xml\deliveries.xml
+		xml\orders.xml = xml\orders.xml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +48,10 @@ Global
 		{A2D1E16A-F712-4DD8-BB13-E900BF4BDD61}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A2D1E16A-F712-4DD8-BB13-E900BF4BDD61}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A2D1E16A-F712-4DD8-BB13-E900BF4BDD61}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A27E0175-F55D-4650-9BDF-EB2BCC57A1ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A27E0175-F55D-4650-9BDF-EB2BCC57A1ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A27E0175-F55D-4650-9BDF-EB2BCC57A1ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A27E0175-F55D-4650-9BDF-EB2BCC57A1ED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

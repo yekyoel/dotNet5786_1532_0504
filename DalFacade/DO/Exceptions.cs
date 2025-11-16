@@ -32,3 +32,9 @@ public class DalCanNotBeNullException : Exception
     public DalCanNotBeNullException(string? message) : base(message) { }
 }
 
+[Serializable] // Indicate that the class can be serialized
+/// Exception thrown when a requested data access layer (DAL) entity already exists.
+public class DalXMLFileLoadCreateException : Exception
+{
+    public DalXMLFileLoadCreateException(string? message) : base(message) { }
+}
