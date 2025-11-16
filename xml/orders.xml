@@ -1,3 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfOrders>
+<ArrayOfOrders xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Order>
+    <Id>0</Id>
+    <Latitude>31.7617</Latitude>
+    <Longitude>35.2248</Longitude>
+    <Weight>2.78</Weight>
+    <FullAdd>18 Emek Refaim St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Dana Katz</CustFullName>
+    <CusNum>059-4324006</CusNum>
+    <StartTimeForOrdering>2025-11-15T19:00:47</StartTimeForOrdering>
+    <Description>Loaded fries with cheese and bacon bits</Description>
+    <Food>Fries</Food>
+  </Order>
 </ArrayOfOrders>
