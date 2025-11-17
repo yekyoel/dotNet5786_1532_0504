@@ -251,8 +251,7 @@ public static  class Initialization
         for (int i = 0; i < 50; i++)
         {
             Order cr = createOrders();
-            if (s_dal!.Order.Read(cr.Id) == null)
-               s_dal!.Order.Create(cr);
+            s_dal!.Order.Create(cr);
         }
     }
 
