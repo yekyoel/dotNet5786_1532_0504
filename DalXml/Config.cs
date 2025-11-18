@@ -47,8 +47,8 @@ internal static class Config
     /// </summary>
     internal static void Reset()
     {
-        NextDeliveryId = 0;
-        NextOrderId = 0;
+        NextDeliveryId = 1;
+        NextOrderId = 1;
         AdminId = 0;
         Clock = DateTime.Now;
         CompanyName = null;

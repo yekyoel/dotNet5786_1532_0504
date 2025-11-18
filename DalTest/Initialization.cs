@@ -3,8 +3,9 @@
 using DalApi;
 using DO;
 using System;
-using System.Net;
+using System.Diagnostics.Metrics;
 using System.Linq; // added for ElementAt, Count, Where, etc.
+using System.Net;
 
 
 /// <summary>
@@ -248,7 +249,7 @@ public static  class Initialization
     /// </summary>
     public static void CreateOrder()
     {
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 50; i++) 
         {
             Order cr = createOrders();
             s_dal!.Order.Create(cr);
@@ -261,7 +262,7 @@ public static  class Initialization
     /// <returns></returns>
     public static Order createOrders()
     {
-        DateTime orderTimeStart = RandomDeliveryOpenTime();// within last 24 hours
+        DateTime orderPlacedTime = s_dal!.Config.Clock; // current time from DAL clock
         OrderType type = (OrderType)s_rand.Next(0,4);// enum values 0..3
         string description = GenerateRandomOrder(type);// description based on type
 
@@ -305,13 +306,14 @@ public static  class Initialization
 
         return new Order
         {
+            Id = 0, // ID will be assigned by DAL
             Latitude = lat,
             Longitude = lon,
             Weight = weight,
             FullAdd = address,
             CustFullName = name,
             CusNum = phone,
-            StartTimeForOrdering = orderTimeStart,
+            StartTimeForOrdering = orderPlacedTime,
             Description = description,
             Food = type
         };
@@ -322,114 +324,113 @@ public static  class Initialization
     /// </summary>
     public static void CreateDelivery()
     {
-        // assume s_dalConfig, s_order, s_courier, s_delivery and other values are correct and non-null
+        List<DO.Order> orders = s_dal!.Order.ReadAll().ToList();
+        List<DO.Courier> couriers = s_dal!.Courier.ReadAll().ToList();
+        List<DO.Delivery> existingDeliveries = s_dal!.Delivery.ReadAll().ToList();
 
-        var orders = s_dal!.Order.ReadAll();
-        if (orders == null) return;
-        int ordersCount = orders.Count();
-        if (ordersCount == 0) return;
-
-        var couriers = s_dal!.Courier.ReadAll();
-        var existingDeliveries = s_dal!.Delivery.ReadAll() ?? new List<Delivery>();
-
-        // pick one random order from the list using Enumerable.ElementAt (works on IEnumerable)
-        var order = orders.ElementAt(s_rand.Next(ordersCount));
-
-        // compute distance from store to customer
         double storeLat = s_dal!.Config.Latitude ?? 0.0;
         double storeLon = s_dal!.Config.Longitude ?? 0.0;
-        double distanceKm = Math.Round(HaversineDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude), 2);
 
-        // eligible couriers: active and within max distance
-        var eligible = couriers.Where(c => c.IsActive && (c.MaxDist == null || c.MaxDist >= distanceKm)).ToList();
-        if (eligible.Count == 0)
-            return; // no courier can serve this order
-
-        // pick a random eligible courier
-        var courier = eligible[s_rand.Next(eligible.Count)];
-
-        // compute courier available-from based on existing deliveries (avoid overlapping assignments)
-        DateTime courierAvailableFrom = s_dal!.Config.Clock;
-        var courierDeliveries = existingDeliveries.Where(d => d.CourierId == courier.Id).ToList();
-        if (courierDeliveries.Count > 0)
+        do
         {
-            // find latest end time among courier's deliveries
-            DateTime latest = courierDeliveries
-                .Select(d =>
-                {
-                    if (d.DeliveryEndTime.HasValue) return d.DeliveryEndTime.Value;// use actual end time if available
-                    if (d.DeliveryStartTime.HasValue) // estimate end time if only start time is available
+            var order = orders[s_rand.Next(orders.Count)];
+            double distanceKm = Math.Round(HaversineDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude), 2);
+
+
+            // eligible couriers: active and within max distance
+            var eligible = couriers.Where(c => c.IsActive && (c.MaxDist == null || c.MaxDist >= distanceKm)).ToList();
+            if (eligible.Count == 0)
+                return ; // no courier can serve this order Error
+
+            var courier = eligible[s_rand.Next(eligible.Count)]; // pick a random eligible courier
+
+            // compute courier available-from based on existing deliveries (avoid overlapping assignments)
+            DateTime courierAvailableFrom = s_dal!.Config.Clock;
+            var courierDeliveries = existingDeliveries.Where(d => d.CourierId == courier.Id).ToList();
+
+            if (courierDeliveries.Count > 0)
+            {
+                // find latest end time among courier's deliveries
+                DateTime latest = courierDeliveries
+                    .Select(d =>
                     {
-                        // estimate end using simple speed estimate based on recorded distance and shipping method
-                        double dKm = d.Distance ?? distanceKm;
-                        var method = d.ShippingMethod ?? courier.PreferredShippingMethod ?? ShippingMethod.Car;
-                        double speedKmh = method switch
+                        if (d.DeliveryEndTime.HasValue) return d.DeliveryEndTime.Value;// use actual end time if available
+                        if (d.DeliveryStartTime.HasValue) // estimate end time if only start time is available
                         {
-                            ShippingMethod.Car => s_dal!.Config.AvgCarMPH,
-                            ShippingMethod.Motorcycle => s_dal!.Config.AvgMotorcycleMPH,
-                            ShippingMethod.Bike => s_dal!.Config.AvgBicycleMPH,
-                            ShippingMethod.OnFoot => s_dal!.Config.AvgWalkMPH,
-                            _ => s_dal!.Config.AvgCarMPH
-                        };
-                        if (speedKmh <= 0) speedKmh = 30.0;
-                        var duration = TimeSpan.FromHours((dKm) / speedKmh);
-                        return d.DeliveryStartTime.Value + duration;
-                    }
-                    return s_dal!.Config.Clock;
-                })
-                .Max();
-            courierAvailableFrom = latest;
-        }
+                            // estimate end using simple speed estimate based on recorded distance and shipping method
+                            double dKm = d.Distance ?? distanceKm;
+                            var method = d.ShippingMethod ?? courier.PreferredShippingMethod ?? ShippingMethod.Car;
+                            double speedKmh = method switch
+                            {
+                                ShippingMethod.Car => s_dal!.Config.AvgCarMPH,
+                                ShippingMethod.Motorcycle => s_dal!.Config.AvgMotorcycleMPH,
+                                ShippingMethod.Bike => s_dal!.Config.AvgBicycleMPH,
+                                ShippingMethod.OnFoot => s_dal!.Config.AvgWalkMPH,
+                                _ => s_dal!.Config.AvgCarMPH
+                            };
+                            if (speedKmh <= 0) speedKmh = 30.0;
+                            var duration = TimeSpan.FromHours((dKm) / speedKmh);
+                            return d.DeliveryStartTime.Value + duration;
+                        }
+                        return s_dal!.Config.Clock;
+                    })
+                    .Max();
+                courierAvailableFrom = latest;
+            }
 
-        // earliest start must be after order start and courier availability and after downtime
-        DateTime earliest = (order.StartTimeForOrdering ?? s_dal!.Config.Clock) > courierAvailableFrom ? (order.StartTimeForOrdering ?? s_dal!.Config.Clock) : courierAvailableFrom;
-        earliest = earliest.Add(s_dal!.Config.DownTime);
+            // earliest start must be after order start and courier availability and after downtime
+            DateTime earliest = (order.StartTimeForOrdering ?? s_dal!.Config.Clock) > courierAvailableFrom ? (order.StartTimeForOrdering ?? s_dal!.Config.Clock) : courierAvailableFrom;
+            earliest = earliest.Add(s_dal!.Config.DownTime);
 
-        // small random scheduling delay
-        DateTime start = earliest.AddMinutes(s_rand.Next(0, 16));
+            // small random scheduling delay
+            DateTime start = earliest.AddMinutes(s_rand.Next(0, 16));
 
-        // estimate duration using courier preferred method
-        var chosenMethod = courier.PreferredShippingMethod ?? ShippingMethod.Car;
-        double speed = chosenMethod switch
-        {
-            ShippingMethod.Car => s_dal!.Config.AvgCarMPH,
-            ShippingMethod.Motorcycle => s_dal!.Config.AvgMotorcycleMPH,
-            ShippingMethod.Bike => s_dal!.Config.AvgBicycleMPH,
-            ShippingMethod.OnFoot => s_dal!.Config.AvgWalkMPH,
-            _ => s_dal!.Config.AvgCarMPH
-        };
-        if (speed <= 0) speed = 30.0;
-        TimeSpan estimatedDuration = TimeSpan.FromHours(distanceKm / speed);
+            // estimate duration using courier preferred method
+            var chosenMethod = courier.PreferredShippingMethod ?? ShippingMethod.Car;
+            double speed = chosenMethod switch
+            {
+                ShippingMethod.Car => s_dal!.Config.AvgCarMPH,
+                ShippingMethod.Motorcycle => s_dal!.Config.AvgMotorcycleMPH,
+                ShippingMethod.Bike => s_dal!.Config.AvgBicycleMPH,
+                ShippingMethod.OnFoot => s_dal!.Config.AvgWalkMPH,
+                _ => s_dal!.Config.AvgCarMPH
+            };
+            if (speed <= 0) speed = 30.0;
+            TimeSpan estimatedDuration = TimeSpan.FromHours(distanceKm / speed);
 
-        // pick completion type with reasonable probabilities
-        double r = s_rand.NextDouble();
-        CompletionType completion = r < 0.15 ? CompletionType.Pending
-                                : r < 0.35 ? CompletionType.EnRoute
-                                : r < 0.85 ? CompletionType.Delivered
-                                : r < 0.925 ? CompletionType.Cancelled
-                                : CompletionType.Failed;
+            // pick completion type with reasonable probabilities
+            double r = s_rand.NextDouble();
+            CompletionType completion = r < 0.15 ? CompletionType.Pending
+                                    : r < 0.35 ? CompletionType.EnRoute
+                                    : r < 0.85 ? CompletionType.Delivered
+                                    : r < 0.925 ? CompletionType.Cancelled
+                                    : CompletionType.Failed;
 
-        DateTime? endTime = null;
-        if (completion == CompletionType.Delivered || completion == CompletionType.Cancelled || completion == CompletionType.Failed)
-        {
-            // finish time = start + estimatedDuration + small random extra minutes
-            endTime = start + estimatedDuration + TimeSpan.FromMinutes(s_rand.Next(0, 21));
-        }
+            DateTime? endTime = null;
+            if (completion == CompletionType.Delivered || completion == CompletionType.Cancelled || completion == CompletionType.Failed)
+            {
+                // finish time = start + estimatedDuration + small random extra minutes
+                endTime = start + estimatedDuration + TimeSpan.FromMinutes(s_rand.Next(0, 21));
+            }
 
-        var delivery = new Delivery
-        {
-            OrderId = order.Id,
-            CourierId = courier.Id,
-            ShippingMethod = chosenMethod,
-            DeliveryStartTime = start,
-            Distance = distanceKm,
-            End = completion,
-            DeliveryEndTime = endTime
-        };
 
-        // persist delivery and remove order so it won't be reused
-        s_dal!.Delivery.Create(delivery);
-        s_dal!.Order.Delete(order.Id);
+            var delivery = new Delivery
+            {
+                Id = 0, // ID will be assigned by DAL
+                OrderId = order.Id,
+                CourierId = courier.Id,
+                ShippingMethod = chosenMethod,
+                DeliveryStartTime = start,
+                Distance = distanceKm,
+                End = completion,
+                DeliveryEndTime = endTime
+            };
+
+            // persist delivery and remove order so it won't be reused
+            s_dal!.Delivery.Create(delivery);
+            s_dal!.Order.Delete(order.Id);
+            orders = s_dal!.Order.ReadAll().ToList();
+        } while (orders.Count() != 0);
     }
 
 
@@ -464,6 +465,7 @@ public static  class Initialization
         Console.WriteLine("Initializing Deliveries list ...");
         CreateDelivery();
         
+  
     }
 }
 

@@ -1,7 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <config>
-  <NextOrderId>0</NextOrderId>
-  <NextDeliveryId>0</NextDeliveryId>
-  <Clock>18/11/2025 18:22:38</Clock>
+  <NextOrderId>1</NextOrderId>
+  <NextDeliveryId>1</NextDeliveryId>
+  <Clock>18/11/2025 18:21:43</Clock>
   <MaxRange>50</MaxRange>
+  <Clock>18/11/2025 12:26:59</Clock>
+  <MaxRange>41</MaxRange>
 </config>

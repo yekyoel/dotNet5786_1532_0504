@@ -6,11 +6,11 @@ namespace Dal;
 
 internal static class Config
 {
-    internal const int deliveryId = 0;  ///the number of deliveries 
+    internal const int deliveryId = 1;  ///the number of deliveries 
     private static int delId = deliveryId; //counter for delivery IDs
     internal static int NextDeliveryId { get => delId++; } //property to get the next delivery ID
 
-    internal const int orderId = 0;     ///the num of orders
+    internal const int orderId = 1;     ///the num of orders
     private static int ordId = orderId; //counter for order IDs
     internal static int NextOrderId { get => ordId++; } //property to get the next order ID
 
