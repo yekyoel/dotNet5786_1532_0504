@@ -8,15 +8,14 @@ internal class CourierImplementation : ICourier
     public void Create(Courier item)
     {
         List<Courier> couriers = XMLTools.LoadListFromXMLSerializer<Courier>(Config.s_couriers_xml);
-        int id = Config.NextOrderId; // assign a new id consistently like OrderImplementation
-        Courier newCourier = item with { Id = id };
+        Courier newCourier = item;
         if (couriers.Exists(c => c.Id == newCourier.Id))
             throw new DalAlreadyExistExceptions($"Courier with ID={newCourier.Id} already exists");
         couriers.Add(newCourier);
         XMLTools.SaveListToXMLSerializer(couriers, Config.s_couriers_xml);
     }
 
-    // delete courier by ID
+    // delete courier by id
     public void Delete(int id)
     {
         List<Courier> couriers = XMLTools.LoadListFromXMLSerializer<Courier>(Config.s_couriers_xml);
