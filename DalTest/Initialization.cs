@@ -248,7 +248,7 @@ public static  class Initialization
     /// </summary>
     public static void CreateOrder()
     {
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 50; i++) 
         {
             Order cr = createOrders();
             if (s_dal!.Order.Read(cr.Id) == null)
@@ -262,7 +262,8 @@ public static  class Initialization
     /// <returns></returns>
     public static Order createOrders()
     {
-        DateTime orderTimeStart = RandomDeliveryOpenTime();// within last 24 hours
+        // !!!this needs to show the time the order was placed . we do so by using the current clock time!!!
+        DateTime orderPlacedTime = s_dal!.Config.Clock; // current time from DAL clock
         OrderType type = (OrderType)s_rand.Next(0,4);// enum values 0..3
         string description = GenerateRandomOrder(type);// description based on type
 
@@ -306,13 +307,14 @@ public static  class Initialization
 
         return new Order
         {
+            Id = 0, // ID will be assigned by DAL
             Latitude = lat,
             Longitude = lon,
             Weight = weight,
             FullAdd = address,
             CustFullName = name,
             CusNum = phone,
-            StartTimeForOrdering = orderTimeStart,
+            StartTimeForOrdering = orderPlacedTime,
             Description = description,
             Food = type
         };
@@ -323,14 +325,14 @@ public static  class Initialization
     /// </summary>
     public static void CreateDelivery()
     {
-        // assume s_dalConfig, s_order, s_courier, s_delivery and other values are correct and non-null
+        
 
-        var orders = s_dal!.Order.ReadAll();
+        var orders = s_dal!.Order.ReadAll(); // get all orders
         if (orders == null) return;
-        int ordersCount = orders.Count();
+        int ordersCount = orders.Count(); 
         if (ordersCount == 0) return;
 
-        var couriers = s_dal!.Courier.ReadAll();
+        var couriers = s_dal!.Courier.ReadAll(); // get all couriers
         var existingDeliveries = s_dal!.Delivery.ReadAll() ?? new List<Delivery>();
 
         // pick one random order from the list using Enumerable.ElementAt (works on IEnumerable)
