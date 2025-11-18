@@ -1,7 +1,9 @@
 ﻿using DalApi;
 namespace Dal;
 
-//stage 3
+/// <summary>
+/// class DalXml that implements the IDal interface for managing data in XML format.
+/// </summary>
 sealed public class DalXml : IDal
 {
     // Singleton pattern implementation
@@ -13,6 +15,7 @@ sealed public class DalXml : IDal
 
     public IDelivery Delivery =>  new DeliveryImplementation();
 
+    // Resets the entire database by deleting all entries in Courier, Order, and Delivery, and resetting the configuration.
     public void ResetDB()
     {
         Courier.DeleteAll();
