@@ -430,7 +430,7 @@ public static  class Initialization
             s_dal!.Delivery.Create(delivery);
             s_dal!.Order.Delete(order.Id);
             orders = s_dal!.Order.ReadAll().ToList();
-        } while (orders.Count() != 0);
+        } while (orders.Count() != 0); // continue until no orders left
     }
 
 

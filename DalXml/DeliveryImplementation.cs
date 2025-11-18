@@ -3,8 +3,13 @@ using DalApi;
 using DO;
 using System.Collections.Generic;
 using System.Xml.Linq;
+
+/// <summary>
+/// class Delivery Implementation that implements the IDelivery interface for managing Delivery data in XML format.
+/// </summary>
 internal class DeliveryImplementation : IDelivery
 {
+    // Converts an XElement to a Delivery object
     static Delivery getDelivery(XElement d)
     {
         return new DO.Delivery()
@@ -20,6 +25,7 @@ internal class DeliveryImplementation : IDelivery
         };
     }
 
+    // Creates a new Delivery entry in the XML data store
     public void Create(Delivery item)
     {
         XElement deliveriesRootElem = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml);
@@ -29,6 +35,7 @@ internal class DeliveryImplementation : IDelivery
         XMLTools.SaveListToXMLElement(deliveriesRootElem, Config.s_deliveries_xml);
     }
 
+    // Deletes a Delivery entry by its ID
     public void Delete(int id)
     {
         XElement deliveriesRootElem = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml);
@@ -39,11 +46,13 @@ internal class DeliveryImplementation : IDelivery
         XMLTools.SaveListToXMLElement(deliveriesRootElem, Config.s_deliveries_xml);
     }
 
+    // Deletes all Delivery entries
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLElement(new XElement(Config.s_deliveries_xml), Config.s_deliveries_xml);
     }
 
+    // Reads a Delivery entry by its ID
     public Delivery? Read(int id)
     {
         XElement? deliveryElem =
@@ -51,17 +60,20 @@ internal class DeliveryImplementation : IDelivery
         return deliveryElem is null ? null : getDelivery(deliveryElem);
     }
 
+    // Reads a Delivery entry that matches a given filter
     public Delivery? Read(Func<Delivery, bool> filter)
     {
         return XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml).Elements().Select(s => getDelivery(s)).FirstOrDefault(filter);
     }
 
+    // Reads all Delivery entries, optionally filtered by a given predicate
     public IEnumerable<Delivery> ReadAll(Func<Delivery, bool>? filter = null)
     {
         var items = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml).Elements().Select(s => getDelivery(s));
         return filter == null ? items : items.Where(filter);
     }
 
+    // Updates an existing Delivery entry
     public void Update(Delivery item)
     {
         XElement deliveriesRootElem = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml);
@@ -75,6 +87,7 @@ internal class DeliveryImplementation : IDelivery
         XMLTools.SaveListToXMLElement(deliveriesRootElem, Config.s_deliveries_xml);
     }
 
+    // Helper method to create an XElement from a Delivery object
     private XElement createDeliveryElement(Delivery item)
     {
         return new XElement("Delivery",

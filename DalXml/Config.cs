@@ -1,24 +1,31 @@
 ﻿namespace Dal;
 
+/// <summary>
+/// Config class that manages configuration settings for the DAL.
+/// </summary>
 internal static class Config
 {
+    // File names for XML data storage
     internal const string s_data_config_xml = "data-config.xml";
     internal const string s_couriers_xml = "couriers.xml";
     internal const string s_orders_xml = "orders.xml";
     internal const string s_deliveries_xml = "deliveries.xml";
 
+    // Properties to get and set configuration values
     internal static int NextDeliveryId
     {
         get => XMLTools.GetAndIncreaseConfigIntVal(s_data_config_xml, "NextDeliveryId");
         private set => XMLTools.SetConfigIntVal(s_data_config_xml, "NextDeliveryId", value);
     }
 
+    // Next order ID property
     internal static int NextOrderId
     {
         get => XMLTools.GetAndIncreaseConfigIntVal(s_data_config_xml, "NextOrderId");
         private set => XMLTools.SetConfigIntVal(s_data_config_xml, "NextOrderId", value);
     }
 
+    // Clock property
     internal static DateTime Clock
     {
         get => XMLTools.GetConfigDateVal(s_data_config_xml, "Clock");
