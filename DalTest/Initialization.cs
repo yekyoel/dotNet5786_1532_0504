@@ -320,21 +320,24 @@ public static  class Initialization
     }
 
     /// <summary>
-    /// Calculates the Haversine distance between two geographic coordinates.
+    /// get both order and courier lists from DAL, then creates deliveries by matching orders to eligible couriers.
     /// </summary>
     public static void CreateDelivery()
     {
+        // create all 3 lists Couriers, Orders, Deliveries
         List<DO.Order> orders = s_dal!.Order.ReadAll().ToList();
         List<DO.Courier> couriers = s_dal!.Courier.ReadAll().ToList();
         List<DO.Delivery> existingDeliveries = s_dal!.Delivery.ReadAll().ToList();
 
+        // store location
         double storeLat = s_dal!.Config.Latitude ?? 0.0;
         double storeLon = s_dal!.Config.Longitude ?? 0.0;
 
+        // a loop to run on all the deliveries until non are left and match them to couriers
         do
         {
-            var order = orders[s_rand.Next(orders.Count)];
-            double distanceKm = Math.Round(HaversineDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude), 2);
+            var order = orders[s_rand.Next(orders.Count)]; // pick a random order
+            double distanceKm = Math.Round(HaversineDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude), 2); // compute distance to order location
 
 
             // eligible couriers: active and within max distance
@@ -346,7 +349,7 @@ public static  class Initialization
 
             // compute courier available-from based on existing deliveries (avoid overlapping assignments)
             DateTime courierAvailableFrom = s_dal!.Config.Clock;
-            var courierDeliveries = existingDeliveries.Where(d => d.CourierId == courier.Id).ToList();
+            var courierDeliveries = existingDeliveries.Where(d => d.CourierId == courier.Id).ToList(); // get courier's existing deliveries
 
             if (courierDeliveries.Count > 0)
             {
@@ -406,6 +409,7 @@ public static  class Initialization
                                     : r < 0.925 ? CompletionType.Cancelled
                                     : CompletionType.Failed;
 
+            // determine end time if applicable
             DateTime? endTime = null;
             if (completion == CompletionType.Delivered || completion == CompletionType.Cancelled || completion == CompletionType.Failed)
             {
@@ -426,11 +430,12 @@ public static  class Initialization
                 DeliveryEndTime = endTime
             };
 
-            // persist delivery and remove order so it won't be reused
+            // create delivery and remove order so it won't be reused
             s_dal!.Delivery.Create(delivery);
             s_dal!.Order.Delete(order.Id);
-            orders = s_dal!.Order.ReadAll().ToList();
-        } while (orders.Count() != 0);
+
+            orders = s_dal!.Order.ReadAll().ToList(); // refresh orders list after deletion
+        } while (orders.Count() != 0);  // continue until no orders left
     }
 
 
@@ -456,6 +461,7 @@ public static  class Initialization
 
         s_dal.ResetDB(); // reset all data in the DAL
 
+        // Now create initial data
         Console.WriteLine("Initializing Config ...");
         CreateConfig();
         Console.WriteLine("Initializing Couriers list ...");

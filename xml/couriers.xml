@@ -1,2 +1,203 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ArrayOfCourier xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+<ArrayOfCourier xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Courier>
+    <Id>360913142</Id>
+    <FullName>Tamar Avraham</FullName>
+    <PhoneNum>056-3843840</PhoneNum>
+    <Email>tamar.avraham@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>2.3</MaxDist>
+    <PreferredShippingMethod>Motorcycle</PreferredShippingMethod>
+    <DayStarted>2024-12-19T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>290769873</Id>
+    <FullName>Dana Rosen</FullName>
+    <PhoneNum>058-2800547</PhoneNum>
+    <Email>dana.rosen@gmail.com</Email>
+    <IsActive>false</IsActive>
+    <MaxDist>11.9</MaxDist>
+    <PreferredShippingMethod>Motorcycle</PreferredShippingMethod>
+    <DayStarted>2023-04-15T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>333447572</Id>
+    <FullName>Eli Cohen</FullName>
+    <PhoneNum>056-7010477</PhoneNum>
+    <Email>eli.cohen@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>17</MaxDist>
+    <PreferredShippingMethod>Bike</PreferredShippingMethod>
+    <DayStarted>2025-03-01T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>323847895</Id>
+    <FullName>David Rosen</FullName>
+    <PhoneNum>059-5445699</PhoneNum>
+    <Email>david.rosen@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>19.1</MaxDist>
+    <PreferredShippingMethod>Car</PreferredShippingMethod>
+    <DayStarted>2025-06-23T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>390821650</Id>
+    <FullName>David Azoulay</FullName>
+    <PhoneNum>053-1330921</PhoneNum>
+    <Email>david.azoulay@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>3.4</MaxDist>
+    <PreferredShippingMethod>Motorcycle</PreferredShippingMethod>
+    <DayStarted>2023-03-13T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>208449575</Id>
+    <FullName>Eli Levi</FullName>
+    <PhoneNum>055-3372056</PhoneNum>
+    <Email>eli.levi@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>5.2</MaxDist>
+    <PreferredShippingMethod>Car</PreferredShippingMethod>
+    <DayStarted>2023-03-30T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>289292765</Id>
+    <FullName>Avi Rosen</FullName>
+    <PhoneNum>059-6083903</PhoneNum>
+    <Email>avi.rosen@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>5</MaxDist>
+    <PreferredShippingMethod>OnFoot</PreferredShippingMethod>
+    <DayStarted>2023-01-05T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>212054840</Id>
+    <FullName>Eli Levi</FullName>
+    <PhoneNum>056-9431394</PhoneNum>
+    <Email>eli.levi@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>10.5</MaxDist>
+    <PreferredShippingMethod>Bike</PreferredShippingMethod>
+    <DayStarted>2024-12-08T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>228086949</Id>
+    <FullName>Hila Levi</FullName>
+    <PhoneNum>058-3405491</PhoneNum>
+    <Email>hila.levi@gmail.com</Email>
+    <IsActive>false</IsActive>
+    <MaxDist>17.1</MaxDist>
+    <PreferredShippingMethod>Motorcycle</PreferredShippingMethod>
+    <DayStarted>2023-02-27T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>352234673</Id>
+    <FullName>Shira Cohen</FullName>
+    <PhoneNum>056-9452442</PhoneNum>
+    <Email>shira.cohen@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>11.3</MaxDist>
+    <PreferredShippingMethod>Motorcycle</PreferredShippingMethod>
+    <DayStarted>2023-03-05T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>373310954</Id>
+    <FullName>Hila Cohen</FullName>
+    <PhoneNum>052-5041466</PhoneNum>
+    <Email>hila.cohen@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>12.6</MaxDist>
+    <PreferredShippingMethod>OnFoot</PreferredShippingMethod>
+    <DayStarted>2023-08-26T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>314821365</Id>
+    <FullName>Ronen Levi</FullName>
+    <PhoneNum>053-5767920</PhoneNum>
+    <Email>ronen.levi@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>16.2</MaxDist>
+    <PreferredShippingMethod>Motorcycle</PreferredShippingMethod>
+    <DayStarted>2025-05-02T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>223752236</Id>
+    <FullName>Hila Peretz</FullName>
+    <PhoneNum>056-9118858</PhoneNum>
+    <Email>hila.peretz@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>10.1</MaxDist>
+    <PreferredShippingMethod>OnFoot</PreferredShippingMethod>
+    <DayStarted>2024-10-11T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>286278365</Id>
+    <FullName>Shira Rosen</FullName>
+    <PhoneNum>053-4061572</PhoneNum>
+    <Email>shira.rosen@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>17.3</MaxDist>
+    <PreferredShippingMethod>Motorcycle</PreferredShippingMethod>
+    <DayStarted>2025-06-18T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>237781735</Id>
+    <FullName>Tamar Levi</FullName>
+    <PhoneNum>056-4200025</PhoneNum>
+    <Email>tamar.levi@gmail.com</Email>
+    <IsActive>false</IsActive>
+    <MaxDist>16.6</MaxDist>
+    <PreferredShippingMethod>Bike</PreferredShippingMethod>
+    <DayStarted>2023-03-20T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>234313098</Id>
+    <FullName>Ronen Biton</FullName>
+    <PhoneNum>057-4953740</PhoneNum>
+    <Email>ronen.biton@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>8</MaxDist>
+    <PreferredShippingMethod>Bike</PreferredShippingMethod>
+    <DayStarted>2025-04-20T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>387028609</Id>
+    <FullName>Hila Katz</FullName>
+    <PhoneNum>059-7889750</PhoneNum>
+    <Email>hila.katz@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>1.4</MaxDist>
+    <PreferredShippingMethod>Bike</PreferredShippingMethod>
+    <DayStarted>2023-03-19T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>367480620</Id>
+    <FullName>Eli Avraham</FullName>
+    <PhoneNum>053-3092941</PhoneNum>
+    <Email>eli.avraham@gmail.com</Email>
+    <IsActive>false</IsActive>
+    <MaxDist>14.6</MaxDist>
+    <PreferredShippingMethod>Bike</PreferredShippingMethod>
+    <DayStarted>2024-01-17T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>265924030</Id>
+    <FullName>David Azoulay</FullName>
+    <PhoneNum>056-3006918</PhoneNum>
+    <Email>david.azoulay@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>3.3</MaxDist>
+    <PreferredShippingMethod>Car</PreferredShippingMethod>
+    <DayStarted>2023-08-18T00:00:00</DayStarted>
+  </Courier>
+  <Courier>
+    <Id>340491221</Id>
+    <FullName>Tamar Sharon</FullName>
+    <PhoneNum>054-7530476</PhoneNum>
+    <Email>tamar.sharon@gmail.com</Email>
+    <IsActive>true</IsActive>
+    <MaxDist>14.2</MaxDist>
+    <PreferredShippingMethod>Motorcycle</PreferredShippingMethod>
+    <DayStarted>2024-08-07T00:00:00</DayStarted>
+  </Courier>
+</ArrayOfCourier>
