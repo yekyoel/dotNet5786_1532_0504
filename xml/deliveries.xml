@@ -1,2 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
-<ArrayOfDelivery xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" />
+﻿<?xml version="1.0" encoding="utf-8"?>
+<deliveries.xml>
+  <Delivery>
+    <Id>0</Id>
+    <OrderId>52</OrderId>
+    <CourierId>8</CourierId>
+    <ShippingMethod>Bike</ShippingMethod>
+    <DeliveryStartTime>2025-11-18T18:50:54</DeliveryStartTime>
+    <Distance>3.69</Distance>
+    <End>Pending</End>
+    <DeliveryEndTime />
+  </Delivery>
+</deliveries.xml>

@@ -2,85 +2,85 @@
 <ArrayOfOrder xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <Order>
     <Id>20</Id>
-    <Latitude>31.7729</Latitude>
-    <Longitude>35.1877</Longitude>
-    <Weight>1.38</Weight>
-    <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Noam Cohen</CustFullName>
-    <CusNum>055-7612031</CusNum>
-    <StartTimeForOrdering>2025-11-17T19:14:24</StartTimeForOrdering>
-    <Description>Mint chip cone with chocolate topping</Description>
-    <Food>IceCream</Food>
+    <Latitude>31.7464</Latitude>
+    <Longitude>35.2195</Longitude>
+    <Weight>2.4</Weight>
+    <FullAdd>8 Pierre Koenig St, Talpiot, Jerusalem, Israel</FullAdd>
+    <CustFullName>Eli Rosen</CustFullName>
+    <CusNum>055-8084482</CusNum>
+    <StartTimeForOrdering>2025-11-18T06:02:54</StartTimeForOrdering>
+    <Description>Large pepperoni pizza with extra cheese</Description>
+    <Food>Pizza</Food>
   </Order>
   <Order>
     <Id>21</Id>
-    <Latitude>31.7519</Latitude>
-    <Longitude>35.2327</Longitude>
-    <Weight>4.3</Weight>
-    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Hila Levi</CustFullName>
-    <CusNum>055-8689541</CusNum>
-    <StartTimeForOrdering>2025-11-17T17:03:24</StartTimeForOrdering>
-    <Description>Chocolate ice cream with caramel drizzle</Description>
+    <Latitude>31.7464</Latitude>
+    <Longitude>35.2195</Longitude>
+    <Weight>2.75</Weight>
+    <FullAdd>8 Pierre Koenig St, Talpiot, Jerusalem, Israel</FullAdd>
+    <CustFullName>Dana Rosen</CustFullName>
+    <CusNum>055-4633842</CusNum>
+    <StartTimeForOrdering>2025-11-17T20:21:54</StartTimeForOrdering>
+    <Description>Strawberry sundae with whipped cream</Description>
     <Food>IceCream</Food>
   </Order>
   <Order>
     <Id>22</Id>
-    <Latitude>31.7821</Latitude>
-    <Longitude>35.2193</Longitude>
-    <Weight>1.28</Weight>
-    <FullAdd>16 Jaffa St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Avi Avraham</CustFullName>
-    <CusNum>051-3304635</CusNum>
-    <StartTimeForOrdering>2025-11-17T14:22:24</StartTimeForOrdering>
+    <Latitude>31.7519</Latitude>
+    <Longitude>35.2327</Longitude>
+    <Weight>4.32</Weight>
+    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Yael Peretz</CustFullName>
+    <CusNum>055-8918920</CusNum>
+    <StartTimeForOrdering>2025-11-18T16:53:54</StartTimeForOrdering>
     <Description>Vegan burger with avocado and sprouts</Description>
     <Food>Hamburger</Food>
   </Order>
   <Order>
     <Id>23</Id>
-    <Latitude>31.7729</Latitude>
-    <Longitude>35.1877</Longitude>
-    <Weight>1.3</Weight>
-    <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
-    <CustFullName>David Sharon</CustFullName>
-    <CusNum>057-2734982</CusNum>
-    <StartTimeForOrdering>2025-11-17T17:42:24</StartTimeForOrdering>
-    <Description>Strawberry sundae with whipped cream</Description>
-    <Food>IceCream</Food>
-  </Order>
-  <Order>
-    <Id>24</Id>
-    <Latitude>31.7729</Latitude>
-    <Longitude>35.1877</Longitude>
-    <Weight>4.27</Weight>
-    <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Avi Katz</CustFullName>
-    <CusNum>053-9246403</CusNum>
-    <StartTimeForOrdering>2025-11-17T18:50:24</StartTimeForOrdering>
-    <Description>Large pepperoni pizza with extra cheese</Description>
+    <Latitude>31.7613</Latitude>
+    <Longitude>35.1828</Longitude>
+    <Weight>2.04</Weight>
+    <FullAdd>14 Mount Herzl St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Yael Levi</CustFullName>
+    <CusNum>052-5703442</CusNum>
+    <StartTimeForOrdering>2025-11-18T17:50:54</StartTimeForOrdering>
+    <Description>Veggie pizza loaded with mushrooms and peppers</Description>
     <Food>Pizza</Food>
   </Order>
   <Order>
-    <Id>25</Id>
+    <Id>24</Id>
     <Latitude>31.806</Latitude>
     <Longitude>35.155</Longitude>
-    <Weight>1.27</Weight>
+    <Weight>1.28</Weight>
     <FullAdd>22 Ben Gurion Blvd, Mevaseret Zion, Israel</FullAdd>
-    <CustFullName>David Sharon</CustFullName>
-    <CusNum>052-7949717</CusNum>
-    <StartTimeForOrdering>2025-11-16T21:47:24</StartTimeForOrdering>
-    <Description>Crispy golden fries with ketchup</Description>
+    <CustFullName>Ronen Avraham</CustFullName>
+    <CusNum>055-5808816</CusNum>
+    <StartTimeForOrdering>2025-11-18T10:27:54</StartTimeForOrdering>
+    <Description>Sweet potato fries with aioli</Description>
     <Food>Fries</Food>
   </Order>
   <Order>
+    <Id>25</Id>
+    <Latitude>31.7742</Latitude>
+    <Longitude>35.2031</Longitude>
+    <Weight>2.91</Weight>
+    <FullAdd>3 Herzl Blvd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Noam Rosen</CustFullName>
+    <CusNum>055-9927576</CusNum>
+    <StartTimeForOrdering>2025-11-18T01:57:54</StartTimeForOrdering>
+    <Description>Chocolate ice cream with caramel drizzle</Description>
+    <Food>IceCream</Food>
+  </Order>
+  <Order>
     <Id>26</Id>
-    <Latitude>31.8204</Latitude>
-    <Longitude>35.2009</Longitude>
-    <Weight>4.17</Weight>
-    <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>David Azoulay</CustFullName>
-    <CusNum>059-5524239</CusNum>
-    <StartTimeForOrdering>2025-11-17T15:16:24</StartTimeForOrdering>
+    <Latitude>31.7613</Latitude>
+    <Longitude>35.1828</Longitude>
+    <Weight>3.55</Weight>
+    <FullAdd>14 Mount Herzl St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Eli Azoulay</CustFullName>
+    <CusNum>051-1087923</CusNum>
+    <StartTimeForOrdering>2025-11-18T11:15:54</StartTimeForOrdering>
     <Description>Margherita pizza with fresh basil</Description>
     <Food>Pizza</Food>
   </Order>
@@ -88,516 +88,504 @@
     <Id>27</Id>
     <Latitude>31.806</Latitude>
     <Longitude>35.155</Longitude>
-    <Weight>1.49</Weight>
+    <Weight>2.72</Weight>
     <FullAdd>22 Ben Gurion Blvd, Mevaseret Zion, Israel</FullAdd>
-    <CustFullName>Ronen Azoulay</CustFullName>
-    <CusNum>054-6065781</CusNum>
-    <StartTimeForOrdering>2025-11-17T18:52:24</StartTimeForOrdering>
-    <Description>Spicy chicken burger with mayo</Description>
-    <Food>Hamburger</Food>
+    <CustFullName>Hila Sharon</CustFullName>
+    <CusNum>055-9677755</CusNum>
+    <StartTimeForOrdering>2025-11-18T03:16:54</StartTimeForOrdering>
+    <Description>Curly fries with garlic dip</Description>
+    <Food>Fries</Food>
   </Order>
   <Order>
     <Id>28</Id>
-    <Latitude>31.7742</Latitude>
-    <Longitude>35.2031</Longitude>
-    <Weight>2.34</Weight>
-    <FullAdd>3 Herzl Blvd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Yael Katz</CustFullName>
-    <CusNum>055-2839451</CusNum>
-    <StartTimeForOrdering>2025-11-17T16:32:24</StartTimeForOrdering>
-    <Description>Chocolate ice cream with caramel drizzle</Description>
-    <Food>IceCream</Food>
+    <Latitude>31.8204</Latitude>
+    <Longitude>35.2009</Longitude>
+    <Weight>4.92</Weight>
+    <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Hila Peretz</CustFullName>
+    <CusNum>051-6152074</CusNum>
+    <StartTimeForOrdering>2025-11-18T08:35:54</StartTimeForOrdering>
+    <Description>Curly fries with garlic dip</Description>
+    <Food>Fries</Food>
   </Order>
   <Order>
     <Id>29</Id>
-    <Latitude>31.7742</Latitude>
-    <Longitude>35.2031</Longitude>
-    <Weight>2.53</Weight>
-    <FullAdd>3 Herzl Blvd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Eli Sharon</CustFullName>
-    <CusNum>053-4826893</CusNum>
-    <StartTimeForOrdering>2025-11-16T23:26:24</StartTimeForOrdering>
-    <Description>Curly fries with garlic dip</Description>
-    <Food>Fries</Food>
+    <Latitude>31.7613</Latitude>
+    <Longitude>35.1828</Longitude>
+    <Weight>0.57</Weight>
+    <FullAdd>14 Mount Herzl St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Ronen Katz</CustFullName>
+    <CusNum>050-9621470</CusNum>
+    <StartTimeForOrdering>2025-11-18T05:09:54</StartTimeForOrdering>
+    <Description>Large pepperoni pizza with extra cheese</Description>
+    <Food>Pizza</Food>
   </Order>
   <Order>
     <Id>30</Id>
-    <Latitude>31.8204</Latitude>
-    <Longitude>35.2009</Longitude>
-    <Weight>4.74</Weight>
-    <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Avi Cohen</CustFullName>
-    <CusNum>057-1784382</CusNum>
-    <StartTimeForOrdering>2025-11-16T23:08:24</StartTimeForOrdering>
-    <Description>Vanilla scoop with rainbow sprinkles</Description>
-    <Food>IceCream</Food>
-  </Order>
-  <Order>
-    <Id>31</Id>
-    <Latitude>31.7464</Latitude>
-    <Longitude>35.2195</Longitude>
-    <Weight>0.83</Weight>
-    <FullAdd>8 Pierre Koenig St, Talpiot, Jerusalem, Israel</FullAdd>
-    <CustFullName>Avi Cohen</CustFullName>
-    <CusNum>055-3595224</CusNum>
-    <StartTimeForOrdering>2025-11-17T01:38:24</StartTimeForOrdering>
-    <Description>Double cheeseburger with fries</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>32</Id>
-    <Latitude>31.806</Latitude>
-    <Longitude>35.155</Longitude>
-    <Weight>4.77</Weight>
-    <FullAdd>22 Ben Gurion Blvd, Mevaseret Zion, Israel</FullAdd>
-    <CustFullName>Shira Katz</CustFullName>
-    <CusNum>059-2607104</CusNum>
-    <StartTimeForOrdering>2025-11-17T11:26:24</StartTimeForOrdering>
-    <Description>Strawberry sundae with whipped cream</Description>
-    <Food>IceCream</Food>
-  </Order>
-  <Order>
-    <Id>33</Id>
     <Latitude>31.7617</Latitude>
     <Longitude>35.2248</Longitude>
-    <Weight>3.51</Weight>
+    <Weight>1.37</Weight>
     <FullAdd>18 Emek Refaim St, Jerusalem, Israel</FullAdd>
-    <CustFullName>David Avraham</CustFullName>
-    <CusNum>056-3558992</CusNum>
-    <StartTimeForOrdering>2025-11-17T11:28:24</StartTimeForOrdering>
-    <Description>Sweet potato fries with aioli</Description>
-    <Food>Fries</Food>
-  </Order>
-  <Order>
-    <Id>34</Id>
-    <Latitude>31.7191</Latitude>
-    <Longitude>35.234</Longitude>
-    <Weight>1.62</Weight>
-    <FullAdd>10 Har Homa Blvd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Yael Peretz</CustFullName>
-    <CusNum>053-7132743</CusNum>
-    <StartTimeForOrdering>2025-11-17T08:49:24</StartTimeForOrdering>
-    <Description>Strawberry sundae with whipped cream</Description>
-    <Food>IceCream</Food>
-  </Order>
-  <Order>
-    <Id>35</Id>
-    <Latitude>31.7191</Latitude>
-    <Longitude>35.234</Longitude>
-    <Weight>3.08</Weight>
-    <FullAdd>10 Har Homa Blvd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Yael Mizrahi</CustFullName>
-    <CusNum>052-3283836</CusNum>
-    <StartTimeForOrdering>2025-11-17T00:00:24</StartTimeForOrdering>
-    <Description>Double cheeseburger with fries</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>36</Id>
-    <Latitude>31.7613</Latitude>
-    <Longitude>35.1828</Longitude>
-    <Weight>4.99</Weight>
-    <FullAdd>14 Mount Herzl St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Eli Sharon</CustFullName>
-    <CusNum>057-3156199</CusNum>
-    <StartTimeForOrdering>2025-11-16T21:41:24</StartTimeForOrdering>
+    <CustFullName>David Biton</CustFullName>
+    <CusNum>055-1774446</CusNum>
+    <StartTimeForOrdering>2025-11-18T00:11:54</StartTimeForOrdering>
     <Description>Curly fries with garlic dip</Description>
     <Food>Fries</Food>
   </Order>
   <Order>
-    <Id>37</Id>
-    <Latitude>31.7729</Latitude>
-    <Longitude>35.1877</Longitude>
-    <Weight>0.87</Weight>
-    <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Hila Sharon</CustFullName>
-    <CusNum>053-2812963</CusNum>
-    <StartTimeForOrdering>2025-11-17T06:10:24</StartTimeForOrdering>
+    <Id>31</Id>
+    <Latitude>31.7742</Latitude>
+    <Longitude>35.2031</Longitude>
+    <Weight>1.59</Weight>
+    <FullAdd>3 Herzl Blvd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Dana Peretz</CustFullName>
+    <CusNum>052-9550134</CusNum>
+    <StartTimeForOrdering>2025-11-18T07:57:54</StartTimeForOrdering>
     <Description>Classic beef burger with lettuce and tomato</Description>
     <Food>Hamburger</Food>
   </Order>
   <Order>
-    <Id>38</Id>
-    <Latitude>31.7464</Latitude>
-    <Longitude>35.2195</Longitude>
-    <Weight>0.83</Weight>
-    <FullAdd>8 Pierre Koenig St, Talpiot, Jerusalem, Israel</FullAdd>
-    <CustFullName>Avi Katz</CustFullName>
-    <CusNum>058-9630120</CusNum>
-    <StartTimeForOrdering>2025-11-17T03:57:24</StartTimeForOrdering>
-    <Description>Double cheeseburger with fries</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>39</Id>
+    <Id>32</Id>
     <Latitude>31.8204</Latitude>
     <Longitude>35.2009</Longitude>
-    <Weight>2.08</Weight>
+    <Weight>1.01</Weight>
     <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Yael Peretz</CustFullName>
-    <CusNum>053-7818682</CusNum>
-    <StartTimeForOrdering>2025-11-16T23:08:24</StartTimeForOrdering>
+    <CustFullName>Tamar Azoulay</CustFullName>
+    <CusNum>051-1481726</CusNum>
+    <StartTimeForOrdering>2025-11-17T23:51:54</StartTimeForOrdering>
     <Description>Sweet potato fries with aioli</Description>
     <Food>Fries</Food>
   </Order>
   <Order>
+    <Id>33</Id>
+    <Latitude>31.7519</Latitude>
+    <Longitude>35.2327</Longitude>
+    <Weight>1.78</Weight>
+    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>David Rosen</CustFullName>
+    <CusNum>055-6120507</CusNum>
+    <StartTimeForOrdering>2025-11-17T22:25:54</StartTimeForOrdering>
+    <Description>Chocolate ice cream with caramel drizzle</Description>
+    <Food>IceCream</Food>
+  </Order>
+  <Order>
+    <Id>34</Id>
+    <Latitude>31.7464</Latitude>
+    <Longitude>35.2195</Longitude>
+    <Weight>2.93</Weight>
+    <FullAdd>8 Pierre Koenig St, Talpiot, Jerusalem, Israel</FullAdd>
+    <CustFullName>Dana Levi</CustFullName>
+    <CusNum>051-5750522</CusNum>
+    <StartTimeForOrdering>2025-11-17T18:35:54</StartTimeForOrdering>
+    <Description>Sweet potato fries with aioli</Description>
+    <Food>Fries</Food>
+  </Order>
+  <Order>
+    <Id>35</Id>
+    <Latitude>31.7519</Latitude>
+    <Longitude>35.2327</Longitude>
+    <Weight>3.53</Weight>
+    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Eli Katz</CustFullName>
+    <CusNum>057-5781488</CusNum>
+    <StartTimeForOrdering>2025-11-18T03:54:54</StartTimeForOrdering>
+    <Description>Strawberry sundae with whipped cream</Description>
+    <Food>IceCream</Food>
+  </Order>
+  <Order>
+    <Id>36</Id>
+    <Latitude>31.7191</Latitude>
+    <Longitude>35.234</Longitude>
+    <Weight>1.04</Weight>
+    <FullAdd>10 Har Homa Blvd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Noam Katz</CustFullName>
+    <CusNum>054-3484293</CusNum>
+    <StartTimeForOrdering>2025-11-18T00:58:54</StartTimeForOrdering>
+    <Description>Strawberry sundae with whipped cream</Description>
+    <Food>IceCream</Food>
+  </Order>
+  <Order>
+    <Id>37</Id>
+    <Latitude>31.7617</Latitude>
+    <Longitude>35.2248</Longitude>
+    <Weight>2.56</Weight>
+    <FullAdd>18 Emek Refaim St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Shira Mizrahi</CustFullName>
+    <CusNum>057-1168999</CusNum>
+    <StartTimeForOrdering>2025-11-18T08:12:54</StartTimeForOrdering>
+    <Description>Strawberry sundae with whipped cream</Description>
+    <Food>IceCream</Food>
+  </Order>
+  <Order>
+    <Id>38</Id>
+    <Latitude>31.8204</Latitude>
+    <Longitude>35.2009</Longitude>
+    <Weight>3.79</Weight>
+    <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Yael Rosen</CustFullName>
+    <CusNum>051-5681650</CusNum>
+    <StartTimeForOrdering>2025-11-18T06:21:54</StartTimeForOrdering>
+    <Description>Veggie pizza loaded with mushrooms and peppers</Description>
+    <Food>Pizza</Food>
+  </Order>
+  <Order>
+    <Id>39</Id>
+    <Latitude>31.7742</Latitude>
+    <Longitude>35.2031</Longitude>
+    <Weight>3.75</Weight>
+    <FullAdd>3 Herzl Blvd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Tamar Azoulay</CustFullName>
+    <CusNum>055-4797661</CusNum>
+    <StartTimeForOrdering>2025-11-18T10:52:54</StartTimeForOrdering>
+    <Description>Vanilla scoop with rainbow sprinkles</Description>
+    <Food>IceCream</Food>
+  </Order>
+  <Order>
     <Id>40</Id>
-    <Latitude>31.7729</Latitude>
-    <Longitude>35.1877</Longitude>
-    <Weight>2.62</Weight>
-    <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Ronen Levi</CustFullName>
-    <CusNum>054-7351179</CusNum>
-    <StartTimeForOrdering>2025-11-17T15:27:24</StartTimeForOrdering>
+    <Latitude>31.7821</Latitude>
+    <Longitude>35.2193</Longitude>
+    <Weight>0.99</Weight>
+    <FullAdd>16 Jaffa St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Ronen Avraham</CustFullName>
+    <CusNum>055-5550082</CusNum>
+    <StartTimeForOrdering>2025-11-17T19:56:54</StartTimeForOrdering>
+    <Description>BBQ chicken pizza with onion and olives</Description>
+    <Food>Pizza</Food>
+  </Order>
+  <Order>
+    <Id>41</Id>
+    <Latitude>31.7613</Latitude>
+    <Longitude>35.1828</Longitude>
+    <Weight>4.85</Weight>
+    <FullAdd>14 Mount Herzl St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Noam Azoulay</CustFullName>
+    <CusNum>054-8632864</CusNum>
+    <StartTimeForOrdering>2025-11-18T13:39:54</StartTimeForOrdering>
+    <Description>Vanilla scoop with rainbow sprinkles</Description>
+    <Food>IceCream</Food>
+  </Order>
+  <Order>
+    <Id>42</Id>
+    <Latitude>31.7464</Latitude>
+    <Longitude>35.2195</Longitude>
+    <Weight>3.42</Weight>
+    <FullAdd>8 Pierre Koenig St, Talpiot, Jerusalem, Israel</FullAdd>
+    <CustFullName>Yael Levi</CustFullName>
+    <CusNum>051-8136933</CusNum>
+    <StartTimeForOrdering>2025-11-18T04:46:54</StartTimeForOrdering>
+    <Description>Veggie pizza loaded with mushrooms and peppers</Description>
+    <Food>Pizza</Food>
+  </Order>
+  <Order>
+    <Id>43</Id>
+    <Latitude>31.8204</Latitude>
+    <Longitude>35.2009</Longitude>
+    <Weight>3.73</Weight>
+    <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Yael Rosen</CustFullName>
+    <CusNum>058-1018329</CusNum>
+    <StartTimeForOrdering>2025-11-18T06:12:54</StartTimeForOrdering>
+    <Description>Vanilla scoop with rainbow sprinkles</Description>
+    <Food>IceCream</Food>
+  </Order>
+  <Order>
+    <Id>44</Id>
+    <Latitude>31.7742</Latitude>
+    <Longitude>35.2031</Longitude>
+    <Weight>2.01</Weight>
+    <FullAdd>3 Herzl Blvd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Tamar Avraham</CustFullName>
+    <CusNum>057-9748375</CusNum>
+    <StartTimeForOrdering>2025-11-18T03:45:54</StartTimeForOrdering>
     <Description>Vegan burger with avocado and sprouts</Description>
     <Food>Hamburger</Food>
   </Order>
   <Order>
-    <Id>41</Id>
-    <Latitude>31.7519</Latitude>
-    <Longitude>35.2327</Longitude>
-    <Weight>0.82</Weight>
-    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Avi Peretz</CustFullName>
-    <CusNum>055-1584758</CusNum>
-    <StartTimeForOrdering>2025-11-16T20:48:24</StartTimeForOrdering>
-    <Description>Loaded fries with cheese and bacon bits</Description>
-    <Food>Fries</Food>
-  </Order>
-  <Order>
-    <Id>42</Id>
-    <Latitude>31.7613</Latitude>
-    <Longitude>35.1828</Longitude>
-    <Weight>3.79</Weight>
-    <FullAdd>14 Mount Herzl St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Shira Avraham</CustFullName>
-    <CusNum>051-4518715</CusNum>
-    <StartTimeForOrdering>2025-11-17T07:41:24</StartTimeForOrdering>
-    <Description>Double cheeseburger with fries</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>43</Id>
+    <Id>45</Id>
     <Latitude>31.7191</Latitude>
     <Longitude>35.234</Longitude>
-    <Weight>4.83</Weight>
+    <Weight>0.52</Weight>
     <FullAdd>10 Har Homa Blvd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Tamar Levi</CustFullName>
-    <CusNum>058-6336279</CusNum>
-    <StartTimeForOrdering>2025-11-17T09:16:24</StartTimeForOrdering>
+    <CustFullName>Noam Mizrahi</CustFullName>
+    <CusNum>053-5773754</CusNum>
+    <StartTimeForOrdering>2025-11-18T14:56:54</StartTimeForOrdering>
     <Description>Sweet potato fries with aioli</Description>
     <Food>Fries</Food>
-  </Order>
-  <Order>
-    <Id>44</Id>
-    <Latitude>31.7617</Latitude>
-    <Longitude>35.2248</Longitude>
-    <Weight>0.59</Weight>
-    <FullAdd>18 Emek Refaim St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Dana Peretz</CustFullName>
-    <CusNum>058-8773873</CusNum>
-    <StartTimeForOrdering>2025-11-17T00:29:24</StartTimeForOrdering>
-    <Description>Double cheeseburger with fries</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>45</Id>
-    <Latitude>31.8204</Latitude>
-    <Longitude>35.2009</Longitude>
-    <Weight>2.71</Weight>
-    <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>David Mizrahi</CustFullName>
-    <CusNum>059-6986395</CusNum>
-    <StartTimeForOrdering>2025-11-17T12:19:24</StartTimeForOrdering>
-    <Description>Vanilla scoop with rainbow sprinkles</Description>
-    <Food>IceCream</Food>
   </Order>
   <Order>
     <Id>46</Id>
     <Latitude>31.8204</Latitude>
     <Longitude>35.2009</Longitude>
-    <Weight>0.7</Weight>
+    <Weight>3.21</Weight>
     <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Ronen Katz</CustFullName>
-    <CusNum>052-2581708</CusNum>
-    <StartTimeForOrdering>2025-11-16T22:25:24</StartTimeForOrdering>
-    <Description>Vegan burger with avocado and sprouts</Description>
-    <Food>Hamburger</Food>
+    <CustFullName>David Avraham</CustFullName>
+    <CusNum>050-7518263</CusNum>
+    <StartTimeForOrdering>2025-11-18T09:54:54</StartTimeForOrdering>
+    <Description>Sweet potato fries with aioli</Description>
+    <Food>Fries</Food>
   </Order>
   <Order>
     <Id>47</Id>
-    <Latitude>31.7821</Latitude>
-    <Longitude>35.2193</Longitude>
-    <Weight>4.62</Weight>
-    <FullAdd>16 Jaffa St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Tamar Avraham</CustFullName>
-    <CusNum>055-8299921</CusNum>
-    <StartTimeForOrdering>2025-11-17T18:27:24</StartTimeForOrdering>
-    <Description>Vegan burger with avocado and sprouts</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>48</Id>
-    <Latitude>31.7729</Latitude>
-    <Longitude>35.1877</Longitude>
-    <Weight>1.47</Weight>
-    <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Noam Peretz</CustFullName>
-    <CusNum>056-7274002</CusNum>
-    <StartTimeForOrdering>2025-11-16T20:32:24</StartTimeForOrdering>
-    <Description>Margherita pizza with fresh basil</Description>
-    <Food>Pizza</Food>
-  </Order>
-  <Order>
-    <Id>49</Id>
-    <Latitude>31.7821</Latitude>
-    <Longitude>35.2193</Longitude>
-    <Weight>3.53</Weight>
-    <FullAdd>16 Jaffa St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Hila Biton</CustFullName>
-    <CusNum>059-5245968</CusNum>
-    <StartTimeForOrdering>2025-11-17T03:22:24</StartTimeForOrdering>
-    <Description>Vegan burger with avocado and sprouts</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>50</Id>
-    <Latitude>31.7729</Latitude>
-    <Longitude>35.1877</Longitude>
-    <Weight>3.52</Weight>
-    <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Eli Rosen</CustFullName>
-    <CusNum>055-7230939</CusNum>
-    <StartTimeForOrdering>2025-11-17T14:02:24</StartTimeForOrdering>
-    <Description>Double cheeseburger with fries</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>51</Id>
-    <Latitude>31.7617</Latitude>
-    <Longitude>35.2248</Longitude>
-    <Weight>2.79</Weight>
-    <FullAdd>18 Emek Refaim St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Hila Katz</CustFullName>
-    <CusNum>055-8385347</CusNum>
-    <StartTimeForOrdering>2025-11-17T17:31:24</StartTimeForOrdering>
-    <Description>Vegan burger with avocado and sprouts</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>52</Id>
-    <Latitude>31.7821</Latitude>
-    <Longitude>35.2193</Longitude>
-    <Weight>0.67</Weight>
-    <FullAdd>16 Jaffa St, Jerusalem, Israel</FullAdd>
+    <Latitude>31.7191</Latitude>
+    <Longitude>35.234</Longitude>
+    <Weight>2.06</Weight>
+    <FullAdd>10 Har Homa Blvd, Jerusalem, Israel</FullAdd>
     <CustFullName>Dana Levi</CustFullName>
-    <CusNum>050-9174448</CusNum>
-    <StartTimeForOrdering>2025-11-16T22:12:24</StartTimeForOrdering>
-    <Description>Curly fries with garlic dip</Description>
-    <Food>Fries</Food>
-  </Order>
-  <Order>
-    <Id>53</Id>
-    <Latitude>31.7729</Latitude>
-    <Longitude>35.1877</Longitude>
-    <Weight>1.44</Weight>
-    <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Noam Biton</CustFullName>
-    <CusNum>057-9033183</CusNum>
-    <StartTimeForOrdering>2025-11-17T04:59:24</StartTimeForOrdering>
-    <Description>Double cheeseburger with fries</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>54</Id>
-    <Latitude>31.7742</Latitude>
-    <Longitude>35.2031</Longitude>
-    <Weight>4.6</Weight>
-    <FullAdd>3 Herzl Blvd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Yael Katz</CustFullName>
-    <CusNum>055-7466393</CusNum>
-    <StartTimeForOrdering>2025-11-16T21:54:24</StartTimeForOrdering>
-    <Description>Curly fries with garlic dip</Description>
-    <Food>Fries</Food>
-  </Order>
-  <Order>
-    <Id>55</Id>
-    <Latitude>31.8204</Latitude>
-    <Longitude>35.2009</Longitude>
-    <Weight>1.61</Weight>
-    <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Hila Cohen</CustFullName>
-    <CusNum>054-9321705</CusNum>
-    <StartTimeForOrdering>2025-11-17T17:45:24</StartTimeForOrdering>
-    <Description>BBQ chicken pizza with onion and olives</Description>
-    <Food>Pizza</Food>
-  </Order>
-  <Order>
-    <Id>56</Id>
-    <Latitude>31.8204</Latitude>
-    <Longitude>35.2009</Longitude>
-    <Weight>4.6</Weight>
-    <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Shira Azoulay</CustFullName>
-    <CusNum>050-6266899</CusNum>
-    <StartTimeForOrdering>2025-11-17T02:34:24</StartTimeForOrdering>
-    <Description>Double cheeseburger with fries</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>57</Id>
-    <Latitude>31.8204</Latitude>
-    <Longitude>35.2009</Longitude>
-    <Weight>1.79</Weight>
-    <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Yael Levi</CustFullName>
-    <CusNum>057-3373561</CusNum>
-    <StartTimeForOrdering>2025-11-17T18:24:24</StartTimeForOrdering>
+    <CusNum>054-4668229</CusNum>
+    <StartTimeForOrdering>2025-11-18T18:15:54</StartTimeForOrdering>
     <Description>Loaded fries with cheese and bacon bits</Description>
     <Food>Fries</Food>
   </Order>
   <Order>
-    <Id>58</Id>
-    <Latitude>31.7617</Latitude>
-    <Longitude>35.2248</Longitude>
-    <Weight>4.54</Weight>
-    <FullAdd>18 Emek Refaim St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Hila Rosen</CustFullName>
-    <CusNum>057-4976475</CusNum>
-    <StartTimeForOrdering>2025-11-17T11:13:24</StartTimeForOrdering>
-    <Description>BBQ chicken pizza with onion and olives</Description>
-    <Food>Pizza</Food>
+    <Id>48</Id>
+    <Latitude>31.7464</Latitude>
+    <Longitude>35.2195</Longitude>
+    <Weight>3.35</Weight>
+    <FullAdd>8 Pierre Koenig St, Talpiot, Jerusalem, Israel</FullAdd>
+    <CustFullName>Tamar Sharon</CustFullName>
+    <CusNum>056-4223056</CusNum>
+    <StartTimeForOrdering>2025-11-18T11:59:54</StartTimeForOrdering>
+    <Description>Curly fries with garlic dip</Description>
+    <Food>Fries</Food>
   </Order>
   <Order>
-    <Id>59</Id>
-    <Latitude>31.7191</Latitude>
-    <Longitude>35.234</Longitude>
-    <Weight>1.1</Weight>
-    <FullAdd>10 Har Homa Blvd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Avi Peretz</CustFullName>
-    <CusNum>054-7558561</CusNum>
-    <StartTimeForOrdering>2025-11-16T20:48:24</StartTimeForOrdering>
+    <Id>49</Id>
+    <Latitude>31.7729</Latitude>
+    <Longitude>35.1877</Longitude>
+    <Weight>3.93</Weight>
+    <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Hila Rosen</CustFullName>
+    <CusNum>052-4024655</CusNum>
+    <StartTimeForOrdering>2025-11-18T06:19:54</StartTimeForOrdering>
     <Description>Mint chip cone with chocolate topping</Description>
     <Food>IceCream</Food>
   </Order>
   <Order>
-    <Id>60</Id>
+    <Id>50</Id>
+    <Latitude>31.7617</Latitude>
+    <Longitude>35.2248</Longitude>
+    <Weight>4.87</Weight>
+    <FullAdd>18 Emek Refaim St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Dana Rosen</CustFullName>
+    <CusNum>055-2611871</CusNum>
+    <StartTimeForOrdering>2025-11-17T20:01:54</StartTimeForOrdering>
+    <Description>Mint chip cone with chocolate topping</Description>
+    <Food>IceCream</Food>
+  </Order>
+  <Order>
+    <Id>51</Id>
     <Latitude>31.7821</Latitude>
     <Longitude>35.2193</Longitude>
-    <Weight>2.42</Weight>
+    <Weight>4.86</Weight>
     <FullAdd>16 Jaffa St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Ronen Peretz</CustFullName>
-    <CusNum>051-5724981</CusNum>
-    <StartTimeForOrdering>2025-11-17T19:12:24</StartTimeForOrdering>
+    <CustFullName>Ronen Cohen</CustFullName>
+    <CusNum>057-4604043</CusNum>
+    <StartTimeForOrdering>2025-11-18T17:43:54</StartTimeForOrdering>
+    <Description>Margherita pizza with fresh basil</Description>
+    <Food>Pizza</Food>
+  </Order>
+  <Order>
+    <Id>53</Id>
+    <Latitude>31.7464</Latitude>
+    <Longitude>35.2195</Longitude>
+    <Weight>0.58</Weight>
+    <FullAdd>8 Pierre Koenig St, Talpiot, Jerusalem, Israel</FullAdd>
+    <CustFullName>Avi Rosen</CustFullName>
+    <CusNum>053-2141389</CusNum>
+    <StartTimeForOrdering>2025-11-17T23:04:54</StartTimeForOrdering>
+    <Description>Vanilla scoop with rainbow sprinkles</Description>
+    <Food>IceCream</Food>
+  </Order>
+  <Order>
+    <Id>54</Id>
+    <Latitude>31.8204</Latitude>
+    <Longitude>35.2009</Longitude>
+    <Weight>1.94</Weight>
+    <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Dana Cohen</CustFullName>
+    <CusNum>050-5470067</CusNum>
+    <StartTimeForOrdering>2025-11-18T09:34:54</StartTimeForOrdering>
+    <Description>Spicy chicken burger with mayo</Description>
+    <Food>Hamburger</Food>
+  </Order>
+  <Order>
+    <Id>55</Id>
+    <Latitude>31.7821</Latitude>
+    <Longitude>35.2193</Longitude>
+    <Weight>0.93</Weight>
+    <FullAdd>16 Jaffa St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Yael Rosen</CustFullName>
+    <CusNum>051-5336123</CusNum>
+    <StartTimeForOrdering>2025-11-18T18:01:54</StartTimeForOrdering>
+    <Description>Loaded fries with cheese and bacon bits</Description>
+    <Food>Fries</Food>
+  </Order>
+  <Order>
+    <Id>56</Id>
+    <Latitude>31.7821</Latitude>
+    <Longitude>35.2193</Longitude>
+    <Weight>4.55</Weight>
+    <FullAdd>16 Jaffa St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Shira Azoulay</CustFullName>
+    <CusNum>056-8399061</CusNum>
+    <StartTimeForOrdering>2025-11-17T23:25:54</StartTimeForOrdering>
+    <Description>Chocolate ice cream with caramel drizzle</Description>
+    <Food>IceCream</Food>
+  </Order>
+  <Order>
+    <Id>57</Id>
+    <Latitude>31.7464</Latitude>
+    <Longitude>35.2195</Longitude>
+    <Weight>3.21</Weight>
+    <FullAdd>8 Pierre Koenig St, Talpiot, Jerusalem, Israel</FullAdd>
+    <CustFullName>Hila Peretz</CustFullName>
+    <CusNum>053-7714951</CusNum>
+    <StartTimeForOrdering>2025-11-18T15:09:54</StartTimeForOrdering>
+    <Description>Margherita pizza with fresh basil</Description>
+    <Food>Pizza</Food>
+  </Order>
+  <Order>
+    <Id>58</Id>
+    <Latitude>31.7519</Latitude>
+    <Longitude>35.2327</Longitude>
+    <Weight>2.32</Weight>
+    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Tamar Rosen</CustFullName>
+    <CusNum>057-8005259</CusNum>
+    <StartTimeForOrdering>2025-11-17T20:44:54</StartTimeForOrdering>
+    <Description>Loaded fries with cheese and bacon bits</Description>
+    <Food>Fries</Food>
+  </Order>
+  <Order>
+    <Id>59</Id>
+    <Latitude>31.7729</Latitude>
+    <Longitude>35.1877</Longitude>
+    <Weight>4.64</Weight>
+    <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Tamar Rosen</CustFullName>
+    <CusNum>050-4200822</CusNum>
+    <StartTimeForOrdering>2025-11-18T15:20:54</StartTimeForOrdering>
+    <Description>Curly fries with garlic dip</Description>
+    <Food>Fries</Food>
+  </Order>
+  <Order>
+    <Id>60</Id>
+    <Latitude>31.7519</Latitude>
+    <Longitude>35.2327</Longitude>
+    <Weight>3.32</Weight>
+    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Ronen Avraham</CustFullName>
+    <CusNum>051-1027332</CusNum>
+    <StartTimeForOrdering>2025-11-17T21:33:54</StartTimeForOrdering>
     <Description>Double cheeseburger with fries</Description>
     <Food>Hamburger</Food>
   </Order>
   <Order>
     <Id>61</Id>
-    <Latitude>31.7617</Latitude>
-    <Longitude>35.2248</Longitude>
-    <Weight>2.81</Weight>
-    <FullAdd>18 Emek Refaim St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Shira Biton</CustFullName>
-    <CusNum>053-2710778</CusNum>
-    <StartTimeForOrdering>2025-11-17T17:40:24</StartTimeForOrdering>
-    <Description>Margherita pizza with fresh basil</Description>
+    <Latitude>31.7519</Latitude>
+    <Longitude>35.2327</Longitude>
+    <Weight>2.35</Weight>
+    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Yael Azoulay</CustFullName>
+    <CusNum>053-1238286</CusNum>
+    <StartTimeForOrdering>2025-11-18T08:27:54</StartTimeForOrdering>
+    <Description>Veggie pizza loaded with mushrooms and peppers</Description>
     <Food>Pizza</Food>
   </Order>
   <Order>
     <Id>62</Id>
-    <Latitude>31.7464</Latitude>
-    <Longitude>35.2195</Longitude>
-    <Weight>4.32</Weight>
-    <FullAdd>8 Pierre Koenig St, Talpiot, Jerusalem, Israel</FullAdd>
-    <CustFullName>Tamar Cohen</CustFullName>
-    <CusNum>055-3805680</CusNum>
-    <StartTimeForOrdering>2025-11-17T00:49:24</StartTimeForOrdering>
-    <Description>Loaded fries with cheese and bacon bits</Description>
-    <Food>Fries</Food>
+    <Latitude>31.7191</Latitude>
+    <Longitude>35.234</Longitude>
+    <Weight>4.11</Weight>
+    <FullAdd>10 Har Homa Blvd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Noam Katz</CustFullName>
+    <CusNum>056-2301371</CusNum>
+    <StartTimeForOrdering>2025-11-17T22:42:54</StartTimeForOrdering>
+    <Description>Vanilla scoop with rainbow sprinkles</Description>
+    <Food>IceCream</Food>
   </Order>
   <Order>
     <Id>63</Id>
-    <Latitude>31.7464</Latitude>
-    <Longitude>35.2195</Longitude>
-    <Weight>3.93</Weight>
-    <FullAdd>8 Pierre Koenig St, Talpiot, Jerusalem, Israel</FullAdd>
-    <CustFullName>Hila Biton</CustFullName>
-    <CusNum>053-7225950</CusNum>
-    <StartTimeForOrdering>2025-11-17T11:22:24</StartTimeForOrdering>
-    <Description>Double cheeseburger with fries</Description>
+    <Latitude>31.806</Latitude>
+    <Longitude>35.155</Longitude>
+    <Weight>1.97</Weight>
+    <FullAdd>22 Ben Gurion Blvd, Mevaseret Zion, Israel</FullAdd>
+    <CustFullName>Avi Katz</CustFullName>
+    <CusNum>059-4180153</CusNum>
+    <StartTimeForOrdering>2025-11-18T03:09:54</StartTimeForOrdering>
+    <Description>Classic beef burger with lettuce and tomato</Description>
     <Food>Hamburger</Food>
   </Order>
   <Order>
     <Id>64</Id>
-    <Latitude>31.7519</Latitude>
-    <Longitude>35.2327</Longitude>
-    <Weight>1.46</Weight>
-    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>David Sharon</CustFullName>
-    <CusNum>053-2696169</CusNum>
-    <StartTimeForOrdering>2025-11-17T03:22:24</StartTimeForOrdering>
-    <Description>BBQ chicken pizza with onion and olives</Description>
-    <Food>Pizza</Food>
+    <Latitude>31.7729</Latitude>
+    <Longitude>35.1877</Longitude>
+    <Weight>3.82</Weight>
+    <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
+    <CustFullName>Yael Peretz</CustFullName>
+    <CusNum>052-9542841</CusNum>
+    <StartTimeForOrdering>2025-11-17T21:38:54</StartTimeForOrdering>
+    <Description>Loaded fries with cheese and bacon bits</Description>
+    <Food>Fries</Food>
   </Order>
   <Order>
     <Id>65</Id>
     <Latitude>31.7729</Latitude>
     <Longitude>35.1877</Longitude>
-    <Weight>3.34</Weight>
+    <Weight>3.37</Weight>
     <FullAdd>5 Beit HaKerem St, Jerusalem, Israel</FullAdd>
-    <CustFullName>David Biton</CustFullName>
-    <CusNum>057-8578840</CusNum>
-    <StartTimeForOrdering>2025-11-17T17:25:24</StartTimeForOrdering>
-    <Description>Crispy golden fries with ketchup</Description>
-    <Food>Fries</Food>
-  </Order>
-  <Order>
-    <Id>66</Id>
-    <Latitude>31.7519</Latitude>
-    <Longitude>35.2327</Longitude>
-    <Weight>0.93</Weight>
-    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
-    <CustFullName>Tamar Katz</CustFullName>
-    <CusNum>053-3940690</CusNum>
-    <StartTimeForOrdering>2025-11-17T12:43:24</StartTimeForOrdering>
-    <Description>Curly fries with garlic dip</Description>
-    <Food>Fries</Food>
-  </Order>
-  <Order>
-    <Id>67</Id>
-    <Latitude>31.7617</Latitude>
-    <Longitude>35.2248</Longitude>
-    <Weight>1.41</Weight>
-    <FullAdd>18 Emek Refaim St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Dana Cohen</CustFullName>
-    <CusNum>050-1639346</CusNum>
-    <StartTimeForOrdering>2025-11-17T04:16:24</StartTimeForOrdering>
-    <Description>Classic beef burger with lettuce and tomato</Description>
-    <Food>Hamburger</Food>
-  </Order>
-  <Order>
-    <Id>68</Id>
-    <Latitude>31.7613</Latitude>
-    <Longitude>35.1828</Longitude>
-    <Weight>4.25</Weight>
-    <FullAdd>14 Mount Herzl St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Tamar Rosen</CustFullName>
-    <CusNum>059-5219031</CusNum>
-    <StartTimeForOrdering>2025-11-17T07:00:24</StartTimeForOrdering>
+    <CustFullName>Eli Levi</CustFullName>
+    <CusNum>057-8872083</CusNum>
+    <StartTimeForOrdering>2025-11-18T18:11:54</StartTimeForOrdering>
     <Description>BBQ chicken pizza with onion and olives</Description>
     <Food>Pizza</Food>
   </Order>
   <Order>
-    <Id>69</Id>
+    <Id>66</Id>
+    <Latitude>31.8204</Latitude>
+    <Longitude>35.2009</Longitude>
+    <Weight>3.81</Weight>
+    <FullAdd>2 Ramot Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>David Peretz</CustFullName>
+    <CusNum>055-3337561</CusNum>
+    <StartTimeForOrdering>2025-11-17T18:55:54</StartTimeForOrdering>
+    <Description>Vegan burger with avocado and sprouts</Description>
+    <Food>Hamburger</Food>
+  </Order>
+  <Order>
+    <Id>67</Id>
+    <Latitude>31.7519</Latitude>
+    <Longitude>35.2327</Longitude>
+    <Weight>1.3</Weight>
+    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Ronen Levi</CustFullName>
+    <CusNum>059-1533354</CusNum>
+    <StartTimeForOrdering>2025-11-18T04:40:54</StartTimeForOrdering>
+    <Description>Spicy chicken burger with mayo</Description>
+    <Food>Hamburger</Food>
+  </Order>
+  <Order>
+    <Id>68</Id>
     <Latitude>31.7617</Latitude>
     <Longitude>35.2248</Longitude>
-    <Weight>0.5</Weight>
+    <Weight>2.02</Weight>
     <FullAdd>18 Emek Refaim St, Jerusalem, Israel</FullAdd>
-    <CustFullName>Dana Azoulay</CustFullName>
-    <CusNum>050-9034975</CusNum>
-    <StartTimeForOrdering>2025-11-17T00:54:24</StartTimeForOrdering>
-    <Description>Double cheeseburger with fries</Description>
-    <Food>Hamburger</Food>
+    <CustFullName>Avi Avraham</CustFullName>
+    <CusNum>052-1729062</CusNum>
+    <StartTimeForOrdering>2025-11-18T16:01:54</StartTimeForOrdering>
+    <Description>Veggie pizza loaded with mushrooms and peppers</Description>
+    <Food>Pizza</Food>
+  </Order>
+  <Order>
+    <Id>69</Id>
+    <Latitude>31.7519</Latitude>
+    <Longitude>35.2327</Longitude>
+    <Weight>2.24</Weight>
+    <FullAdd>12 Hebron Rd, Jerusalem, Israel</FullAdd>
+    <CustFullName>Tamar Levi</CustFullName>
+    <CusNum>052-2589232</CusNum>
+    <StartTimeForOrdering>2025-11-18T00:48:54</StartTimeForOrdering>
+    <Description>Strawberry sundae with whipped cream</Description>
+    <Food>IceCream</Food>
   </Order>
 </ArrayOfOrder>

@@ -1,66 +1,92 @@
 ﻿namespace Dal;
 using DalApi;
 using DO;
-
+using System.Collections.Generic;
+using System.Xml.Linq;
 internal class DeliveryImplementation : IDelivery
 {
-    // Create a new delivery
+    static Delivery getDelivery(XElement d)
+    {
+        return new DO.Delivery()
+        {
+            Id = d.ToIntNullable("Id") ?? throw new FormatException("can't convert id"),
+            OrderId = d.ToIntNullable("OrderId") ?? 0,
+            CourierId = d.ToIntNullable("CourierId") ?? 0,
+            ShippingMethod = d.ToEnumNullable<ShippingMethod>("ShippingMethod"),
+            DeliveryStartTime = d.ToDateTimeNullable("DeliveryStartTime"),
+            Distance = d.ToDoubleNullable("Distance"),
+            End = d.ToEnumNullable<CompletionType>("End"),
+            DeliveryEndTime = d.ToDateTimeNullable("DeliveryEndTime")
+        };
+    }
+
     public void Create(Delivery item)
     {
-        List<Delivery> deliveries = XMLTools.LoadListFromXMLSerializer<Delivery>(Config.s_deliveries_xml);
+        XElement deliveriesRootElem = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml);
         int id = Config.NextDeliveryId;
-        Delivery newDel = item with { Id = id }; // assign new ID
-        if (deliveries.Exists(d => d.Id == newDel.Id))
-            throw new DalAlreadyExistExceptions($"Delivery with ID={newDel.Id} already exists");
-        deliveries.Add(newDel);
-        XMLTools.SaveListToXMLSerializer(deliveries, Config.s_deliveries_xml);
+        Delivery newDelivery = item with { Id = id };
+        deliveriesRootElem.Add(createDeliveryElement(newDelivery));
+        XMLTools.SaveListToXMLElement(deliveriesRootElem, Config.s_deliveries_xml);
     }
 
-    // Delete a delivery by ID
     public void Delete(int id)
     {
-        List<Delivery> deliveries = XMLTools.LoadListFromXMLSerializer<Delivery>(Config.s_deliveries_xml);
-        if (deliveries.RemoveAll(it => it.Id == id) == 0)
-            throw new DalDoesNotExistException($"Delivery with ID={id} does Not exist");
-        XMLTools.SaveListToXMLSerializer(deliveries, Config.s_deliveries_xml);
+        XElement deliveriesRootElem = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml);
+        XElement? elem = deliveriesRootElem.Elements().FirstOrDefault(st => (int?)st.Element("Id") == id);
+        if (elem is null)
+            throw new DO.DalDoesNotExistException($"Delivery with ID={id} does Not exist");
+        elem.Remove();
+        XMLTools.SaveListToXMLElement(deliveriesRootElem, Config.s_deliveries_xml);
     }
 
-    // Delete all deliveries
     public void DeleteAll()
     {
-        XMLTools.SaveListToXMLSerializer(new List<Delivery>(), Config.s_deliveries_xml); // delete all by saving empty list
+        XMLTools.SaveListToXMLElement(new XElement(Config.s_deliveries_xml), Config.s_deliveries_xml);
     }
 
-    // Read a delivery by ID
     public Delivery? Read(int id)
     {
-        List<Delivery> deliveries = XMLTools.LoadListFromXMLSerializer<Delivery>(Config.s_deliveries_xml);
-        return deliveries.Find(d => d.Id == id);
+        XElement? deliveryElem =
+    XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml).Elements().FirstOrDefault(st => (int?)st.Element("Id") == id);
+        return deliveryElem is null ? null : getDelivery(deliveryElem);
     }
 
-    // Read a delivery by filter
     public Delivery? Read(Func<Delivery, bool> filter)
     {
-        if (filter is null) return null;
-        List<Delivery> deliveries = XMLTools.LoadListFromXMLSerializer<Delivery>(Config.s_deliveries_xml);
-        return deliveries.Find(new System.Predicate<Delivery>(filter));
+        return XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml).Elements().Select(s => getDelivery(s)).FirstOrDefault(filter);
     }
 
-    // Read all deliveries with optional filter
     public IEnumerable<Delivery> ReadAll(Func<Delivery, bool>? filter = null)
     {
-        List<Delivery> deliveries = XMLTools.LoadListFromXMLSerializer<Delivery>(Config.s_deliveries_xml);
-        return filter == null ? deliveries : deliveries.FindAll(d => filter(d));
+        var items = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml).Elements().Select(s => getDelivery(s));
+        return filter == null ? items : items.Where(filter);
     }
 
-    // Update a delivery
     public void Update(Delivery item)
     {
-        List<Delivery> deliveries = XMLTools.LoadListFromXMLSerializer<Delivery>(Config.s_deliveries_xml);
-        if (deliveries.RemoveAll(it => it.Id == item.Id) == 0)
-            throw new DalDoesNotExistException($"Delivery with ID={item.Id} does Not exist");
-        deliveries.Add(item);
-        XMLTools.SaveListToXMLSerializer(deliveries, Config.s_deliveries_xml);
+        XElement deliveriesRootElem = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml);
+
+        (deliveriesRootElem.Elements().FirstOrDefault(st => (int?)st.Element("Id") == item.Id)
+        ?? throw new DO.DalDoesNotExistException($"Delivery with ID={item.Id} does Not exist"))
+                .Remove();
+
+       deliveriesRootElem.Add(createDeliveryElement(item));
+
+        XMLTools.SaveListToXMLElement(deliveriesRootElem, Config.s_deliveries_xml);
+    }
+
+    private XElement createDeliveryElement(Delivery item)
+    {
+        return new XElement("Delivery",
+            new XElement("Id", item.Id),
+            new XElement("OrderId", item.OrderId),
+            new XElement("CourierId", item.CourierId),
+            new XElement("ShippingMethod", item.ShippingMethod),
+            new XElement("DeliveryStartTime", item.DeliveryStartTime),
+            new XElement("Distance", item.Distance),
+            new XElement("End", item.End),
+            new XElement("DeliveryEndTime", item.DeliveryEndTime)
+        );
     }
 }
 

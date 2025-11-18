@@ -455,14 +455,15 @@ public static  class Initialization
 
         s_dal.ResetDB(); // reset all data in the DAL
 
+        Console.WriteLine("Initializing Config ...");
+        CreateConfig();
         Console.WriteLine("Initializing Couriers list ...");
         CreateCourier();
         Console.WriteLine("Initializing Orders list ...");
         CreateOrder();
         Console.WriteLine("Initializing Deliveries list ...");
         CreateDelivery();
-        Console.WriteLine("Initializing Config ...");
-        CreateConfig();
+        
     }
 }
 

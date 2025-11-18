@@ -7,7 +7,7 @@ internal class CourierImplementation : ICourier
     // create a new courier
     public void Create(Courier item)
     {
-        List<Courier> couriers = XMLTools.LoadListFromXMLSerializer<Courier>(Config.s_couriers_xml);
+        List<Courier> couriers = XMLTools.LoadListFromXMLSerializer<Courier>(Config.s_couriers_xml); // load the couriers list
         int id = Config.NextOrderId; // assign a new id consistently like OrderImplementation
         Courier newCourier = item with { Id = id };
         if (couriers.Exists(c => c.Id == newCourier.Id))
