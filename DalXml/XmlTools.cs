@@ -36,7 +36,11 @@ static class XMLTools
         try
         {
             if (!File.Exists(xmlFilePath)) return new();
-            using FileStream file = new(xmlFilePath, FileMode.Open);
+            using FileStream file = new(
+             xmlFilePath,
+             FileMode.Open,
+             FileAccess.Read,
+             FileShare.ReadWrite);
             XmlSerializer x = new(typeof(List<T>));
             return x.Deserialize(file) as List<T> ?? new();
         }

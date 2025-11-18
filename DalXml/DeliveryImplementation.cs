@@ -10,6 +10,8 @@ internal class DeliveryImplementation : IDelivery
         List<Delivery> deliveries = XMLTools.LoadListFromXMLSerializer<Delivery>(Config.s_deliveries_xml);
         int id = Config.NextDeliveryId;
         Delivery newDel = item with { Id = id }; // assign new ID
+        if (deliveries.Exists(d => d.Id == newDel.Id))
+            throw new DalAlreadyExistExceptions($"Delivery with ID={newDel.Id} already exists");
         deliveries.Add(newDel);
         XMLTools.SaveListToXMLSerializer(deliveries, Config.s_deliveries_xml);
     }
