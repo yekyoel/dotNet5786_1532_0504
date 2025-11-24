@@ -27,6 +27,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "xml", "xml", "{02EA681E-C7D
 		xml\orders.xml = xml\orders.xml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL", "BL\BL.csproj", "{633A75AD-AF3C-42A5-A030-32CA92B72587}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BITest", "BITest\BITest.csproj", "{A426BCA8-41B5-45CB-A2ED-83FAC3CDA135}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +57,14 @@ Global
 		{A27E0175-F55D-4650-9BDF-EB2BCC57A1ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A27E0175-F55D-4650-9BDF-EB2BCC57A1ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A27E0175-F55D-4650-9BDF-EB2BCC57A1ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{633A75AD-AF3C-42A5-A030-32CA92B72587}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{633A75AD-AF3C-42A5-A030-32CA92B72587}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{633A75AD-AF3C-42A5-A030-32CA92B72587}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{633A75AD-AF3C-42A5-A030-32CA92B72587}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A426BCA8-41B5-45CB-A2ED-83FAC3CDA135}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A426BCA8-41B5-45CB-A2ED-83FAC3CDA135}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A426BCA8-41B5-45CB-A2ED-83FAC3CDA135}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A426BCA8-41B5-45CB-A2ED-83FAC3CDA135}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
