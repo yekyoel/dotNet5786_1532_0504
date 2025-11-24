@@ -444,14 +444,15 @@ public static  class Initialization
     /// </summary>
     /// <param name="dal"></param>
     /// <exception cref="NullReferenceException"></exception>
-    public static void Do(IDal dal)
+    public static void Do()
     {
         //s_dalConfig = dalConfig ?? throw new NullReferenceException("DAL can not be null!");
         //s_courier = dalCourier ?? throw new NullReferenceException("DAL Courier can not be null!");
         //s_order = dalOrder ?? throw new NullReferenceException("DAL Order can not be null!");
         //s_delivery = dalDelivery ?? throw new NullReferenceException("DAL Delivery can not be null!");
 
-        s_dal = dal ?? throw new DalCanNotBeNullException("DAL object can not be null!"); 
+        //s_dal = dal ?? throw new DalCanNotBeNullException("DAL object can not be null!"); //stage 2
+        s_dal = DalApi.Factory.Get; //stage 4
 
         Console.WriteLine("Reset Configuration values and List values...");
         //s_dalConfig.Reset();

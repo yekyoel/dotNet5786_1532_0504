@@ -6,8 +6,11 @@ using DalApi;
 /// Provides a data access layer implementation using in-memory lists for couriers, orders, deliveries, and configuration.
 /// </summary>
 
-sealed public class DalList : IDal
+sealed internal class DalList : IDal
 {
+    public static IDal Instance { get; } = new DalList();
+    private DalList() { }
+
     public ICourier Courier { get; } =  new CourierImplementation();
 
     public IOrder Order { get; } = new OrderImplementation();

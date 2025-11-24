@@ -38,7 +38,9 @@ internal class Program
     //private static IDelivery? s_dalDelivery = new DeliveryImplementation(); //stage 1
     //private static IConfig? s_dalConfig = new ConfigImplementation(); //stage 1
     //static readonly IDal s_dal = new DalList(); // new DalList implementation instance (stage 2)
-    static readonly IDal s_dal = new DalXml(); // stage 3
+    //static readonly IDal s_dal = new DalXml(); // stage 3
+    static readonly IDal s_dal = Factory.Get; //stage 4
+
 
     public static ENTITY COURIER { get; private set; } // unused property but left for compatibility. In case needed later.
 
@@ -553,7 +555,8 @@ internal class Program
 
                     case ENTITY.Initialize:
                         //Initialization.Do(s_dalConfig, s_dalCourier, s_dalOrder, s_dalDelivery);
-                        Initialization.Do(s_dal);
+                        //Initialization.Do(s_dal);
+                        Initialization.Do(); //stage 4
                         break;
 
                     case ENTITY.All:

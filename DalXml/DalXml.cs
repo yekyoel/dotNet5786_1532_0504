@@ -1,11 +1,15 @@
 ﻿using DalApi;
+using System.Diagnostics;
 namespace Dal;
 
 /// <summary>
 /// class DalXml that implements the IDal interface for managing data in XML format.
 /// </summary>
-sealed public class DalXml : IDal
+sealed internal class DalXml : IDal
 {
+    public static IDal Instance { get; } = new DalXml();
+    private DalXml() { }
+
     // Singleton pattern implementation
     public IConfig Config { get; } = new ConfigImplementation();
 
