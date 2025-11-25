@@ -1,4 +1,6 @@
-﻿namespace DO;
+﻿using DO;
+
+namespace BO;
 
 public class OpenOrderInList
 {
@@ -11,7 +13,7 @@ public class OpenOrderInList
     public double? ActualDistance { get; init; }
     public TimeSpan? ExpectedActualDeliveryTime { get; init; }
 
-    // public ScheduleStatus  status { get; init; }
+    public ScheduleStatus status { get; init; }
      
     public TimeSpan TotalTimeLeft { get; init; }
     public DateTime MaxDeliveryTime { get; init; }

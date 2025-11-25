@@ -23,6 +23,6 @@ public class Courier
 
     public int TotalDelSuppliedLate { get; init; }
 
-    //BO.OrderInProgress huhuh // nullable
+    BO.OrderInProgress OrderInProg { get; set;}
 
 }
