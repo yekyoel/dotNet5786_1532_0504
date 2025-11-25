@@ -11,4 +11,4 @@ public class DeliveryPerOrderInList
     DateTime OrderStart { get; init; }
     CompletionType? CompType { get; init; }
     DateTime? DeliveryEndTime { get; init; }
-    }
+}

@@ -18,6 +18,6 @@ public class Order
     public OrderStatus OrderStatus { get; init; }
     public ScheduleStatus ScheduleStatus { get; init; }
     public TimeSpan TotalTimeLeft { get; init; }
-    //public list<DeliveryPerOrderInList>? DeliveriesList { get; init; }
+    public List<DeliveryPerOrderInList>? DeliveriesList { get; init; }
 
 }
