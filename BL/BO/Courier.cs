@@ -15,7 +15,7 @@ public class Courier
 
     public double? MaxDist { get; set;}
 
-    public OrderType orderType { get; set;}
+    public OrderType OrderType { get; set;}
 
     public DateTime EmploymentStartDate { get; init; } 
 
