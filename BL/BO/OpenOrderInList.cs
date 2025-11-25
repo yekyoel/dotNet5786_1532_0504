@@ -14,7 +14,7 @@ public class OpenOrderInList
     public TimeSpan? ExpectedActualDeliveryTime { get; init; }
 
     public ScheduleStatus status { get; init; }
-
+     
     public TimeSpan TotalTimeLeft { get; init; }
     public DateTime MaxDeliveryTime { get; init; }
 }

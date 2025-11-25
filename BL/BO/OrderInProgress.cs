@@ -29,10 +29,7 @@ public class OrderInProgress
     public DateTime ExpectedDeliveryTime { get; init; }
 
     public DateTime MaxDeliveryTime { get; init; }
-
-    //OrderStatus OrderStats { get; init; }    
-
-    // ScheduleStatus ScheduleStat { get; init; }
-
-   public  TimeSpan TotalTimeLeft { get; init; }
+    public OrderStatus OrderStats { get; init; }    
+    public ScheduleStatus ScheduleStat { get; init; }
+    public  TimeSpan TotalTimeLeft { get; init; }
 }
