@@ -48,3 +48,15 @@ public enum ScheduleStatus
     InRisk,
     Late
 }
+
+public enum CourierInListFilter
+{
+   CourierId,
+   FullName,
+   IsActive,
+   TypeOrder,
+   EmploymentStartDate,
+   TotalDelSuppliedOnTime,
+   TotalLateDelSupplied,
+   OrderId 
+}
