@@ -60,3 +60,53 @@ public enum CourierInListFilter
    TotalLateDelSupplied,
    OrderId 
 }
+
+public enum OrderInListFilter
+{
+    DeliveryId,
+    OrderId,
+    OrderType,
+    AerialDistance,
+    OrderStatus,
+    ScheduleStatus,
+    TotalTimeLeft,
+    TotalCompletionTime,
+    TotalDeliveries
+}  
+
+public enum ClosedDeliveryInListFilter
+{
+    DeliveryId,
+    OrderId,
+    OrderType,
+    DeliveryAddress,
+    DeliveryType,
+    ActualDistance,
+    TotalCompletionTime,
+    CompletionType
+}
+
+
+public enum OpenOrderInListFilter
+{
+    CourierId,
+    OrderId,
+    TypeOrder,
+    weight,
+    DeliveryAddress,
+    ArealDistance,
+    ActualDistance,
+    ExpectedActualDeliveryTime,
+    status,
+    TotalTimeLeft,
+    MaxDeliveryTime 
+}
+
+public enum  Time
+{
+    Minute,
+    Hour,
+    Day,
+    Month,
+    Year
+}

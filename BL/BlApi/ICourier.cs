@@ -1,19 +1,17 @@
-﻿using BO;
-
-namespace BlApi;
+﻿namespace BlApi;
 
 public interface ICourier
 {
-    string Login(String name);
+    public string Login(String name);
 
-    BO.CourierInList GetListOfCouriers(int userId, bool? mainFilter, CourierInListFilter? secondFilter);
+    public IEnumerable<BO.CourierInList> GetListOfCouriers(int userId, bool? mainFilter, BO.CourierInListFilter? secondFilter);
 
-    BO.Courier GetCourierDetails(int userId, int courierId);
+    public BO.Courier GetCourierDetails(int userId, int courierId);
 
-    void UpdateCourierDetails(int userId, BO.Courier courier);
+    public void UpdateCourierDetails(int userId, BO.Courier courier);
 
-    void DeleteCourier(int userId, int courierId);
+    public void DeleteCourier(int userId, int courierId);
 
-    void AddCourier(int userId, BO.Courier courier);
+    public void AddCourier(int userId, BO.Courier courier);
 
 }
