@@ -404,7 +404,7 @@ public static  class Initialization
             // pick completion type with reasonable probabilities
             double r = s_rand.NextDouble();
             CompletionType completion = r < 0.15 ? CompletionType.Pending
-                                    : r < 0.35 ? CompletionType.EnRoute
+                                    : r < 0.35 ? CompletionType.Refused
                                     : r < 0.85 ? CompletionType.Delivered
                                     : r < 0.925 ? CompletionType.Cancelled
                                     : CompletionType.Failed;

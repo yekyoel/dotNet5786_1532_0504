@@ -27,8 +27,8 @@ public enum  OrderType
 /// </summary>
 public enum CompletionType
 {
-    Pending, 
-    EnRoute,
+    Pending,
+    Refused,
     Delivered,
     Cancelled,
     Failed

@@ -37,7 +37,8 @@ internal static class AdminManager //stage 4
         // - (students become not active after 5 years etc.)
 
         //TO_DO: //stage 4
-        StudentManager.PeriodicStudentsUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
+        CourierManager.PeriodicCouriersUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
+        OrderManager.PeriodicOrdersUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
         //...
 
         //TO_DO: //stage 7
@@ -205,8 +206,8 @@ internal static class AdminManager //stage 4
         {
             s_interval = interval;
             s_stop = false;
-            s_thread = new(clockRunner) { Name = "ClockRunner" };
-            s_thread.Start();
+            //s_thread = new(clockRunner) { Name = "ClockRunner" };
+            //s_thread.Start();
         }
     }
 
@@ -224,7 +225,7 @@ internal static class AdminManager //stage 4
 
     private static Task? _simulateTask = null;
 
-    private static void clockRunner()
+    /*private static void clockRunner()
     {
         while (!s_stop)
         {
@@ -244,7 +245,7 @@ internal static class AdminManager //stage 4
             }
             catch (ThreadInterruptedException) { }
         }
-    }
+    } */
 
     #endregion Stage 7 base
 }

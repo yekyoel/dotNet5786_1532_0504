@@ -92,7 +92,7 @@ internal static class OrderManager
             };
             s_dal.Order.Create(dalOrder);
         }
-        else if (DeliveryManager.checkForSatus(dalOrder) == DO.CompletionType.EnRoute) // being handeled
+        else if (DeliveryManager.checkForSatus(dalOrder) == DO.CompletionType.Refused) // being handeled
             s_dal.Delivery.Update(dalOrder);
         // finish
         else
