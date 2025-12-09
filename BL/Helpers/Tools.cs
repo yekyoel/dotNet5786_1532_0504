@@ -65,17 +65,42 @@ internal static class Tools
         };
     }
 
-    internal static BO.ScheduleStatus? SwitchScheduleStatusTOBO(BO.ScheduleStatus? status)
+    internal static BO.ScheduleStatus? FindScheduleStatusType(DO.Order order)
     {
-        return status switch
+        var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
+        
+        if (delivery == null || delivery.ShippingMethod == null)
+            return null; // No delivery or no shipping method assigned yet
+        
+        // Get config for time calculations
+        var config = AdminManager.GetConfig();
+        if (config == null)
+            return null;
+        
+        DateTime orderTime = order.StartTimeForOrdering ?? config.Clock;
+        DateTime currentTime = config.Clock;
+        
+        TimeSpan maxDelTime = config.MaxDelTime;
+        TimeSpan riskRange = config.RiskRange;
+        
+        DateTime expectedDeliveryTime = orderTime.Add(maxDelTime);
+        DateTime riskThresholdTime = expectedDeliveryTime.Subtract(riskRange);
+        
+        // If delivery is completed, check if it was on time
+        if (delivery.DeliveryEndTime.HasValue)
         {
-            BO.ScheduleStatus.OnTime => BO.ScheduleStatus.OnTime,
-            BO.ScheduleStatus.InRisk => BO.ScheduleStatus.InRisk,
-            BO.ScheduleStatus.Late => BO.ScheduleStatus.Late,
-            _ => null
-        };
+            if (delivery.DeliveryEndTime.Value <= expectedDeliveryTime)
+                return BO.ScheduleStatus.OnTime;
+            else
+                return BO.ScheduleStatus.Late;
+        }
+        
+        // Delivery is still in progress - check current time against thresholds
+        if (currentTime <= riskThresholdTime)
+            return BO.ScheduleStatus.OnTime; // Still within safe window
+        else if (currentTime <= expectedDeliveryTime)
+            return BO.ScheduleStatus.InRisk; // Passed risk threshold but not yet late
+        else
+            return BO.ScheduleStatus.Late; // Already late
     }
 }
-}
-
-
