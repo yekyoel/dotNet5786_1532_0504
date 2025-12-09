@@ -1,5 +1,4 @@
-﻿
-using DalApi;
+﻿using DalApi;
 
 namespace Helpers;
 
@@ -7,15 +6,8 @@ internal static class DeliveryManager
 {
     private static IDal s_dal = Factory.Get; //stage 4
 
-    internal static DO.CompletionType? checkForSatus(DO.Order order)
-    { 
-        var status = s_dal?.Delivery?.Read(order.Id)?.End;
-        return status;
-    }
-    internal static DO.ShippingMethod? checkForSatusTwo(DO.Order order)
+    internal static DO.Delivery? GetDeliveryByOrderId(int orderId)
     {
-        var status = s_dal?.Delivery?.Read(order.Id)?.ShippingMethod;
-        return status;
+        return s_dal?.Delivery?.Read(orderId);
     }
-   
 }

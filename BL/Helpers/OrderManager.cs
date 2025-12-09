@@ -32,7 +32,7 @@ internal static class OrderManager
             ExpectedDeliveryTime = null, // i need a function to calculate it
             MaxDeliveredTime = DateTime.Now.AddHours(24), // i need a function to calculate it
             OrderStatus = Tools.FindOrderStatusType(dalOrder),
-            ScheduleStatus = DeliveryManager.checkForSatusTwo(dalOrder),
+            ScheduleStatus = Tools.FindScheduleStatusType(dalOrder),
             TotalTimeLeft = TimeSpan.Zero, // i need a function to calculate it
             DeliveriesList = new List<BO.DeliveryPerOrderInList>()
         };
@@ -51,8 +51,8 @@ internal static class OrderManager
             OrderId = dalOrder.Id,
             OrderType = dalOrder.Food ,
             AerialDistance = dalOrder.AerialDistance,
-            OrderStatus = DeliveryManager.checkForSatus(dalOrder),
-            ScheduleStatus = DeliveryManager.checkForSatusTwo(dalOrder),
+            OrderStatus = Tools.FindOrderStatusType(dalOrder),
+            ScheduleStatus = Tools.FindScheduleStatusType(dalOrder),
             TotalTimeLeft = TimeSpan.Zero, // i need a function to calculate it
             TotalCompletionTime = TimeSpan.Zero, // i need a function to calculate it
             TotalDeliveries = 0 // i need a function to calculate it
@@ -62,7 +62,7 @@ internal static class OrderManager
     internal static void UpdateOrder(string userID, BO.Order order)
     {
         if(order == null)
-            throw  "Order cannot be null";
+            throw  new "Order cannot be null";
         var dalOrder = s_dal.Order.Read(int.Parse(order.Id));
     
         s_dal.Order.Update(dalOrder);

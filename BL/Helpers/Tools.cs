@@ -39,29 +39,52 @@ internal static class Tools
         };
     }
 
-    internal static BO.OrderStatus? FindOrderStatusType(BO.OrderStatus? status)
+
+    internal static BO.OrderStatus? FindOrderStatusType(DO.Order order)
     {
-        return status switch
+        // Check if delivery exists for this order
+        var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
+        
+        if (delivery == null)
+            return BO.OrderStatus.Open; // No delivery = Open
+        
+        if (delivery.ShippingMethod == null)
+            return BO.OrderStatus.InProgress; // Delivery exists but not assigned yet
+        
+        // Check the completion type for final statuses
+        return delivery.End switch
         {
-            BO.OrderStatus.Open => BO.OrderStatus.Open,
-            BO.OrderStatus.InProgress => BO.OrderStatus.InProgress,
-            BO.OrderStatus.Completed => BO.OrderStatus.Completed,
-            BO.OrderStatus.Rejected => BO.OrderStatus.Rejected,
-            BO.OrderStatus.Cancelled => BO.OrderStatus.Cancelled,
-            _ => null
+            DO.CompletionType.Pending => BO.OrderStatus.InProgress,
+            DO.CompletionType.Refused => BO.OrderStatus.Rejected,
+            DO.CompletionType.Delivered => BO.OrderStatus.Completed,
+            DO.CompletionType.Cancelled => BO.OrderStatus.Cancelled,
+            DO.CompletionType.Failed => BO.OrderStatus.Rejected,
+            null => BO.OrderStatus.InProgress,
+            _ => BO.OrderStatus.InProgress
         };
     }
 
-    internal static BO.ScheduleStatus? SwitchScheduleStatusTOBO(BO.ScheduleStatus? status)
+    internal static BO.ScheduleStatus? FindScheduleStatusType(DO.Order order)
     {
-        return status switch
-        {
-            BO.ScheduleStatus.OnTime => BO.ScheduleStatus.OnTime,
-            BO.ScheduleStatus.InRisk => BO.ScheduleStatus.InRisk,
-            BO.ScheduleStatus.Late => BO.ScheduleStatus.Late,
-            _ => null
-        };
+        var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
+        
+        if (delivery?.DeliveryStartTime == null)
+            return null; // No delivery start time yet
+        
+        if (delivery?.DeliveryEndTime == null)
+            return null; // Still in progress, can't determine schedule status
+        
+        // Determine if on time, in risk, or late based on delivery duration
+        // This is a simple implementation - you may need to use config values for actual calculation
+        if (delivery.End == DO.CompletionType.Delivered)
+            return BO.ScheduleStatus.OnTime; // delivered = on time
+        else if (delivery.End == DO.CompletionType.Pending || delivery.End == DO.CompletionType.Refused)
+            return BO.ScheduleStatus.InRisk; // pending or refused = in risk
+        else if (delivery.End == DO.CompletionType.Failed)
+            return BO.ScheduleStatus.Late; // failed = late
+        
+        return null;
     }
-}
+
 }
 
