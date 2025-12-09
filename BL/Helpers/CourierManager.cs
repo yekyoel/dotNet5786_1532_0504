@@ -1,5 +1,6 @@
 ﻿using BO;
 using DalApi;
+using System.Xml.Linq;
 using static Helpers.Tools;
 namespace Helpers;
 
@@ -16,7 +17,6 @@ internal static class CourierManager
     {
         Admin,
         Courier,
-        Unknown
     }
     /// <summary>
     /// Returns whether the given userId is the configured Admin, a Courier, or Unknown.
@@ -48,12 +48,11 @@ internal static class CourierManager
             }
             catch
             {
-                // on DAL error treat as unknown (do not throw from helper)
-                return UserType.Unknown;
+                new BLDoesNotExistException("User does not exist");
             }
         }
 
-        return UserType.Unknown;
+        throw new BLDoesNotExistException("User does not exist");
     }
 
     // Get list of couriers with optional filtering and sorting
@@ -127,10 +126,13 @@ internal static class CourierManager
         if (courier is null)
             return "BO.Courier: null";
 
-        var started = courier.EmploymentStartDate == default ? "N/A" : courier.EmploymentStartDate.ToString("u");
+        var started = courier.EmploymentStartDate == null || !courier.EmploymentStartDate.HasValue
+            ? "N/A"
+            : courier.EmploymentStartDate.Value.ToString("u");
         var maxDist = courier.MaxDist.HasValue ? courier.MaxDist.Value.ToString("F2") : "N/A";
 
-        return $"BO.Courier: Id={courier.Id}; Name=\"{courier.FullName}\"; Phone=\"{courier.PhoneNumber}\"; Email=\"{courier.Email}\"; Active={courier.IsActive}; MaxDist={maxDist}; Started={started}; OrderType={courier.OrderType}; OnTime={courier.TotalDelSuppliedOnTime}; Late={courier.TotalDelSuppliedLate}";
+        // Removed OrderType property, replaced with ShippingMethod (which exists in BO.Courier)
+        return $"BO.Courier: Id={courier.Id}; Name=\"{courier.FullName}\"; Phone=\"{courier.PhoneNumber}\"; Email=\"{courier.Email}\"; Active={courier.IsActive}; MaxDist={maxDist}; Started={started}; ShippingMethod={courier.ShippingMethod}; OnTime={courier.TotalDelSuppliedOnTime}; Late={courier.TotalDelSuppliedLate}";
     }
 
     // ---------- CRUD helpers for BL (wrap DAL + DO/BO mapping) ----------

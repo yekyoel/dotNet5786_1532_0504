@@ -427,7 +427,7 @@ internal class Program
                             End = statusStr.ToLower() switch
                             {
                                 "pending" => CompletionType.Pending,
-                                "enroute" => CompletionType.EnRoute,
+                                "refused" => CompletionType.Refused,
                                 "delivered" => CompletionType.Delivered,
                                 "cancelled" => CompletionType.Cancelled,
                                 "failed" => CompletionType.Failed,

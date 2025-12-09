@@ -26,19 +26,19 @@ public enum OrderType
 /// </summary>
 public enum CompletionType
 {
-    Pending,
-    EnRoute,
-    Delivered,
-    Cancelled,
-    Failed
+    Pending, // the client was unavailable at the time of delivery. The order goes back. The delivery closes but the order stays open
+    Refused, // the courier reached the destination and the client refused the order (Order goes back)
+    Delivered, // the order has been delivered and closed
+    Cancelled, // the order was cancelled before delivery
+    Failed // the delivery failed for a miscalculation of the distance
 }
 
 public enum OrderStatus
 {
-    Open,
+    Open, // Pending + 
     InProgress,
-    Completed,
-    Rejected,
+    Completed, // Delivered
+    Rejected, // Closed delivery
     Cancelled
 }
 
