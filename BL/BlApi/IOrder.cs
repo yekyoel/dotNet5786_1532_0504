@@ -2,9 +2,9 @@
 
 public interface IOrder
 {
-    public int[] StatusTotal(int userId); /// check?
+    public int[] StatusTotal(string userId); /// check?
 
-    public IEnumerable<BO.OrderInList> GetListOfOrders(int userId, BO.OrderInListFilter? fliter, object? nullable, BO.OrderInListFilter? sort);
+    public IEnumerable<BO.OrderInList> GetListOfOrders(string userId, BO.OrderInListFilter? fliter, object? nullable, BO.OrderInListFilter? sort);
 
     public BO.Order GetOrderDetails(int userId, int orderId);
 

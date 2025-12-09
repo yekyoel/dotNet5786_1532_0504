@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BlApi;
+namespace BlImplementation;
 
-namespace BlImplementation
+internal class BlImplementation : IBl
 {
-    internal class BlImplementation
-    {
-    }
+    public IAdmin Admin => throw new NotImplementedException();
+
+    public ICourier Courier => throw new NotImplementedException();
+
+    public IOrder Order => throw new NotImplementedException();
 }

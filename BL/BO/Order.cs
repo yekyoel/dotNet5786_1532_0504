@@ -2,8 +2,8 @@
 
 public class Order
 {
-    public int Id { get; init; }
-    OrderType OrderType { get; set; }
+    public string Id { get; init; }
+    public OrderType OrderTyype { get; set; }
     public string Description { get; set; }
     public string OrderAddress { get; set; }
     public double Latitude { get; set; }
