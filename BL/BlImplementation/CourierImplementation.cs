@@ -1,7 +1,8 @@
 ﻿namespace BlImplementation;
+
 using BlApi;
 using Helpers;
-
+using static Helpers.Tools;
 internal class CourierImplementation : ICourier
 {
     public void AddCourier(int userId, BO.Courier courier) // add a new courier to the system
@@ -53,7 +54,7 @@ internal class CourierImplementation : ICourier
                 CourierId = bo.Id,
                 FullName = bo.FullName,
                 IsActive = bo.IsActive,
-                TypeOrder = bo.OrderType,
+                TypeOrder = FindScheduleStatusType(bo),
                 EmploymentStartDate = bo.EmploymentStartDate,
                 TotalDelSuppliedOnTime = bo.TotalDelSuppliedOnTime,
                 TotalLateDelSupplied = bo.TotalDelSuppliedLate,
