@@ -1,4 +1,5 @@
-﻿using DalApi;
+﻿using BO;
+using DalApi;
 
 namespace Helpers;
 
@@ -52,6 +53,20 @@ internal static class Tools
         };
     }
 
+    // New overload: map DO.CompletionType? -> non-nullable BO.OrderStatus (provides a safe default)
+    internal static BO.OrderStatus FindOrderStatusType(DO.CompletionType? completion)
+    {
+        return completion switch
+        {
+            DO.CompletionType.Pending => BO.OrderStatus.Open,
+            DO.CompletionType.InProgress => BO.OrderStatus.InProgress,
+            DO.CompletionType.Completed => BO.OrderStatus.Completed,
+            DO.CompletionType.Refused => BO.OrderStatus.Rejected,
+            DO.CompletionType.Cancelled => BO.OrderStatus.Cancelled,
+            _ => BO.OrderStatus.Open
+        };
+    }
+
     internal static BO.ScheduleStatus? SwitchScheduleStatusTOBO(BO.ScheduleStatus? status)
     {
         return status switch
@@ -62,6 +77,9 @@ internal static class Tools
             _ => null
         };
     }
+
+    
+    
 }
-}
+
 
