@@ -126,4 +126,67 @@ internal static class Tools
         var storeLon = cfg?.Longitude ?? 0.0;
         return GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
     }
+
+    // Returns the most-frequent OrderType (food) for a courier.
+    // If the courier has no deliveries/orders, returns a sensible default (Pizza).
+    internal static BO.OrderType FindCourierOrderType(DO.Courier courier)
+    {
+        if (courier is null)
+            throw new ArgumentNullException(nameof(courier)); // throw an exception if courier is null
+
+        var dal = Factory.Get; // get DAL instance
+        // read deliveries assigned to this courier
+        var deliveries = dal.Delivery.ReadAll(d => d.CourierId == courier.Id);
+
+        // count foods by DO.OrderType
+        var counts = new Dictionary<DO.OrderType, int>();
+        foreach (var del in deliveries)
+        {
+            // safe read of order (Read returns Order? in DAL implementations)
+            var order = dal.Order.Read(del.OrderId);
+            if (order?.Food is DO.OrderType ot)
+            {
+                if (counts.ContainsKey(ot)) counts[ot]++; else counts[ot] = 1;
+            }
+        }
+
+        if (counts.Count == 0)
+        {
+            // no history -> choose default
+            return BO.OrderType.Pizza;
+        }
+
+        var mostFrequent = counts.OrderByDescending(kv => kv.Value).First().Key; // get most frequent DO.OrderType
+
+        // map DO.OrderType to BO.OrderType and return
+        return mostFrequent switch
+        {
+            DO.OrderType.Pizza => BO.OrderType.Pizza,
+            DO.OrderType.Hamburger => BO.OrderType.Hamburger,
+            DO.OrderType.Fries => BO.OrderType.Fries,
+            DO.OrderType.IceCream => BO.OrderType.IceCream,
+            _ => BO.OrderType.Pizza
+        };
+    }
+
+    // Map DO.Courier.PreferredShippingMethod (nullable DO.ShippingMethod?) to BO.ShippingMethod?
+    internal static BO.ShippingMethod? FindType(DO.Courier courier)
+    {
+        if (courier is null)
+            throw new ArgumentNullException(nameof(courier));
+
+        var doMethod = courier.PreferredShippingMethod;
+
+        if (doMethod is null)
+            return null;
+
+        return doMethod.Value switch
+        {
+            DO.ShippingMethod.Car => BO.ShippingMethod.Car,
+            DO.ShippingMethod.Motorcycle => BO.ShippingMethod.Motorcycle,
+            DO.ShippingMethod.Bike => BO.ShippingMethod.Bike,
+            DO.ShippingMethod.OnFoot => BO.ShippingMethod.OnFoot,
+            _ => null
+        };
+    }
 }
