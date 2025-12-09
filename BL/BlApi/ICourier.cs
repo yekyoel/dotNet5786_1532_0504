@@ -2,7 +2,7 @@
 
 public interface ICourier
 {
-    public string Login(String name);
+    public string Login(string userId);
 
     public IEnumerable<BO.CourierInList> GetListOfCouriers(int userId, bool? mainFilter, BO.CourierInListFilter? secondFilter);
 
