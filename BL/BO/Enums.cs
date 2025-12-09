@@ -35,7 +35,7 @@ public enum CompletionType
 
 public enum OrderStatus
 {
-    Open,
+    Open,  // 
     InProgress,
     Completed,
     Rejected,

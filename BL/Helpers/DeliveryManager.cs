@@ -12,5 +12,10 @@ internal static class DeliveryManager
         var status = s_dal?.Delivery?.Read(order.Id)?.End;
         return status;
     }
- 
+    internal static DO.ShippingMethod? checkForSatusTwo(DO.Order order)
+    {
+        var status = s_dal?.Delivery?.Read(order.Id)?.ShippingMethod;
+        return status;
+    }
+   
 }

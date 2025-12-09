@@ -1,30 +1,13 @@
 ﻿using DalApi;
 using DO;
-using System.Runtime.CompilerServices;
-
 namespace Helpers;
-
-/*internal static class OrderManager
-{
-    private static IDal s_dal = Factory.Get; //stage 4
-
-    internal static BO.Order GetOrder() => (BO.Order)s_dal.Order;
-
-    internal static IEnumerable<BO.OrderInList> GetAllOrders()
-    {
-        
-        return (IEnumerable<BO.OrderInList>)s_dal.Order.ReadAll();
-    }
-
-
-}*/
 
 internal static class OrderManager
 {
     private static IDal s_dal = Factory.Get;
 
     /// <summary>
-    /// Retrieves a single order by ID as a full BO.Order object.
+    /// Retrieves a single order by ID as a BO.Order object.
     /// </summary>
     internal static BO.Order? GetOrderById(int orderId)
     {
@@ -36,21 +19,21 @@ internal static class OrderManager
         return new BO.Order
         {
             Id = dalOrder.Id.ToString(),
-          //  OrderTyype = dalOrder.OrderType, // check why this doesnt work
+            OrderTyype = Tools.SwitchOrderTypeTOBO(dalOrder),
             Description = dalOrder.Description,
             OrderAddress = dalOrder.FullAdd,
             Latitude = dalOrder.Latitude,
             Longitude = dalOrder.Longitude,
-            //AerialDistance = dalOrder.AerialDistance,
+            AerialDistance = dalOrder.Latitude, //?
             CustomerName = dalOrder.CustFullName,
             CustomerPhone = dalOrder.CusNum,
             Weight = dalOrder.Weight,
             OrderPlacedTime = dalOrder.StartTimeForOrdering ?? DateTime.Now,
-            ExpectedDeliveryTime = null,
-            MaxDeliveredTime = DateTime.Now.AddHours(24),
-            OrderStatus = BO.OrderStatus.Open,
-            ScheduleStatus = BO.ScheduleStatus.OnTime,
-            TotalTimeLeft = TimeSpan.Zero,
+            ExpectedDeliveryTime = null, // i need a function to calculate it
+            MaxDeliveredTime = DateTime.Now.AddHours(24), // i need a function to calculate it
+            OrderStatus = Tools.FindOrderStatusType(dalOrder),
+            ScheduleStatus = DeliveryManager.checkForSatusTwo(dalOrder),
+            TotalTimeLeft = TimeSpan.Zero, // i need a function to calculate it
             DeliveriesList = new List<BO.DeliveryPerOrderInList>()
         };
     }
@@ -62,25 +45,26 @@ internal static class OrderManager
     {
         var dalOrders = s_dal.Order.ReadAll();
 
-        return dalOrders.Select(dalOrder => new BO.OrderInList
+        return dalOrders.Select.Distinct(dalOrder => new BO.OrderInList
         {
             DeliveryId = null,
             OrderId = dalOrder.Id,
-            OrderType = dalOrder.Food ?? BO.OrderType.Pizza,
+            OrderType = dalOrder.Food ,
             AerialDistance = dalOrder.AerialDistance,
-            OrderStatus = BO.OrderStatus.Open,
-            ScheduleStatus = BO.ScheduleStatus.OnTime,
-            TotalTimeLeft = TimeSpan.Zero,
-            TotalCompletionTime = TimeSpan.Zero,
-            TotalDeliveries = 0
+            OrderStatus = DeliveryManager.checkForSatus(dalOrder),
+            ScheduleStatus = DeliveryManager.checkForSatusTwo(dalOrder),
+            TotalTimeLeft = TimeSpan.Zero, // i need a function to calculate it
+            TotalCompletionTime = TimeSpan.Zero, // i need a function to calculate it
+            TotalDeliveries = 0 // i need a function to calculate it
         });
     }
 
-    internal static void UpdateOrder(BO.Order order)
+    internal static void UpdateOrder(string userID, BO.Order order)
     {
+        if(order == null)
+            throw  "Order cannot be null";
         var dalOrder = s_dal.Order.Read(int.Parse(order.Id));
-        if (dalOrder == null)
-            throw new KeyNotFoundException($"Order with ID {order.Id} not found");
+    
         s_dal.Order.Update(dalOrder);
     }
 
@@ -103,6 +87,7 @@ internal static class OrderManager
                 StartTimeForOrdering = dalOrder.StartTimeForOrdering,
                 Description = dalOrder.Description,
                 Food = dalOrder.Food
+                
                 // update other fields as necessary
             };
             s_dal.Order.Create(dalOrder);
@@ -113,5 +98,11 @@ internal static class OrderManager
         else
             throw new InvalidOperationException($"Order with ID {orderId} cannot be cancelled as it is already completed or cancelled.");
     }
+
+    internal static void TryToDeleteOrder(orderId);
+
+    internal static void AddOrder();
+
+
 }
 

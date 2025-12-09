@@ -11,37 +11,18 @@ internal class OrderImplementation : IOrder
     //???
     public int[] StatusTotal(string userId)
     {
-
-        throw new NotImplementedException();
+        //
     }
 
     //???
     public IEnumerable<BO.OrderInList> GetListOfOrders(string userId, OrderInListFilter? filter, object? filterTwo, OrderInListFilter? sort)
     {
         IEnumerable<BO.OrderInList> allOrders = Helpers.OrderManager.GetAllOrders();
-        
-        //if(allOrders.)
 
-        if(filter == null)
-            return (allOrders = allOrders.Select(o => o).Distinct()).ToList();
-        else if(filterTwo )
-
-        switch (filter)
+        allOrders = allOrders.Distinct();
+        if (filter == null)
         {
-            case OrderInListFilter.OrderId:
-                allOrders = allOrders.Where(o => o.OrderId == (int)nullable!);
-                break;
-            case OrderInListFilter.OrderType:
-                allOrders = allOrders.Where(o => o.OrderType == (OrderType)nullable!);
-                break;
-            case OrderInListFilter.OrderStatus:
-                allOrders = allOrders.Where(o => o.OrderStatus == (OrderStatus)nullable!);
-                break;
-            case OrderInListFilter.ScheduleStatus:
-                allOrders = allOrders.Where(o => o.ScheduleStatus == (ScheduleStatus)nullable!);
-                break;
-            default:
-                break;
+
         }
     }
 
@@ -66,23 +47,28 @@ internal class OrderImplementation : IOrder
         Helpers.OrderManager.TryToCancelOrder(orderId);
     }
 
+    public void DeleteOrder(int userId, int orderId)
+    {
+        Helpers.OrderManager.TryToDeleteOrder(orderId);
+    }
 
     public void AddOrder(int userId, BO.Order order)
     {
-        throw new NotImplementedException();
+        Helpers.OrderManager.AddOrder();
     }
 
-  
+
+    public void OrderComplete(int userId, int courierId, int deliveryId)
+    {
+        throw new NotImplementedException();  //?
+    }
 
     public void ChooseOrder(int userId, int courierId, int orderId)
     {
         throw new NotImplementedException();
     }
 
-    public void DeleteOrder(int userId, int orderId)
-    {
-        throw new NotImplementedException();
-    }
+    
 
     public OpenOrderInList GetAvailableOrdersForCourier(int userId, int courierId, OpenOrderInListFilter? filter, OpenOrderInListFilter? sort)
     {
@@ -92,17 +78,5 @@ internal class OrderImplementation : IOrder
     public ClosedDeliveryInList GetCompletedCourierDeliveries(int userId, int courierId, ClosedDeliveryInListFilter? filter, ClosedDeliveryInListFilter? sort)
     {
         throw new NotImplementedException();
-    }
-
-
-
-
-    public void OrderComplete(int userId, int courierId, int deliveryId)
-    {
-        throw new NotImplementedException();
-    }
-
-   
-
-  
+    } 
 }

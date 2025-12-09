@@ -3,7 +3,7 @@
 public class Order
 {
     public string Id { get; init; }
-    public OrderType OrderTyype { get; set; }
+    public OrderType? OrderTyype { get; set; }
     public string Description { get; set; }
     public string OrderAddress { get; set; }
     public double Latitude { get; set; }

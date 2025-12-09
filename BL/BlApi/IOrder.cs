@@ -2,7 +2,7 @@
 
 public interface IOrder
 {
-    public int[] StatusTotal(string userId); /// check?
+    public int[] StatusTotal(string userId); 
 
     public IEnumerable<BO.OrderInList> GetListOfOrders(string userId, BO.OrderInListFilter? fliter, object? nullable, BO.OrderInListFilter? sort);
 
