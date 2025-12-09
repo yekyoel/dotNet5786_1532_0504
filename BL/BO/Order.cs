@@ -15,8 +15,8 @@ public class Order
     public DateTime OrderPlacedTime { get; init; }
     public DateTime? ExpectedDeliveryTime { get; init; }
     public DateTime MaxDeliveredTime { get; init; }
-    public OrderStatus OrderStatus { get; init; }
-    public ScheduleStatus ScheduleStatus { get; init; }
+    public OrderStatus? OrderStatus { get; init; }
+    public ScheduleStatus? ScheduleStatus { get; init; }
     public TimeSpan TotalTimeLeft { get; init; }
     public List<DeliveryPerOrderInList>? DeliveriesList { get; init; }
 

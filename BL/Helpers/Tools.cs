@@ -40,30 +40,28 @@ internal static class Tools
         };
     }
 
-    internal static BO.OrderStatus? FindOrderStatusType(BO.OrderStatus? status)
-    {
-        return status switch
-        {
-            BO.OrderStatus.Open => BO.OrderStatus.Open,
-            BO.OrderStatus.InProgress => BO.OrderStatus.InProgress,
-            BO.OrderStatus.Completed => BO.OrderStatus.Completed,
-            BO.OrderStatus.Rejected => BO.OrderStatus.Rejected,
-            BO.OrderStatus.Cancelled => BO.OrderStatus.Cancelled,
-            _ => null
-        };
-    }
 
-    // New overload: map DO.CompletionType? -> non-nullable BO.OrderStatus (provides a safe default)
-    internal static BO.OrderStatus FindOrderStatusType(DO.CompletionType? completion)
+    internal static BO.OrderStatus? FindOrderStatusType(DO.Order order)
     {
-        return completion switch
+        // Check if delivery exists for this order
+        var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
+        
+        if (delivery == null)
+            return BO.OrderStatus.Open; // No delivery = Open
+        
+        if (delivery.ShippingMethod == null)
+            return BO.OrderStatus.InProgress; // Delivery exists but not assigned yet
+        
+        // Check the completion type for final statuses
+        return delivery.End switch
         {
-            DO.CompletionType.Pending => BO.OrderStatus.Open,
-            DO.CompletionType.InProgress => BO.OrderStatus.InProgress,
-            DO.CompletionType.Completed => BO.OrderStatus.Completed,
+            DO.CompletionType.Pending => BO.OrderStatus.InProgress,
             DO.CompletionType.Refused => BO.OrderStatus.Rejected,
+            DO.CompletionType.Delivered => BO.OrderStatus.Completed,
             DO.CompletionType.Cancelled => BO.OrderStatus.Cancelled,
-            _ => BO.OrderStatus.Open
+            DO.CompletionType.Failed => BO.OrderStatus.Rejected,
+            null => BO.OrderStatus.InProgress,
+            _ => BO.OrderStatus.InProgress
         };
     }
 
@@ -77,9 +75,7 @@ internal static class Tools
             _ => null
         };
     }
-
-    
-    
+}
 }
 
 
