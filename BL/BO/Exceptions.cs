@@ -44,3 +44,9 @@ public class BLTemporaryNotAvailableException : Exception
 {
     public BLTemporaryNotAvailableException(string? message) : base(message) { }
 }
+
+[Serializable] // Indicate that the class can be serialized
+public class BLDoesNotExistException : Exception
+{
+    public BLDoesNotExistException(string? message) : base(message) { }
+}

@@ -1,8 +1,6 @@
 ﻿using BO;
 using DalApi;
-using System.Security.Cryptography;
-using System.Collections.Generic;
-
+using static Helpers.Tools;
 namespace Helpers;
 
 internal static class CourierManager
@@ -27,11 +25,35 @@ internal static class CourierManager
     /// <returns>UserType.Admin | UserType.Courier | UserType.Unknown</returns>
     internal static UserType GetUserType(string userId)
     {
-        // Check admin id from configuration
-        if (userId == "admin")
+        if (string.IsNullOrWhiteSpace(userId))
+            throw new BLDoesNotExistException("User does not exist");
+
+        // allow explicit "admin" literal
+        if (userId.Equals("admin", StringComparison.OrdinalIgnoreCase))
             return UserType.Admin;
 
-        return UserType.Courier; // Default to Courier for any non-admin user
+        // try numeric id
+        if (int.TryParse(userId, out var id))
+        {
+            try
+            {
+                // admin configured id in DAL takes precedence
+                if (dal.Config.AdminId == id)
+                    return UserType.Admin;
+
+                // courier exists?
+                var doCourier = dal.Courier.Read(id);
+                if (doCourier is not null)
+                    return UserType.Courier;
+            }
+            catch
+            {
+                // on DAL error treat as unknown (do not throw from helper)
+                return UserType.Unknown;
+            }
+        }
+
+        return UserType.Unknown;
     }
 
     // Get list of couriers with optional filtering and sorting
@@ -59,6 +81,7 @@ internal static class CourierManager
         return list;
     }
 
+   
     internal static BO.Courier fromDOToBO(DO.Courier doCourier) // Convert DO.Courier to BO.Courier
     {
         return new BO.Courier
@@ -67,11 +90,10 @@ internal static class CourierManager
             FullName = doCourier.FullName,
             PhoneNumber = doCourier.PhoneNum,
             Email = doCourier.Email,
-            Password = string.Empty,
             IsActive = doCourier.IsActive,
             MaxDist = doCourier.MaxDist,
-            OrderType = default,
-            EmploymentStartDate = doCourier.DayStarted ?? default,
+            ShippingMethod = FindType(doCourier),
+            EmploymentStartDate = doCourier.DayStarted,
             TotalDelSuppliedOnTime = 0,
             TotalDelSuppliedLate = 0
         };

@@ -15,9 +15,9 @@ public class Courier
 
     public double? MaxDist { get; set;}
 
-    public OrderType OrderType { get; set;}
+    public ShippingMethod? ShippingMethod { get; set;}
 
-    public DateTime EmploymentStartDate { get; init; } 
+    public DateTime? EmploymentStartDate { get; init; } 
 
     public int TotalDelSuppliedOnTime { get; init; }
 

@@ -38,7 +38,7 @@ internal static class AdminManager //stage 4
 
         //TO_DO: //stage 4
         CourierManager.PeriodicCouriersUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
-
+        OrderManager.PeriodicOrdersUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
         //...
 
         //TO_DO: //stage 7
