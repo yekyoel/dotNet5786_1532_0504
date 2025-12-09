@@ -45,13 +45,13 @@ internal static class Tools
     {
         // Check if delivery exists for this order
         var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
-        
+
         if (delivery == null)
             return BO.OrderStatus.Open; // No delivery = Open
-        
+
         if (delivery.ShippingMethod == null)
             return BO.OrderStatus.InProgress; // Delivery exists but not assigned yet
-        
+
         // Check the completion type for final statuses
         return delivery.End switch
         {
