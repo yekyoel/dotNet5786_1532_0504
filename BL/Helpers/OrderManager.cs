@@ -16,6 +16,11 @@ internal static class OrderManager
         if (dalOrder == null)
             return null;
 
+        var cfg = AdminManager.GetConfig();
+        double storeLat = cfg?.Latitude ?? 0.0;
+        double storeLon = cfg?.Longitude ?? 0.0;
+        double aerial = Tools.GetAerialDistanceKm(storeLat, storeLon, dalOrder.Latitude, dalOrder.Longitude);
+
         return new BO.Order
         {
             Id = dalOrder.Id.ToString(),
@@ -24,7 +29,7 @@ internal static class OrderManager
             OrderAddress = dalOrder.FullAdd,
             Latitude = dalOrder.Latitude,
             Longitude = dalOrder.Longitude,
-            AerialDistance = dalOrder.Latitude, //?
+            AerialDistance = aerial,
             CustomerName = dalOrder.CustFullName,
             CustomerPhone = dalOrder.CusNum,
             Weight = dalOrder.Weight,
@@ -104,5 +109,16 @@ internal static class OrderManager
     internal static void AddOrder();
 
 
+    internal static double GetAerialDistanceKm(double lat1, double lon1, double lat2, double lon2)
+{
+    const double R = 6371.0;
+    static double ToRad(double deg) => deg * Math.PI / 180.0;
+    var dLat = ToRad(lat2 - lat1);
+    var dLon = ToRad(lon2 - lon1);
+    var a = Math.Sin(dLat/2)*Math.Sin(dLat/2)
+          + Math.Cos(ToRad(lat1))*Math.Cos(ToRad(lat2))
+          * Math.Sin(dLon/2)*Math.Sin(dLon/2);
+    var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
+    return R * c; // kilometers
 }
 
