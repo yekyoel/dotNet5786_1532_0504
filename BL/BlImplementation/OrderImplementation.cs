@@ -7,13 +7,13 @@ namespace BlImplementation;
 internal class OrderImplementation : IOrder 
 {
     //???
-    public int[] StatusTotal(string userId)
+    public int[] StatusTotal(int userId)
     {
         //
     }
 
     //???
-    public IEnumerable<BO.OrderInList> GetListOfOrders(string userId, OrderInListFilter? filter, object? filterTwo, OrderInListFilter? sort)
+    public IEnumerable<BO.OrderInList> GetListOfOrders(int userId, OrderInListFilter? filter, object? filterTwo, OrderInListFilter? sort)
     {
         IEnumerable<BO.OrderInList> allOrders = Helpers.OrderManager.GetAllOrders();
 
@@ -24,7 +24,7 @@ internal class OrderImplementation : IOrder
         }
     }
 
-    public BO.Order GetOrderDetails(string userId, int orderId)
+    public BO.Order GetOrderDetails(int userId, int orderId)
     {
         var order = Helpers.OrderManager.GetOrderById(orderId);
 
@@ -52,7 +52,7 @@ internal class OrderImplementation : IOrder
 
     public void AddOrder(int userId, BO.Order order)
     {
-        Helpers.OrderManager.AddOrder();
+        Helpers.OrderManager.AddOrder(order);
     }
 
 
