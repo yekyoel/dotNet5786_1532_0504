@@ -24,7 +24,7 @@ internal static class OrderManager
 
         return new BO.Order
         {
-            Id = dalOrder.Id.ToString(),
+            Id = dalOrder.Id,
             OrderTyype = Tools.SwitchOrderTypeTOBO(dalOrder),
             Description = dalOrder.Description,
             OrderAddress = dalOrder.FullAdd,
@@ -51,56 +51,73 @@ internal static class OrderManager
     {
         var dalOrders = s_dal.Order.ReadAll();
 
-        return dalOrders.Select.Distinct(dalOrder => new BO.OrderInList
+        var cfg = AdminManager.GetConfig();
+        double storeLat = cfg?.Latitude ?? 0.0;
+        double storeLon = cfg?.Longitude ?? 0.0;
+
+        return dalOrders.Select(dalOrder =>
         {
-            DeliveryId = null,
-            OrderId = dalOrder.Id,
-            OrderType = dalOrder.Food ,
-            AerialDistance = dalOrder.AerialDistance,
-            OrderStatus = Tools.FindOrderStatusType(dalOrder),
-            ScheduleStatus = Tools.FindScheduleStatusType(dalOrder),
-            TotalTimeLeft = TimeSpan.Zero, // i need a function to calculate it
-            TotalCompletionTime = TimeSpan.Zero, // i need a function to calculate it
-            TotalDeliveries = 0 // i need a function to calculate it
-        });
+            var delivery = DeliveryManager.GetDeliveryByOrderId(dalOrder.Id);
+            return new BO.OrderInList
+            {
+                DeliveryId = delivery?.Id,
+                OrderId = dalOrder.Id,
+                OrderType = Tools.SwitchOrderTypeTOBO(dalOrder) ?? BO.OrderType.Pizza,
+                AerialDistance = Tools.GetAerialDistanceKm(storeLat, storeLon, dalOrder.Latitude, dalOrder.Longitude),
+                OrderStatus = Tools.FindOrderStatusType(dalOrder) ?? BO.OrderStatus.Open,
+                ScheduleStatus = Tools.FindScheduleStatusType(dalOrder) ?? BO.ScheduleStatus.OnTime,
+                TotalTimeLeft = TimeSpan.Zero,
+                TotalCompletionTime = TimeSpan.Zero,
+                TotalDeliveries = 0
+            };
+        }).ToList();
     }
 
-    internal static void UpdateOrder(string userID, BO.Order order)
+    internal static void UpdateOrder(BO.Order order)
     {
         if(order == null)
             throw new BLNullReferenceException ("Order cannot be null");
-        var dalOrder = s_dal.Order.Read(int.Parse(order.Id));
+        var dalOrder = s_dal.Order.Read(order.Id);
     
         s_dal.Order.Update(dalOrder);
     }
 
     internal static void TryToCancelOrder(int orderId)
     {
+        Delivery? delivery;
         var dalOrder = s_dal.Order.Read(orderId);
         if (dalOrder == null)
             throw new KeyNotFoundException($"Order with ID {orderId} not found");
-        else if (DeliveryManager.checkForSatus(dalOrder) == DO.CompletionType.Pending) // its open
+        else if (Tools.FindOrderStatusType(dalOrder) == BO.OrderStatus.Open) // its open
         {
-            new DO.Order
+            var del = new DO.Delivery
             {
-                Id = 0,
-                Latitude = dalOrder.Latitude,
-                Longitude = dalOrder.Longitude,
-                Weight = dalOrder.Weight,
-                FullAdd = dalOrder.FullAdd,
-                CustFullName = dalOrder.CustFullName,
-                CusNum = dalOrder.CusNum,
-                StartTimeForOrdering = dalOrder.StartTimeForOrdering,
-                Description = dalOrder.Description,
-                Food = dalOrder.Food
-                
-                // update other fields as necessary
+                OrderId = dalOrder.Id,
+                CourierId = 0,
+                DeliveryStartTime = AdminManager.GetConfig()?.Clock ?? DateTime.Now,
+                DeliveryEndTime = AdminManager.GetConfig()?.Clock ?? DateTime.Now,
+                End = DO.CompletionType.Cancelled,
             };
-            s_dal.Order.Create(dalOrder);
+            s_dal.Delivery.Create(del);
         }
-        else if (DeliveryManager.checkForSatus(dalOrder) == DO.CompletionType.Refused) // being handeled
-            s_dal.Delivery.Update(dalOrder);
-        // finish
+        else if (Tools.FindOrderStatusType(dalOrder) == BO.OrderStatus.InProgress)  // being handeled
+        {
+            delivery = DeliveryManager.GetDeliveryByOrderId(orderId);
+            if (delivery == null)
+                throw new InvalidOperationException($"Order with ID {orderId} is in progress but has no associated delivery.");
+            var dalDelivery = new DO.Delivery
+            {
+                Id = delivery.Id,
+                OrderId = delivery.OrderId,
+                CourierId = delivery.CourierId,
+                ShippingMethod = delivery.ShippingMethod,
+                DeliveryStartTime = delivery.DeliveryStartTime,
+                Distance = delivery.Distance,
+                End = DO.CompletionType.Cancelled,
+                DeliveryEndTime = AdminManager.GetConfig()?.Clock ?? DateTime.Now
+            };
+            s_dal.Delivery.Update(dalDelivery);
+        }
         else
             throw new InvalidOperationException($"Order with ID {orderId} cannot be cancelled as it is already completed or cancelled.");
     }
@@ -114,12 +131,6 @@ internal static class OrderManager
         {
             s_dal.Order.Delete(orderId);
         }
-    }
-
-    // Parameterless helper left for compatibility; instruct callers to use overload below.
-    internal static void AddOrder()
-    {
-        throw new NotImplementedException("Call AddOrder(BO.Order order) overload with a BO.Order argument.");
     }
 
     // Adds a new BO.Order into the DAL by mapping it to DO.Order and calling DAL.Create.
@@ -151,20 +162,19 @@ internal static class OrderManager
                             ? configClock ?? DateTime.Now
                             : order.OrderPlacedTime;
 
-        // Map BO.Order -> DO.Order
         var doOrder = new DO.Order
-        (
-            Id: 0,
-            Latitude: order.Latitude,
-            Longitude: order.Longitude,
-            Weight: order.Weight,
-            FullAdd: order.OrderAddress ?? string.Empty,
-            CustFullName: order.CustomerName ?? string.Empty,
-            CusNum: order.CustomerPhone ?? string.Empty,
-            StartTimeForOrdering: placed,
-            Description: order.Description,
-            Food: Tools.SwitchOrderTypeTODO(order) // returns DO.OrderType? 
-        );
+        {
+            Id = order.Id,
+            Latitude =  order.Latitude,
+            Longitude = order.Longitude,
+            Weight = order.Weight,
+            FullAdd = order.OrderAddress ?? string.Empty,
+            CustFullName = order.CustomerName ?? string.Empty,
+            CusNum = order.CustomerPhone ?? string.Empty,
+            StartTimeForOrdering = placed,
+            Description = order.Description,
+            Food = Tools.SwitchOrderTypeTODO(order) // returns DO.OrderType? 
+        };
 
         s_dal.Order.Create(doOrder);
     }

@@ -64,8 +64,7 @@ internal static class Tools
             DO.CompletionType.Delivered => BO.OrderStatus.Completed,
             DO.CompletionType.Cancelled => BO.OrderStatus.Cancelled,
             DO.CompletionType.Failed => BO.OrderStatus.Rejected,
-            null => BO.OrderStatus.InProgress,
-            _ => BO.OrderStatus.InProgress
+            _ => null
         };
     }
 

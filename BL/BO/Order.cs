@@ -2,7 +2,7 @@
 
 public class Order
 {
-    public string Id { get; init; }
+    public int Id { get; init; }
     public OrderType? OrderTyype { get; set; }
     public string Description { get; set; }
     public string OrderAddress { get; set; }
