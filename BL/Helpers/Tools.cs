@@ -7,7 +7,10 @@ namespace Helpers;
 internal static class Tools
 {
 
-    //public static string ToStringProperty<T>(this T t) { }
+    public static string ToStringProperty<T>(this T t) 
+    { 
+        return t?.ToString() ?? "null";
+    }
 
     internal static bool checkProperty<T>(T t) => t is not null;
 

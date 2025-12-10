@@ -105,7 +105,16 @@ internal static class OrderManager
             throw new InvalidOperationException($"Order with ID {orderId} cannot be cancelled as it is already completed or cancelled.");
     }
 
-    internal static void TryToDeleteOrder(orderId);
+    internal static void TryToDeleteOrder(int orderId)
+    {
+        var dalOrder = s_dal.Order.Read(orderId);
+        if (dalOrder == null)
+            throw new KeyNotFoundException($"Order with ID {orderId} not found");
+        else
+        {
+            s_dal.Order.Delete(orderId);
+        }
+    }
 
     // Parameterless helper left for compatibility; instruct callers to use overload below.
     internal static void AddOrder()

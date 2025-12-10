@@ -24,7 +24,7 @@ internal class OrderImplementation : IOrder
         }
     }
 
-    public BO.Order GetOrderDetails(int userId, int orderId)
+    public BO.Order GetOrderDetails(string userId, int orderId)
     {
         var order = Helpers.OrderManager.GetOrderById(orderId);
 
