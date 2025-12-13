@@ -70,7 +70,7 @@ internal class DeliveryImplementation : IDelivery
         if (Read(item.Id) == null)
             throw new DalAlreadyExistExceptions($"Delivery with ID={item.Id} already exists"); // throw exception from Exceptions.cs
         Delete(item.Id);
-        DataSource.Deliveries.Add(item);
+        DataSource.Deliveries.Add(item); // add the updated item
     }
 
     /// <summary>
