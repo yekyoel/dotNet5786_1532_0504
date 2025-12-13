@@ -14,6 +14,11 @@ internal static class DeliveryManager
         return s_dal.Delivery.ReadAll().FirstOrDefault(d => d.OrderId == orderId);
     }
 
+    internal static IEnumerable<DO.Delivery?> GetAllDeliveries()
+    {
+        return s_dal.Delivery.ReadAll().ToList();
+    }
+
     /// <summary>
     /// Periodic updates for deliveries:
     /// - Marks assigned, in-progress deliveries as Failed if they exceeded expected + risk thresholds.
@@ -76,5 +81,17 @@ internal static class DeliveryManager
 
     }
 
+    internal static void CompleteDelivery(int deliveryId)
+    {
+        var delivery = s_dal.Delivery.Read(deliveryId);
+        if (delivery == null)
+            throw new KeyNotFoundException($"Delivery with ID {deliveryId} not found");
+        var updated = delivery with
+        {
+            End = DO.CompletionType.Delivered,
+            DeliveryEndTime = DateTime.Now
+        };
+        s_dal.Delivery.Update(updated);
+    }
 
 }

@@ -35,7 +35,7 @@ public enum CompletionType
 
 public enum OrderStatus
 {
-    Open, // Pending + 
+    Open, // Pending + not yet assigned to a courier
     InProgress,
     Completed, // Delivered
     Rejected, // Closed delivery
@@ -92,12 +92,12 @@ public enum OpenOrderInListFilter
     CourierId,
     OrderId,
     TypeOrder,
-    weight,
+    Weight,
     DeliveryAddress,
     ArealDistance,
     ActualDistance,
     ExpectedActualDeliveryTime,
-    status,
+    Status,
     TotalTimeLeft,
     MaxDeliveryTime 
 }

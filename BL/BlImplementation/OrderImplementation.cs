@@ -58,23 +58,36 @@ internal class OrderImplementation : IOrder
 
     public void OrderComplete(int userId, int courierId, int deliveryId)
     {
-        throw new NotImplementedException();  //?
+        if(userId == courierId)
+        {
+            Helpers.DeliveryManager.CompleteDelivery(deliveryId);
+        }
+        else
+        {
+            throw new InvalidOperationException("User is not authorized to complete this delivery.");
+        }
     }
 
     public void ChooseOrder(int userId, int courierId, int orderId)
     {
-        throw new NotImplementedException();
-    }
-
-    
-
-    public OpenOrderInList GetAvailableOrdersForCourier(int userId, int courierId, OpenOrderInListFilter? filter, OpenOrderInListFilter? sort)
-    {
-        throw new NotImplementedException();
+        if (userId == courierId)
+        {
+            Helpers.OrderManager.AssignOrderToCourier(orderId, courierId);
+        }
+        else
+        {
+            throw new InvalidOperationException("User is not authorized to choose this order.");
+        }
     }
 
     public ClosedDeliveryInList GetCompletedCourierDeliveries(int userId, int courierId, ClosedDeliveryInListFilter? filter, ClosedDeliveryInListFilter? sort)
     {
-        throw new NotImplementedException();
+        return 
+
+    }
+
+    public OpenOrderInList GetAvailableOrdersForCourier(int userId, int courierId, OpenOrderInListFilter? filter, OpenOrderInListFilter? sort)
+    {
+        
     } 
 }

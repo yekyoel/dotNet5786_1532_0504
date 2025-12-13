@@ -191,4 +191,31 @@ internal static class Tools
             _ => null
         };
     }
+
+    internal static BO.ShippingMethod? SwitchShippingMethodTOBO(DO.ShippingMethod? shippingMethod)
+    {
+        return shippingMethod switch
+        {
+            DO.ShippingMethod.Car => BO.ShippingMethod.Car,
+            DO.ShippingMethod.Motorcycle => BO.ShippingMethod.Motorcycle,
+            DO.ShippingMethod.Bike => BO.ShippingMethod.Bike,
+            DO.ShippingMethod.OnFoot => BO.ShippingMethod.OnFoot,
+            null => null,
+            _ => null
+        };
+    }
+
+    internal static BO.CompletionType? SwitchCompletionTypeTOBO(DO.CompletionType? completionType)
+    {
+        return completionType switch
+        {
+            DO.CompletionType.Pending => BO.CompletionType.Pending,
+            DO.CompletionType.Refused => BO.CompletionType.Refused,
+            DO.CompletionType.Delivered => BO.CompletionType.Delivered,
+            DO.CompletionType.Cancelled => BO.CompletionType.Cancelled,
+            DO.CompletionType.Failed => BO.CompletionType.Failed,
+            null => null,
+            _ => null
+        };
+    }
 }
