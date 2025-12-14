@@ -5,6 +5,13 @@ using Helpers;
 using static Helpers.Tools;
 internal class CourierImplementation : ICourier
 {
+    /// <summary>
+    /// Adds a new courier to the system for the specified user.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user associated with the courier.</param>
+    /// <param name="courier">The <see cref="BO.Courier"/> object containing the details of the courier to add. Cannot be <see
+    /// langword="null"/>.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="courier"/> is <see langword="null"/>.</exception>
     public void AddCourier(int userId, BO.Courier courier) // add a new courier to the system
     {
         if (courier == null)
@@ -14,6 +21,12 @@ internal class CourierImplementation : ICourier
         CourierManager.CreateCourier(courier);
     }
 
+    /// <summary>
+    /// Deletes a courier from the system.
+    /// </summary>
+    /// <param name="userId">The identifier of the user requesting the deletion. Must be the administrator's user ID.</param>
+    /// <param name="courierId">The identifier of the courier to delete.</param>
+    /// <exception cref="UnauthorizedAccessException">Thrown if <paramref name="userId"/> does not match the administrator's user ID.</exception>
     public void DeleteCourier(int userId, int courierId) // delete a courier from the system
     {
         var adminId = AdminManager.GetConfig().AdminId;
@@ -24,6 +37,15 @@ internal class CourierImplementation : ICourier
         CourierManager.DeleteCourier(courierId);
     }
 
+    /// <summary>
+    /// Retrieves detailed information about a specific courier.
+    /// </summary>
+    /// <param name="userId">The identifier of the user requesting the courier details. Must be either the administrator's user ID or the
+    /// courier's own user ID.</param>
+    /// <param name="courierId">The identifier of the courier whose details are to be retrieved. Must be a positive integer.</param>
+    /// <returns>A <see cref="BO.Courier"/> object containing detailed information about the specified courier.</returns>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="courierId"/> is less than or equal to zero.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if <paramref name="userId"/> is not the administrator or the courier whose details are being requested.</exception>
     public BO.Courier GetCourierDetails(int userId, int courierId) // get detailed information about a specific courier
     {
         if (courierId <= 0)
@@ -39,6 +61,18 @@ internal class CourierImplementation : ICourier
         return CourierManager.ReadCourier(courierId);
     }
 
+    /// <summary>
+    /// Retrieves a collection of couriers with summary information, filtered and sorted according to the specified
+    /// criteria.
+    /// </summary>
+    /// <param name="userId">The identifier of the user requesting the list. This parameter may be used to determine access permissions or
+    /// personalize the results.</param>
+    /// <param name="mainFilter">An optional filter indicating whether to include only couriers matching a primary condition. If <see
+    /// langword="null"/>, no primary filtering is applied.</param>
+    /// <param name="secondFilter">An optional secondary filter or sort order to apply to the list of couriers. If <see langword="null"/>, the
+    /// default sorting is used.</param>
+    /// <returns>An enumerable collection of <see cref="BO.CourierInList"/> objects representing couriers that match the
+    /// specified filters. The collection is empty if no couriers meet the criteria.</returns>
     public IEnumerable<BO.CourierInList> GetListOfCouriers(int userId, bool? mainFilter, BO.CourierInListFilter? secondFilter)
     {
         // Reuse existing manager method for DO-level filtering/sorting
@@ -66,6 +100,16 @@ internal class CourierImplementation : ICourier
         return result;
     }
 
+    /// <summary>
+    /// Authenticates a user by their user ID and returns their user role if authentication is successful.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user to authenticate. Cannot be <see langword="null"/>, empty, or consist only of
+    /// white-space characters.</param>
+    /// <returns>A string representing the user's role. Returns "Admin" if the user is an administrator, or "Courier" if the user
+    /// is a courier.</returns>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="userId"/> is <see langword="null"/>, empty, or consists only of white-space
+    /// characters.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if the user is not found or the password is incorrect.</exception>
     public string Login(string userId)
     {
         if (string.IsNullOrWhiteSpace(userId))
@@ -81,6 +125,13 @@ internal class CourierImplementation : ICourier
         };
     }
 
+    /// <summary>
+    /// Updates the details of a courier with the specified information.
+    /// </summary>
+    /// <param name="userId">The identifier of the user requesting the update. Must be either the administrator or the courier being updated.</param>
+    /// <param name="courier">The <see cref="BO.Courier"/> object containing the updated courier details. Cannot be <see langword="null"/>.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="courier"/> is <see langword="null"/>.</exception>
+    /// <exception cref="UnauthorizedAccessException">Thrown if <paramref name="userId"/> is neither the administrator nor the courier being updated.</exception>
     public void UpdateCourierDetails(int userId, BO.Courier courier)
     {
         if (courier is null)
