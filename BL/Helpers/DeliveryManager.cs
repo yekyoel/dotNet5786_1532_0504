@@ -8,12 +8,22 @@ internal static class DeliveryManager
 {
     private static IDal s_dal = Factory.Get; //stage 4
 
+    /// <summary>
+    /// Retrieves the first delivery associated with the specified order ID, if one exists.
+    /// </summary>
+    /// <param name="orderId">The unique identifier of the order for which to retrieve the delivery.</param>
+    /// <returns>A <see cref="DO.Delivery"/> object representing the delivery for the specified order, or <see langword="null"/>
+    /// if no delivery is found.</returns>
     internal static DO.Delivery? GetDeliveryByOrderId(int orderId)
     {
         // Return the first delivery that references the given order id (or null)
         return s_dal.Delivery.ReadAll().FirstOrDefault(d => d.OrderId == orderId);
     }
 
+    /// <summary>
+    /// Retrieves all deliveries from the data source.
+    /// </summary>
+    /// <returns></returns>
     internal static IEnumerable<DO.Delivery?> GetAllDeliveries()
     {
         return s_dal.Delivery.ReadAll().ToList();
@@ -81,6 +91,11 @@ internal static class DeliveryManager
 
     }
 
+    /// <summary>
+    /// Marks the specified delivery as completed and updates its status to delivered.
+    /// </summary>
+    /// <param name="deliveryId">The unique identifier of the delivery to complete.</param>
+    /// <exception cref="KeyNotFoundException">Thrown if a delivery with the specified deliveryId does not exist.</exception>
     internal static void CompleteDelivery(int deliveryId)
     {
         var delivery = s_dal.Delivery.Read(deliveryId);
