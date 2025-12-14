@@ -1,6 +1,5 @@
 ﻿using BO;
 using DalApi;
-using System.Xml.Linq;
 using static Helpers.Tools;
 namespace Helpers;
 
@@ -26,7 +25,7 @@ internal static class CourierManager
     internal static UserType GetUserType(string userId)
     {
         if (string.IsNullOrWhiteSpace(userId))
-            throw new BLDoesNotExistException("User does not exist");
+            throw new BlDoesNotExistException("User does not exist");
 
         // allow explicit "admin" literal
         if (userId.Equals("admin", StringComparison.OrdinalIgnoreCase))
@@ -48,11 +47,11 @@ internal static class CourierManager
             }
             catch
             {
-                new BLDoesNotExistException("User does not exist");
+                throw new BlDoesNotExistException("User does not exist");
             }
         }
 
-        throw new BLDoesNotExistException("User does not exist");
+        throw new BlDoesNotExistException("User does not exist");
     }
 
     // Get list of couriers with optional filtering and sorting
