@@ -22,6 +22,11 @@ internal static class OrderManager
         double storeLon = cfg?.Longitude ?? 0.0;
         double aerial = Tools.GetAerialDistanceKm(storeLat, storeLon, dalOrder.Latitude, dalOrder.Longitude);
 
+        var delivery = DeliveryManager.GetDeliveryByOrderId(orderId);
+        var expectedDeliveryTime = Tools.CalculateExpectedDeliveryTime(dalOrder, delivery);
+        var maxDeliveredTime = (dalOrder.StartTimeForOrdering ?? DateTime.Now).Add(cfg?.MaxDelTime ?? TimeSpan.FromHours(24));
+        var totalTimeLeft = Tools.CalculateTotalTimeLeft(dalOrder, delivery);
+
         return new BO.Order
         {
             Id = dalOrder.Id,
@@ -35,11 +40,11 @@ internal static class OrderManager
             CustomerPhone = dalOrder.CusNum,
             Weight = dalOrder.Weight,
             OrderPlacedTime = dalOrder.StartTimeForOrdering ?? DateTime.Now,
-            ExpectedDeliveryTime = null, // i need a function to calculate it
-            MaxDeliveredTime = DateTime.Now.AddHours(24), // i need a function to calculate it
+            ExpectedDeliveryTime = expectedDeliveryTime,
+            MaxDeliveredTime = maxDeliveredTime,
             OrderStatus = Tools.FindOrderStatusType(dalOrder),
             ScheduleStatus = Tools.FindScheduleStatusType(dalOrder),
-            TotalTimeLeft = TimeSpan.Zero, // i need a function to calculate it
+            TotalTimeLeft = totalTimeLeft,
             DeliveriesList = new List<BO.DeliveryPerOrderInList>()
         };
     }
@@ -58,6 +63,11 @@ internal static class OrderManager
         return dalOrders.Select(dalOrder =>
         {
             var delivery = DeliveryManager.GetDeliveryByOrderId(dalOrder.Id);
+            var totalTimeLeft = Tools.CalculateTotalTimeLeft(dalOrder, delivery);
+            var completionTime = (delivery?.DeliveryEndTime.HasValue ?? false) && (delivery?.DeliveryStartTime.HasValue ?? false)
+                ? delivery.DeliveryEndTime.Value - delivery.DeliveryStartTime.Value
+                : TimeSpan.Zero;
+
             return new BO.OrderInList
             {
                 DeliveryId = delivery?.Id,
@@ -66,13 +76,14 @@ internal static class OrderManager
                 AerialDistance = Tools.GetAerialDistanceKm(storeLat, storeLon, dalOrder.Latitude, dalOrder.Longitude),
                 OrderStatus = Tools.FindOrderStatusType(dalOrder) ?? BO.OrderStatus.Open,
                 ScheduleStatus = Tools.FindScheduleStatusType(dalOrder) ?? BO.ScheduleStatus.OnTime,
-                TotalTimeLeft = TimeSpan.Zero,
-                TotalCompletionTime = TimeSpan.Zero,
-                TotalDeliveries = 0
+                TotalTimeLeft = totalTimeLeft,
+                TotalCompletionTime = completionTime,
+                TotalDeliveries = delivery != null ? 1 : 0
             };
         }).ToList();
     }
 
+   
     internal static void UpdateOrder(BO.Order order)
     {
         if (order == null)
@@ -199,73 +210,6 @@ internal static class OrderManager
 
     }
 
-    internal static IEnumerable<BO.ClosedDeliveryInList> GetClosedDeliveries(int userId, int courierId, ClosedDeliveryInListFilter? filter, ClosedDeliveryInListFilter? sort)
-    {
-        var dalDeliveries = DeliveryManager.GetAllDeliveries()
-            .Where(d => d.CourierId == courierId && d.End == DO.CompletionType.Delivered).ToList();
-
-        // Apply filtering if specified
-        if (filter.HasValue)
-        {
-            dalDeliveries = ApplyClosedDeliveryFilter(dalDeliveries, filter.Value);
-        }
-
-        // Apply sorting if specified
-        if (sort.HasValue)
-        {
-            dalDeliveries = ApplyClosedDeliverySort(dalDeliveries, sort.Value);
-        }
-
-        // Map to BO
-        return dalDeliveries.Select(dalDelivery =>
-        {
-            var order = s_dal.Order.Read(dalDelivery.OrderId);
-            return new BO.ClosedDeliveryInList
-            {
-                DeliveryId = dalDelivery.Id,
-                OrderId = dalDelivery.OrderId,
-                OrderType = Tools.SwitchOrderTypeTOBO(order) ?? BO.OrderType.Pizza,
-                DeliveryAddress = order?.FullAdd ?? string.Empty,
-                DeliveryType = Tools.SwitchShippingMethodTOBO(dalDelivery.ShippingMethod) ?? BO.ShippingMethod.Car,
-                ActualDistance = dalDelivery.Distance ?? 0,
-                TotalCompletionTime = (dalDelivery.DeliveryEndTime.HasValue && dalDelivery.DeliveryStartTime.HasValue)
-                    ? dalDelivery.DeliveryEndTime.Value - dalDelivery.DeliveryStartTime.Value
-                    : TimeSpan.Zero,
-                CompletionType = Tools.SwitchCompletionTypeTOBO(dalDelivery.End) ?? BO.CompletionType.Delivered
-            };
-        }).ToList();
-    }
-
-    private static List<DO.Delivery> ApplyClosedDeliveryFilter(List<DO.Delivery> deliveries, ClosedDeliveryInListFilter filter)
-    {
-        return filter switch
-        {
-            ClosedDeliveryInListFilter.DeliveryId => deliveries,
-            ClosedDeliveryInListFilter.OrderId => deliveries,
-            ClosedDeliveryInListFilter.OrderType => deliveries,
-            ClosedDeliveryInListFilter.DeliveryAddress => deliveries,
-            ClosedDeliveryInListFilter.DeliveryType => deliveries,
-            ClosedDeliveryInListFilter.ActualDistance => deliveries,
-            ClosedDeliveryInListFilter.TotalCompletionTime => deliveries,
-            ClosedDeliveryInListFilter.CompletionType => deliveries,
-            _ => deliveries
-        };
-    }
-
-    private static List<DO.Delivery> ApplyClosedDeliverySort(List<DO.Delivery> deliveries, ClosedDeliveryInListFilter sort)
-    {
-        return sort switch
-        {
-            ClosedDeliveryInListFilter.DeliveryId => deliveries.OrderBy(d => d.Id).ToList(),
-            ClosedDeliveryInListFilter.OrderId => deliveries.OrderBy(d => d.OrderId).ToList(),
-            ClosedDeliveryInListFilter.ActualDistance => deliveries.OrderBy(d => d.Distance ?? 0).ToList(),
-            ClosedDeliveryInListFilter.TotalCompletionTime => deliveries.OrderBy(d =>
-                (d.DeliveryEndTime ?? DateTime.Now) - (d.DeliveryStartTime ?? DateTime.Now)).ToList(),
-            _ => deliveries
-        };
-    }
-
-
 
     /// <summary>
     /// Periodic updates specific to orders/deliveries. Called after clock changes.
@@ -370,7 +314,7 @@ internal static class OrderManager
                     // distance from store to order
                     double storeLat = config.Latitude ?? 0.0;
                     double storeLon = config.Longitude ?? 0.0;
-                    double distanceKm = GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
+                    double distanceKm = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
 
                     // eligible couriers: active, within max distance, and currently free (no in-progress deliveries)
                     var eligible = couriers.Where(c =>
@@ -412,28 +356,99 @@ internal static class OrderManager
         }
     }
 
-    internal static double GetAerialDistanceKm(double lat1, double lon1, double lat2, double lon2)
+
+    internal static IEnumerable<BO.ClosedDeliveryInList> GetClosedDeliveries(int courierId, ClosedDeliveryInListFilter? filter, ClosedDeliveryInListFilter? sort)
     {
-        const double R = 6371.0;
-        static double ToRad(double deg) => deg * Math.PI / 180.0;
-        var dLat = ToRad(lat2 - lat1);
-        var dLon = ToRad(lon2 - lon1);
-        var a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2)
-              + Math.Cos(ToRad(lat1)) * Math.Cos(ToRad(lat2))
-              * Math.Sin(dLon / 2) * Math.Sin(dLon / 2);
-        var c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-        return R * c; // kilometers
+        var dalDeliveries = DeliveryManager.GetAllDeliveries()
+            .Where(d => d.CourierId == courierId && d.End == DO.CompletionType.Delivered).ToList();
+
+        // Apply filtering if specified
+        if (filter.HasValue)
+        {
+            dalDeliveries = ApplyClosedDeliveryFilter(dalDeliveries, filter.Value);
+        }
+
+        // Apply sorting if specified
+        if (sort.HasValue)
+        {
+            dalDeliveries = ApplyClosedDeliverySort(dalDeliveries, sort.Value);
+        }
+
+        // Map to BO
+        return dalDeliveries.Select(dalDelivery =>
+        {
+            var order = s_dal.Order.Read(dalDelivery.OrderId);
+            return new BO.ClosedDeliveryInList
+            {
+                DeliveryId = dalDelivery.Id,
+                OrderId = dalDelivery.OrderId,
+                OrderType = Tools.SwitchOrderTypeTOBO(order) ?? BO.OrderType.Pizza,
+                DeliveryAddress = order?.FullAdd ?? string.Empty,
+                DeliveryType = Tools.SwitchShippingMethodTOBO(dalDelivery.ShippingMethod) ?? BO.ShippingMethod.Car,
+                ActualDistance = dalDelivery.Distance ?? 0,
+                TotalCompletionTime = (dalDelivery.DeliveryEndTime.HasValue && dalDelivery.DeliveryStartTime.HasValue)
+                    ? dalDelivery.DeliveryEndTime.Value - dalDelivery.DeliveryStartTime.Value
+                    : TimeSpan.Zero,
+                CompletionType = Tools.SwitchCompletionTypeTOBO(dalDelivery.End) ?? BO.CompletionType.Delivered
+            };
+        }).ToList();
     }
 
-    internal static IEnumerable<BO.OpenOrderInList> GetOpenOrders(int userId, OpenOrderInListFilter? filter, OpenOrderInListFilter? sort)
+    private static List<DO.Delivery> ApplyClosedDeliveryFilter(List<DO.Delivery> deliveries, ClosedDeliveryInListFilter filter)
+    {
+        return filter switch
+        {
+            ClosedDeliveryInListFilter.DeliveryId => deliveries,
+            ClosedDeliveryInListFilter.OrderId => deliveries,
+            ClosedDeliveryInListFilter.OrderType => deliveries,
+            ClosedDeliveryInListFilter.DeliveryAddress => deliveries,
+            ClosedDeliveryInListFilter.DeliveryType => deliveries,
+            ClosedDeliveryInListFilter.ActualDistance => deliveries,
+            ClosedDeliveryInListFilter.TotalCompletionTime => deliveries,
+            ClosedDeliveryInListFilter.CompletionType => deliveries,
+            _ => deliveries
+        };
+    }
+
+    private static List<DO.Delivery> ApplyClosedDeliverySort(List<DO.Delivery> deliveries, ClosedDeliveryInListFilter sort)
+    {
+        return sort switch
+        {
+            ClosedDeliveryInListFilter.DeliveryId => deliveries.OrderBy(d => d.Id).ToList(),
+            ClosedDeliveryInListFilter.OrderId => deliveries.OrderBy(d => d.OrderId).ToList(),
+            ClosedDeliveryInListFilter.ActualDistance => deliveries.OrderBy(d => d.Distance ?? 0).ToList(),
+            ClosedDeliveryInListFilter.TotalCompletionTime => deliveries.OrderBy(d =>
+                (d.DeliveryEndTime ?? DateTime.Now) - (d.DeliveryStartTime ?? DateTime.Now)).ToList(),
+            _ => deliveries
+        };
+    }
+
+
+    internal static IEnumerable<BO.OpenOrderInList> GetOpenOrders(int courierId, OpenOrderInListFilter? filter, OpenOrderInListFilter? sort)
     {
         var dalOrders = s_dal.Order.ReadAll().ToList();
 
+        // Get courier's max distance capability
+        var courier = s_dal.Courier.Read(courierId);
+        double courierMaxDist = courier?.MaxDist ?? double.MaxValue;
+
+        var cfg = AdminManager.GetConfig();
+        double storeLat = cfg?.Latitude ?? 0.0;
+        double storeLon = cfg?.Longitude ?? 0.0;
+
         // Filter for open orders only (orders without a delivery, or with pending delivery)
+        // AND that are within the courier's max distance from the store
         var openOrders = dalOrders.Where(order =>
         {
             var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
-            return delivery == null || delivery.End == null;
+            bool isOpen = delivery == null || delivery.End == null;
+            
+            if (!isOpen)
+                return false;
+
+            // Check if order is within courier's max distance
+            double distance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
+            return distance <= courierMaxDist;
         }).ToList();
 
         // Apply filtering if specified
@@ -448,15 +463,18 @@ internal static class OrderManager
             openOrders = ApplyOpenOrderSort(openOrders, sort.Value);
         }
 
-        // Map to BO
-        var cfg = AdminManager.GetConfig();
-        double storeLat = cfg?.Latitude ?? 0.0;
-        double storeLon = cfg?.Longitude ?? 0.0;
-
         return openOrders.Select(order =>
         {
             var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
             double distance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
+            var orderPlacedTime = order.StartTimeForOrdering ?? DateTime.Now;
+            var maxDelTime = cfg?.MaxDelTime ?? TimeSpan.FromHours(24);
+            var maxDeliveryTime = orderPlacedTime.Add(maxDelTime);
+            var expectedDeliveryTime = Tools.CalculateExpectedDeliveryTime(order, delivery);
+            var timeSpanToDelivery = expectedDeliveryTime != null 
+                ? (expectedDeliveryTime.Value - DateTime.Now)
+                : (TimeSpan?)null;
+            var totalTimeLeft = Tools.CalculateTotalTimeLeft(order, delivery);
 
             return new BO.OpenOrderInList
             {
@@ -467,10 +485,10 @@ internal static class OrderManager
                 DeliveryAddress = order.FullAdd ?? string.Empty,
                 ArealDistance = distance,
                 ActualDistance = delivery?.Distance ?? 0,
-                ExpectedActualDeliveryTime = delivery?.DeliveryStartTime,
-                Status = Tools.FindOrderStatusType(order) ?? BO.OrderStatus.Open,
-                TotalTimeLeft = TimeSpan.Zero, // TODO: calculate based on config
-                MaxDeliveryTime = cfg?.MaxDelTime ?? TimeSpan.FromHours(24)
+                ExpectedActualDeliveryTime = timeSpanToDelivery,
+                Status = Tools.FindScheduleStatusType(order) ?? BO.ScheduleStatus.OnTime,
+                TotalTimeLeft = totalTimeLeft,
+                MaxDeliveryTime = maxDeliveryTime
             };
         }).ToList();
     }
@@ -515,4 +533,5 @@ internal static class OrderManager
             _ => orders
         };
     }
+
 }

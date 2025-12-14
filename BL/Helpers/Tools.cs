@@ -12,14 +12,6 @@ internal static class Tools
         return t?.ToString() ?? "null";
     }
 
-    internal static bool checkProperty<T>(T t) => t is not null;
-
-    internal static object? GetProperty(object obj, string propertyName)
-    {
-        return obj.GetType().GetProperty(propertyName)?
-                  .GetValue(obj, null);
-    }
-
     internal static BO.OrderType? SwitchOrderTypeTOBO(DO.Order order)
     {
         return order.Food switch
@@ -43,7 +35,6 @@ internal static class Tools
             _ => null
         };
     }
-
 
     internal static BO.OrderStatus? FindOrderStatusType(DO.Order order)
     {
@@ -217,5 +208,81 @@ internal static class Tools
             null => null,
             _ => null
         };
+    }
+
+    /// <summary>
+    /// Calculates expected delivery time based on order placement, distance, and courier shipping method.
+    /// Formula: OrderPlacedTime + DeliveryDuration + 10 min buffer
+    /// DeliveryDuration is calculated using distance and speed based on shipping method.
+    /// </summary>
+    internal static DateTime? CalculateExpectedDeliveryTime(DO.Order order, DO.Delivery? delivery)
+    {
+        if (order == null)
+            return null;
+
+        var config = AdminManager.GetConfig();
+        if (config == null)
+            return null;
+
+        // If no delivery or no shipping method assigned yet, cannot calculate
+        if (delivery?.ShippingMethod == null)
+            return null;
+
+        // Order placement time
+        DateTime orderTime = order.StartTimeForOrdering ?? config.Clock;
+
+        // Distance in km (if not recorded, estimate from store to delivery location)
+        double distanceKm = delivery.Distance ?? GetAerialDistanceFromStoreKm(order);
+
+        // Get speed in mph based on shipping method, convert to kmh
+        double speedMph = delivery.ShippingMethod.Value switch
+        {
+            DO.ShippingMethod.Car => config.AvgCarMPH,
+            DO.ShippingMethod.Motorcycle => config.AvgMotorcycleMPH,
+            DO.ShippingMethod.Bike => config.AvgBicycleMPH,
+            DO.ShippingMethod.OnFoot => config.AvgWalkMPH,
+            _ => 70.0
+        };
+
+        // Convert mph to kmh: mph * 1.60934
+        double speedKmh = speedMph * 1.60934;
+        if (speedKmh <= 0) speedKmh = 30.0;
+
+        // Calculate delivery duration in hours
+        double durationHours = distanceKm / speedKmh;
+
+        // Expected time = order time + duration + 10 min buffer
+        TimeSpan deliverySpan = TimeSpan.FromHours(durationHours);
+        TimeSpan bufferSpan = TimeSpan.FromMinutes(10);
+
+        return orderTime.Add(deliverySpan).Add(bufferSpan);
+    }
+
+    /// <summary>
+    /// Calculates remaining time until max delivery deadline.
+    /// TotalTimeLeft = MaxDeliveryTime - CurrentTime
+    /// If negative or delivery complete, returns zero.
+    /// </summary>
+    internal static TimeSpan CalculateTotalTimeLeft(DO.Order order, DO.Delivery? delivery)
+    {
+        var config = AdminManager.GetConfig();
+        if (config == null)
+            return TimeSpan.Zero;
+
+        // If delivery is complete, no time left
+        if (delivery?.DeliveryEndTime != null)
+            return TimeSpan.Zero;
+
+        // Order placement time
+        DateTime orderTime = order.StartTimeForOrdering ?? config.Clock;
+
+        // Max delivery deadline = order time + config max delivery time
+        DateTime maxDeliveryDeadline = orderTime.Add(config.MaxDelTime);
+
+        // Time remaining = deadline - current time
+        TimeSpan timeLeft = maxDeliveryDeadline - config.Clock;
+
+        // Return zero if already past deadline
+        return timeLeft > TimeSpan.Zero ? timeLeft : TimeSpan.Zero;
     }
 }

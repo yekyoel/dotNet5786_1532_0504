@@ -2,9 +2,9 @@
 
 public interface IOrder
 {
-    public int[] StatusTotal(string userId); 
+    public int[] StatusTotal(int userId); 
 
-    public IEnumerable<BO.OrderInList> GetListOfOrders(string userId, BO.OrderInListFilter? fliter, object? nullable, BO.OrderInListFilter? sort);
+    public IEnumerable<BO.OrderInList> GetListOfOrders(int userId, BO.OrderInListFilter? fliter, object? nullable, BO.OrderInListFilter? sort);
 
     public BO.Order GetOrderDetails(int userId, int orderId);
 
@@ -20,8 +20,8 @@ public interface IOrder
 
     public void ChooseOrder(int userId , int courierId, int orderId);
 
-    public BO.ClosedDeliveryInList GetCompletedCourierDeliveries(int userId, int courierId, BO.ClosedDeliveryInListFilter? filter, BO.ClosedDeliveryInListFilter? sort);
+    public IEnumerable<BO.ClosedDeliveryInList> GetCompletedCourierDeliveries(int userId, int courierId, BO.ClosedDeliveryInListFilter? filter, BO.ClosedDeliveryInListFilter? sort);
 
-    public BO.OpenOrderInList GetAvailableOrdersForCourier(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort);
+    public IEnumerable<BO.OpenOrderInList> GetAvailableOrdersForCourier(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort);
 
 }
