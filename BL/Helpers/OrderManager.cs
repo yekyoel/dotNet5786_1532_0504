@@ -7,27 +7,34 @@ internal static class OrderManager
 {
     private static IDal s_dal = Factory.Get;
 
-    /// <summary>
-    /// Retrieves a single order by ID as a BO.Order object.
-    /// </summary>
+  /// <summary>
+  /// Retrieves the business object representation of an order by its unique identifier.
+  /// </summary>
+  /// <remarks>The returned order includes calculated fields such as aerial distance from the store, expected
+  /// delivery time, and total time left for delivery. If the order does not exist, the method returns <see
+  /// langword="null"/>.</remarks>
+  /// <param name="orderId">The unique identifier of the order to retrieve.</param>
+  /// <returns>A <see cref="BO.Order"/> object containing the order details if found; otherwise, <see langword="null"/>.</returns>
     internal static BO.Order? GetOrderById(int orderId)
     {
-        var dalOrder = s_dal.Order.Read(orderId);
+        var dalOrder = s_dal.Order.Read(orderId); // read from DAL
 
         if (dalOrder == null)
             return null;
 
+        // claculates the soroe cordinates
         var cfg = AdminManager.GetConfig();
         double storeLat = cfg?.Latitude ?? 0.0;
         double storeLon = cfg?.Longitude ?? 0.0;
         double aerial = Tools.GetAerialDistanceKm(storeLat, storeLon, dalOrder.Latitude, dalOrder.Longitude);
 
+        // gets the delivery related to the order
         var delivery = DeliveryManager.GetDeliveryByOrderId(orderId);
         var expectedDeliveryTime = Tools.CalculateExpectedDeliveryTime(dalOrder, delivery);
         var maxDeliveredTime = (dalOrder.StartTimeForOrdering ?? DateTime.Now).Add(cfg?.MaxDelTime ?? TimeSpan.FromHours(24));
         var totalTimeLeft = Tools.CalculateTotalTimeLeft(dalOrder, delivery);
 
-        return new BO.Order
+        return new BO.Order // maps DO.Order to BO.Order
         {
             Id = dalOrder.Id,
             OrderTyype = Tools.SwitchOrderTypeTOBO(dalOrder),

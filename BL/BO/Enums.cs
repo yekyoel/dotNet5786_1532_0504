@@ -36,72 +36,106 @@ public enum CompletionType
 public enum OrderStatus
 {
     Open, // Pending + not yet assigned to a courier
-    InProgress,
+    InProgress, // Assigned to a courier
     Completed, // Delivered
     Rejected, // Closed delivery
-    Cancelled
+    Cancelled // Cancelled before delivery
 }
 
+/// <summary>
+/// Specifies the status of a scheduled item based on its timing relative to the planned schedule.
+/// </summary>
+/// <remarks>Use this enumeration to indicate whether a scheduled item is on time, at risk of being late, or
+/// already late. The specific meaning of each value may depend on the context in which it is used.</remarks>
 public enum ScheduleStatus
 {
-    OnTime,
-    InRisk,
-    Late
+    OnTime, // The scheduled item is on track to meet its planned schedule.
+    InRisk, // The scheduled item is at risk of being late.
+    Late // The scheduled item is already
 }
 
+/// <summary>
+/// Specifies the fields that can be used to filter or sort couriers in a list operation.
+/// </summary>
+/// <remarks>Use this enumeration to indicate which property of a courier should be used when applying filters or
+/// ordering results in list queries. The available fields correspond to common courier attributes such as identifier,
+/// name, activity status, employment date, and delivery statistics.</remarks>
 public enum CourierInListFilter
 {
-   CourierId,
-   FullName,
-   IsActive,
-   TypeOrder,
-   EmploymentStartDate,
-   TotalDelSuppliedOnTime,
-   TotalLateDelSupplied,
-   OrderId 
+   CourierId, // Identifier for the courier
+   FullName, // Full name of the courier
+   IsActive, // Indicates if the courier is currently active
+   TypeOrder, // Most associated order type for the courier
+   EmploymentStartDate, // Employment start date of the courier
+   TotalDelSuppliedOnTime, // Total number of deliveries supplied on time by the courier
+   TotalLateDelSupplied,  // Total number of deliveries supplied late by the courier
+   OrderId  // Current order ID being handled by the courier
 }
 
+/// <summary>
+/// Specifies the fields by which orders in a list can be filtered or sorted.
+/// </summary>
+/// <remarks>Use this enumeration to indicate the property of an order to use when applying filtering or sorting
+/// operations in order management scenarios. The available values correspond to common order attributes, such as
+/// identifiers, status, scheduling, and time-related metrics.</remarks>
 public enum OrderInListFilter
 {
-    DeliveryId,
-    OrderId,
-    OrderType,
-    AerialDistance,
-    OrderStatus,
-    ScheduleStatus,
-    TotalTimeLeft,
-    TotalCompletionTime,
-    TotalDeliveries
+    DeliveryId, // Delivery identifier
+    OrderId, // Order identifier
+    OrderType, // Type of the order
+    AerialDistance, // Aerial distance for the order
+    OrderStatus, // Current status of the order
+    ScheduleStatus, // Schedule status of the order
+    TotalTimeLeft, //   Total time left for the order
+    TotalCompletionTime, // Total time taken to complete the order
+    TotalDeliveries // Total number of deliveries associated with the order
 }  
 
+/// <summary>
+/// Specifies the available filters for listing closed deliveries.
+/// </summary>
+/// <remarks>Use this enumeration to select the property by which closed deliveries are filtered or sorted in list
+/// operations. The specific meaning of each value corresponds to a property of a closed delivery, such as its
+/// identifier, associated order, address, or completion details.</remarks>
 public enum ClosedDeliveryInListFilter
 {
-    DeliveryId,
-    OrderId,
-    OrderType,
-    DeliveryAddress,
-    DeliveryType,
-    ActualDistance,
-    TotalCompletionTime,
-    CompletionType
+    DeliveryId, // Identifier for the delivery
+    OrderId, // Identifier for the associated order
+    OrderType, // Type of the order
+    DeliveryAddress, // Address where the delivery was made
+    DeliveryType, // Type of delivery completion
+    ActualDistance, // Actual distance covered during the delivery
+    TotalCompletionTime, // Total time taken to complete the delivery
+    CompletionType // Type of completion for the delivery
 }
 
-
+/// <summary>
+/// Specifies the fields by which open orders can be filtered or sorted in a list operation.
+/// </summary>
+/// <remarks>Use this enumeration to indicate the property of an open order to filter or sort by when retrieving
+/// order lists. The available fields correspond to common order attributes such as courier, order type, delivery
+/// address, and timing information. The meaning of each value depends on the context in which the filter is
+/// applied.</remarks>
 public enum OpenOrderInListFilter
 {
-    CourierId,
-    OrderId,
-    TypeOrder,
-    Weight,
-    DeliveryAddress,
-    ArealDistance,
-    ActualDistance,
-    ExpectedActualDeliveryTime,
-    Status,
-    TotalTimeLeft,
-    MaxDeliveryTime 
+    CourierId, // Identifier for the courier handling the order
+    OrderId, // Identifier for the order
+    TypeOrder, // Type of the order
+    Weight,     // Weight of the order
+    DeliveryAddress,    // Address where the order is to be delivered
+    ArealDistance, // Aerial distance to the delivery address
+    ActualDistance, // Actual distance covered for the delivery
+    ExpectedActualDeliveryTime, // Expected time for actual delivery
+    Status, // Current status of the order
+    TotalTimeLeft,  // Total time left for the order
+    MaxDeliveryTime  // Maximum allowed delivery time for the order
 }
 
+/// <summary>
+/// Specifies units of time for representing durations or intervals.
+/// </summary>
+/// <remarks>Use this enumeration to indicate the granularity of a time period, such as when scheduling events,
+/// configuring timeouts, or aggregating data. The values range from minutes to years.</remarks>
 public enum  Time
 {
     Minute,

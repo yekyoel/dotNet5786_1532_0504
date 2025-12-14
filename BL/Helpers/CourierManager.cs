@@ -18,6 +18,7 @@ internal static class CourierManager
         Admin,
         Courier,
     }
+
     /// <summary>
     /// Returns whether the given userId is the configured Admin, a Courier, or Unknown.
     /// </summary>
@@ -55,7 +56,16 @@ internal static class CourierManager
         throw new BLDoesNotExistException("User does not exist");
     }
 
-    // Get list of couriers with optional filtering and sorting
+
+    /// <summary>
+    /// Retrieves a collection of couriers, optionally filtered by active status and sorted according to the specified
+    /// criteria.
+    /// </summary>
+    /// <param name="isActive">If specified, filters the results to include only couriers whose active status matches this value. If null, no
+    /// filtering by active status is applied.</param>
+    /// <param name="sortBy">An optional value specifying the property by which to sort the returned couriers. If null, the original order is
+    /// preserved.</param>
+    /// <returns>An enumerable collection of couriers that match the specified filter and sorting criteria.</returns>
     internal static IEnumerable<DO.Courier> GetCouriers( bool? isActive, CourierInListFilter? sortBy)
     {
         var list = dal.Courier.ReadAll();
@@ -80,7 +90,11 @@ internal static class CourierManager
         return list;
     }
 
-   
+   /// <summary>
+   /// Converts a data object representing a courier to its corresponding business object representation.
+   /// </summary>
+   /// <param name="doCourier">The data object containing courier information to convert. Cannot be null.</param>
+   /// <returns>A business object representing the courier with values mapped from the provided data object.</returns>
     internal static BO.Courier fromDOToBO(DO.Courier doCourier) // Convert DO.Courier to BO.Courier
     {
         return new BO.Courier
@@ -97,6 +111,12 @@ internal static class CourierManager
             TotalDelSuppliedLate = 0
         };
     }
+
+    /// <summary>
+    /// Converts a business object courier to its corresponding data object representation.
+    /// </summary>
+    /// <param name="boCourier">The business object courier to convert. Cannot be null.</param>
+    /// <returns>A data object courier containing the values from the specified business object.</returns>
     internal static DO.Courier fromBOToDO(BO.Courier boCourier) // Convert BO.Courier to DO.Courier
     {
         return new DO.Courier
@@ -121,6 +141,13 @@ internal static class CourierManager
         return $"DO.Courier: Id={doCourier.Id}; Name=\"{doCourier.FullName}\"; Phone=\"{doCourier.PhoneNum}\"; Email=\"{doCourier.Email}\"; Active={doCourier.IsActive}; MaxDist={(doCourier.MaxDist.HasValue ? doCourier.MaxDist.Value.ToString("F2") : "N/A")}; Started={(doCourier.DayStarted.HasValue ? doCourier.DayStarted.Value.ToString("u") : "N/A")}";
     }
 
+    /// <summary>
+    /// Returns a string that represents the specified courier, including key properties such as ID, name, contact
+    /// information, employment status, and delivery statistics.
+    /// </summary>
+    /// <param name="courier">The courier to represent as a string. Can be null.</param>
+    /// <returns>A string containing the courier's details. If <paramref name="courier"/> is null, returns a string indicating
+    /// that the courier is null.</returns>
     internal static string ToString(BO.Courier courier)
     {
         if (courier is null)

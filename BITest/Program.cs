@@ -7,13 +7,13 @@ namespace BITest;
 
 class Program
 {
-    static readonly IBl s_bl = Factory.Get(); 
+    static readonly IBl s_bl = Factory.Get();  // Singleton BL instance
 
     public static void Main()
     {
         bool exit = false;
 
-        while (!exit)
+        while (!exit) 
         {
             Console.WriteLine("\n===== MAIN MENU =====");
             Console.WriteLine("1 - Admin");
@@ -28,13 +28,13 @@ class Program
             switch (choice)
             {
                 case 1:
-                    AdminMenu();
+                    AdminMenu(); // Call Admin Menu
                     break;
                 case 2:
-                    CourierMenu();
+                    CourierMenu(); // Call Courier Menu
                     break;
                 case 3:
-                    OrderMenu();
+                    OrderMenu(); // Call Order Menu
                     break;
                 case 0:
                     exit = true;
@@ -44,6 +44,14 @@ class Program
 
     }
 
+    /// <summary>
+    /// Displays the administrative menu and processes user input for performing administrative operations such as
+    /// resetting or initializing the database, forwarding the system clock, and managing configuration settings.
+    /// </summary>
+    /// <remarks>This method provides a console-based interface for administrators to perform system-level
+    /// tasks. It is intended for use in interactive scenarios and blocks execution until the user chooses to exit the
+    /// menu. The method handles invalid input and displays error messages for exceptions encountered during
+    /// administrative operations.</remarks>
     private static void AdminMenu()
     {
         bool exit = false;
@@ -124,6 +132,14 @@ class Program
         }
     }
 
+    /// <summary>
+    /// Displays the courier management menu and handles user interactions for viewing couriers and retrieving courier
+    /// details.
+    /// </summary>
+    /// <remarks>This method presents a console-based menu that allows users to view a list of couriers or
+    /// obtain details for a specific courier. The method continues to prompt for input until the user chooses to exit
+    /// the menu. This method is intended for interactive console applications and blocks execution until the user exits
+    /// the menu.</remarks>
     private static void CourierMenu()
     {
         bool exit = false;
@@ -173,6 +189,12 @@ class Program
         }
     }
 
+    /// <summary>
+    /// Displays the order management menu and processes user input for viewing orders and order details.
+    /// </summary>
+    /// <remarks>This method presents a console-based menu that allows users to view all orders or retrieve
+    /// details for a specific order. The menu continues to prompt for input until the user chooses to exit. Intended
+    /// for interactive console applications.</remarks>
     private static void OrderMenu()
     {
         bool exit = false;

@@ -2,27 +2,25 @@
 
 public class Courier
 {
-    public int Id { get; init; }
-    public string FullName { get; set; }
+    public int Id { get; init; } // Courier unique identifier
+    public string FullName { get; set; } // Courier full name
 
-    public string PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; } // Courier contact phone number
 
-    public string Email { get; set; }
+    public string Email { get; set; } // Courier email address
 
-    public string Password { get; set;}
+    public bool IsActive { get; set; } // Indicates if the courier is currently active
 
-    public bool IsActive { get; set;}
+    public double? MaxDist { get; set; } // Maximum delivery distance the courier can cover
 
-    public double? MaxDist { get; set;}
+    public ShippingMethod? ShippingMethod { get; set; } // Preferred shipping method of the courier
 
-    public ShippingMethod? ShippingMethod { get; set;}
+    public DateTime? EmploymentStartDate { get; init; }  // 
 
-    public DateTime? EmploymentStartDate { get; init; } 
+    public int TotalDelSuppliedOnTime { get; init; } // Total number of deliveries supplied on time by the courier
 
-    public int TotalDelSuppliedOnTime { get; init; }
+    public int TotalDelSuppliedLate { get; init; } // Total number of deliveries supplied late by the courier
 
-    public int TotalDelSuppliedLate { get; init; }
-
-    BO.OrderInProgress OrderInProg { get; set;}
+    BO.OrderInProgress OrderInProg { get; set; } // Current order being handled by the courier
 
 }
