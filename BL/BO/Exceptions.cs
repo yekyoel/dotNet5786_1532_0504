@@ -46,15 +46,17 @@ public class BLTemporaryNotAvailableException : Exception
 }
 
 [Serializable] // Indicate that the class can be serialized
-public class BLDoesNotExistException : Exception
+public class BlDoesNotExistException : Exception
 {
-    public BLDoesNotExistException(string? message) : base(message) { }
+    public BlDoesNotExistException(string? message) : base(message) { }
+    public BlDoesNotExistException(string message, Exception innerException)
+                : base(message, innerException) { }
 }
 
-/// <summary>
-/// Exception thrown by BL when an order is invalid for creation.
-/// </summary>
-[Serializable]
+    /// <summary>
+    /// Exception thrown by BL when an order is invalid for creation.
+    /// </summary>
+    [Serializable]
 public class BLInvalidOrderException : Exception
 {
     public BLInvalidOrderException(string? message) : base(message) { }
@@ -74,7 +76,7 @@ public class BLCannotDeleteOrderException : Exception
 /// Use this for BL-level null/argument checks so callers receive a consistent error type.
 /// </summary>
 [Serializable]
-public class BLNullReferenceException : Exception
+public class BlNullPropertyException : Exception
 {
-    public BLNullReferenceException(string? message) : base(message) { }
+    public BlNullPropertyException(string? message) : base(message) { }
 }
