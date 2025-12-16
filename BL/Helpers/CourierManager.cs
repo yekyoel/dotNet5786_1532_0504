@@ -172,6 +172,7 @@ internal static class CourierManager
 
         var doCourier = fromBOToDO(courier);
         dal.Courier.Create(doCourier);
+        Observers.NotifyListUpdated(); //stage 5
     }
 
     // Read courier by id
@@ -215,6 +216,8 @@ internal static class CourierManager
     internal static void DeleteCourier(int id)
     {
         dal.Courier.Delete(id);
+        Observers.NotifyItemUpdated(id); //stage 5
+        Observers.NotifyListUpdated();  //stage 5
     }
 
     /// <summary>
@@ -264,6 +267,8 @@ internal static class CourierManager
                     {
                         var updated = c with { IsActive = false };
                         dal.Courier.Update(updated);
+                        Observers.NotifyItemUpdated(c.Id); //stage 5
+
                     }
                     catch
                     {

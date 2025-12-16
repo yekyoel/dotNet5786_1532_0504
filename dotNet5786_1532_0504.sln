@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 18
-VisualStudioVersion = 18.1.11304.174 d18.0
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36804.6 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Stage0", "Stage0\Stage0.csproj", "{23EFA183-80B1-217F-D0E2-6AEDF1623973}"
 EndProject
@@ -21,6 +21,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BL", "BL\BL.csproj", "{633A75AD-AF3C-42A5-A030-32CA92B72587}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BITest", "BITest\BITest.csproj", "{A426BCA8-41B5-45CB-A2ED-83FAC3CDA135}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PL", "PL\PL.csproj", "{77931D04-5D52-415F-A756-FAFD9D0022C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +58,10 @@ Global
 		{A426BCA8-41B5-45CB-A2ED-83FAC3CDA135}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A426BCA8-41B5-45CB-A2ED-83FAC3CDA135}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A426BCA8-41B5-45CB-A2ED-83FAC3CDA135}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77931D04-5D52-415F-A756-FAFD9D0022C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77931D04-5D52-415F-A756-FAFD9D0022C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77931D04-5D52-415F-A756-FAFD9D0022C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77931D04-5D52-415F-A756-FAFD9D0022C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
