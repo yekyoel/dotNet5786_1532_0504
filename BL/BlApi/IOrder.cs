@@ -1,6 +1,6 @@
 ﻿namespace BlApi;
 
-public interface IOrder
+public interface IOrder : IObservable
 {
     public int[] StatusTotal(int userId); 
 

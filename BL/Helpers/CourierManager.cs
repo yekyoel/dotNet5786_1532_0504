@@ -6,6 +6,7 @@ namespace Helpers;
 internal static class CourierManager
 {
     private static IDal s_dal = Factory.Get; //stage 4
+    internal static ObserverManager Observers = new(); // stage 5
 
     private static IDal dal => s_dal; 
 

@@ -6,15 +6,16 @@ namespace Helpers;
 internal static class OrderManager
 {
     private static IDal s_dal = Factory.Get;
+    internal static ObserverManager Observers = new(); // stage 5
 
-  /// <summary>
-  /// Retrieves the business object representation of an order by its unique identifier.
-  /// </summary>
-  /// <remarks>The returned order includes calculated fields such as aerial distance from the store, expected
-  /// delivery time, and total time left for delivery. If the order does not exist, the method returns <see
-  /// langword="null"/>.</remarks>
-  /// <param name="orderId">The unique identifier of the order to retrieve.</param>
-  /// <returns>A <see cref="BO.Order"/> object containing the order details if found; otherwise, <see langword="null"/>.</returns>
+    /// <summary>
+    /// Retrieves the business object representation of an order by its unique identifier.
+    /// </summary>
+    /// <remarks>The returned order includes calculated fields such as aerial distance from the store, expected
+    /// delivery time, and total time left for delivery. If the order does not exist, the method returns <see
+    /// langword="null"/>.</remarks>
+    /// <param name="orderId">The unique identifier of the order to retrieve.</param>
+    /// <returns>A <see cref="BO.Order"/> object containing the order details if found; otherwise, <see langword="null"/>.</returns>
     internal static BO.Order? GetOrderById(int orderId)
     {
         var dalOrder = s_dal.Order.Read(orderId); // read from DAL

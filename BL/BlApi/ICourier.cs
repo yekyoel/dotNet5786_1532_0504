@@ -1,6 +1,6 @@
 ﻿namespace BlApi;
 
-public interface ICourier
+public interface ICourier : IObservable
 {
     public string Login(string userId);
 

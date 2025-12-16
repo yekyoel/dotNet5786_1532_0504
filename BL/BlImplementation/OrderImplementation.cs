@@ -6,6 +6,12 @@ namespace BlImplementation;
 
 internal class OrderImplementation : IOrder 
 {
+    public void AddObserver(Action listObserver) => OrderManager.Observers.AddListObserver(listObserver); //stage 5
+    public void AddObserver(int id, Action observer) => OrderManager.Observers.AddObserver(id, observer); //stage 5
+    public void RemoveObserver(Action listObserver) => OrderManager.Observers.RemoveListObserver(listObserver); //stage 5
+    public void RemoveObserver(int id, Action observer) => OrderManager.Observers.RemoveObserver(id, observer); //stage 5
+
+
     /// <summary>
     /// Gets the total number of orders for each combination of order status and schedule status for the specified user.
     /// </summary>

@@ -7,6 +7,7 @@ namespace Helpers;
 internal static class DeliveryManager
 {
     private static IDal s_dal = Factory.Get; //stage 4
+    internal static ObserverManager Observers = new(); // stage 5 not sure we need it here
 
     /// <summary>
     /// Retrieves the first delivery associated with the specified order ID, if one exists.
