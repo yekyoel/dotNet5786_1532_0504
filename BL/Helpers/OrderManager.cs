@@ -35,6 +35,8 @@ internal static class OrderManager
         var maxDeliveredTime = (dalOrder.StartTimeForOrdering ?? DateTime.Now).Add(cfg?.MaxDelTime ?? TimeSpan.FromHours(24));
         var totalTimeLeft = Tools.CalculateTotalTimeLeft(dalOrder, delivery);
 
+
+
         return new BO.Order // maps DO.Order to BO.Order
         {
             Id = dalOrder.Id,
