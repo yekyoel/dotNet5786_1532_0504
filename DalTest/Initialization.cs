@@ -432,9 +432,7 @@ public static  class Initialization
 
             // create delivery and remove order so it won't be reused
             s_dal!.Delivery.Create(delivery);
-            s_dal!.Order.Delete(order.Id);
-
-            orders = s_dal!.Order.ReadAll().ToList(); // refresh orders list after deletion
+            orders.Remove(order); // remove from local list
         } while (orders.Count() != 0);  // continue until no orders left
     }
 

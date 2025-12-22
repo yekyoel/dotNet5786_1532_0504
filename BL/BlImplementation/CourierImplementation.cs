@@ -90,6 +90,14 @@ internal class CourierImplementation : ICourier
         {
             // Convert DO->BO then map to CourierInList (uses manager helper)
             var bo = CourierManager.fromDOToBO(d);
+            
+            // Get the current active order for this courier (if any)
+            var activeDelivery = DeliveryManager.GetAllDeliveries()
+                .FirstOrDefault(delivery => 
+                    delivery.CourierId == d.Id && 
+                    delivery.DeliveryEndTime == null && 
+                    delivery.ShippingMethod != null);
+            
             result.Add(new BO.CourierInList
             {
                 CourierId = bo.Id,
@@ -100,7 +108,7 @@ internal class CourierImplementation : ICourier
                 EmploymentStartDate = bo.EmploymentStartDate,
                 TotalDelSuppliedOnTime = bo.TotalDelSuppliedOnTime,
                 TotalLateDelSupplied = bo.TotalDelSuppliedLate,
-                OrderId = 0 // Delivery/current-order not present in DO.Courier; compute if needed
+                OrderId = activeDelivery?.OrderId ?? 0 // Get OrderId from active delivery, or 0 if none
             });
         }
 
