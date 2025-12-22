@@ -5,25 +5,163 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:PL.Courier"
     mc:Ignorable="d"
-    Title="CourierWindow" Height="640" Width="800"
+    Title="Courier Details" Height="700" Width="900"
     DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
-    <!--External Grid-->
-    <Grid>
+    
+
+    <Window.Resources>
+        <!-- Style for consistent label formatting -->
+        <Style x:Key="LabelStyle" TargetType="Label">
+            <Setter Property="Width" Value="180"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <!-- Style for consistent textbox formatting -->
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5"/>
+        </Style>
+
+        <!-- Style for consistent combobox formatting -->
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Style for consistent checkbox formatting -->
+        <Style x:Key="CheckBoxStyle" TargetType="CheckBox">
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- Style for consistent datepicker formatting -->
+        <Style x:Key="DatePickerStyle" TargetType="DatePicker">
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="#F5F5F5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="893*"/>
+            <ColumnDefinition Width="7*"/>
+        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40*"/>
-            <RowDefinition Height="500*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <!--Internal, Upper Grid-->
-        <Grid HorizontalAlignment="Stretch" Height="auto" Grid.Row="0" VerticalAlignment="Stretch" Width="auto">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Label Content="Label" Grid.Column="0" Margin="10,10,0,0" VerticalAlignment="Top"/>
-            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-        </Grid>
-        <DataGrid Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}"/>
-        <Button x:Name="___No_Name_" Content="Add" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="100"/>
+
+        <!-- Title -->
+        <TextBlock Grid.Row="0" Text="Courier Details" FontSize="24" FontWeight="Bold" Margin="20,20,13,10"/>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Grid.ColumnSpan="2">
+            <StackPanel Margin="20">
+                <!-- Left and Right Columns -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Left Column -->
+                    <StackPanel Grid.Column="0">
+                        <!-- ID -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Label Content="Courier ID:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True" 
+                                     Text="{Binding CourierId, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+
+                        <!-- Full Name -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Label Content="Full Name:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource TextBoxStyle}" 
+                                     Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+
+                        <!-- Phone Number -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Label Content="Phone Number:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource TextBoxStyle}" 
+                                     Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+
+                        <!-- Email -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Label Content="Email:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource TextBoxStyle}" 
+                                     Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+
+                        <!-- Is Active -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Label Content="Is Active:" Style="{StaticResource LabelStyle}"/>
+                            <CheckBox Style="{StaticResource CheckBoxStyle}" 
+                                      IsChecked="{Binding IsActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            
+                        </StackPanel>
+
+                        <!-- Max Distance -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Label Content="Max Distance (km):" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource TextBoxStyle}" 
+                                     Text="{Binding MaxDist, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Right Column -->
+                    <StackPanel Grid.Column="2">
+                        <!-- Shipping Method -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Label Content="Shipping Method:" Style="{StaticResource LabelStyle}"/>
+                            <ComboBox Style="{StaticResource ComboBoxStyle}" 
+                                      SelectedItem="{Binding ShippingMethod, UpdateSourceTrigger=PropertyChanged}">
+                                <ComboBoxItem>Car</ComboBoxItem>
+                                <ComboBoxItem>Motorcycle</ComboBoxItem>
+                                <ComboBoxItem>Bike</ComboBoxItem>
+                                <ComboBoxItem>OnFoot</ComboBoxItem>
+                            </ComboBox>
+                        </StackPanel>
+
+                        <!-- Employment Start Date -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Label Content="Employment Date:" Style="{StaticResource LabelStyle}"/>
+                            <DatePicker Style="{StaticResource DatePickerStyle}" 
+                                        SelectedDate="{Binding EmploymentStartDate, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+
+                        <!-- Total On Time Deliveries (Read-only) -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Label Content="On-Time Deliveries:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                     Text="{Binding TotalDelSuppliedOnTime, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+
+                        <!-- Total Late Deliveries (Read-only) -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                            <Label Content="Late Deliveries:" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                     Text="{Binding TotalDelSuppliedLate, UpdateSourceTrigger=PropertyChanged}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Left" Margin="325,20,0,20">
+            <Button Content="{Binding ButtonText}" Width="120" Height="40" Click="btnAddUpdate_Click" Margin="0,0,10,0"/>
+            <Button Content="Close" Width="120" Height="40" Click="btnClose_Click"/>
+        </StackPanel>
     </Grid>
 </Window>
