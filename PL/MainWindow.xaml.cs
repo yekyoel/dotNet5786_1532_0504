@@ -8,244 +8,338 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PL.Courier;
 
-namespace PL
+namespace PL;
+
+/// <summary>
+/// Interaction logic for MainWindow.xaml
+/// </summary>
+public partial class MainWindow : Window
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+
+    public MainWindow()
     {
-        static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-        
-        public MainWindow()
-        {
-            InitializeComponent();
-            
-        }
+        InitializeComponent();
 
-        #region Dependency Properties and CLR Wrappers
-
-        public static readonly DependencyProperty ConfigurationProperty =
-            DependencyProperty.Register("Configuration", typeof(BO.Config), typeof(MainWindow));
-
-        public BO.Config Configuration
-        {
-            get { return (BO.Config)GetValue(ConfigurationProperty); }
-            set { SetValue(ConfigurationProperty, value); }
-        }
-
-        public static readonly DependencyProperty CurrentTimeProperty =
-            DependencyProperty.Register("CurrentTime", typeof(DateTime), typeof(MainWindow));
-
-        public DateTime CurrentTime
-        {
-            get { return (DateTime)GetValue(CurrentTimeProperty); }
-            set { SetValue(CurrentTimeProperty, value); }
-        }
-
-        public static readonly DependencyProperty AdminIdProperty =
-            DependencyProperty.Register("AdminId", typeof(int), typeof(MainWindow));
-
-        public int AdminId
-        {
-            get { return (int)GetValue(AdminIdProperty); }
-            set { SetValue(AdminIdProperty, value); }
-        }
-
-        public static readonly DependencyProperty CompanyNameProperty =
-            DependencyProperty.Register("CompanyName", typeof(string), typeof(MainWindow));
-
-        public string CompanyName 
-        {
-            get { return (string)GetValue(CompanyNameProperty); }
-            set { SetValue(CompanyNameProperty, value); } 
-        }
-
-        public static readonly DependencyProperty MaxDistanceProperty =
-            DependencyProperty.Register("MaxDist", typeof(double), typeof(MainWindow));
-
-        public double MaxDist
-        {
-            get { return (double)GetValue(MaxDistanceProperty); }
-            set { SetValue(MaxDistanceProperty, value); }
-        }
-
-        public static readonly DependencyProperty AvgCarMPHProperty =
-            DependencyProperty.Register("AvgCarMPH", typeof(double), typeof(MainWindow));
-
-        public double AvgCarMPH
-        {
-            get { return (double)GetValue(AvgCarMPHProperty); }
-            set { SetValue(AvgCarMPHProperty, value); }
-        }
-
-        public static readonly DependencyProperty AvgMotorcycleMPHProperty =
-            DependencyProperty.Register("AvgMotorcycleMPH", typeof(double), typeof(MainWindow));
-
-        public double AvgMotorcycleMPH
-        {
-            get { return (double)GetValue(AvgMotorcycleMPHProperty); }
-            set { SetValue(AvgMotorcycleMPHProperty, value); }
-        }
-
-        public static readonly DependencyProperty AvgBicycleMPHProperty =
-            DependencyProperty.Register("AvgBikeMPH", typeof(double), typeof(MainWindow));
-
-        public double AvgBikeMPH
-        {
-            get { return (double)GetValue(AvgBicycleMPHProperty); }
-            set { SetValue(AvgBicycleMPHProperty, value); }
-        }
-
-        public static readonly DependencyProperty AvgWalkMPHProperty =
-            DependencyProperty.Register("AvgWalkMPH", typeof(double), typeof(MainWindow));
-
-        public double AvgWalkMPH
-        {
-            get { return (double)GetValue(AvgWalkMPHProperty); }
-            set { SetValue(AvgWalkMPHProperty, value); }
-        }
-
-        public static readonly DependencyProperty MaxDeliveryTimeProperty =
-            DependencyProperty.Register("MaxDeliveryTime", typeof(TimeSpan), typeof(MainWindow));
-
-        public TimeSpan MaxDeliveryTime
-        {
-            get { return (TimeSpan)GetValue(MaxDeliveryTimeProperty); }
-            set { SetValue(MaxDeliveryTimeProperty, value); }
-        }
-
-        public static readonly DependencyProperty RiskRangeProperty =
-            DependencyProperty.Register("RiskRange", typeof(TimeSpan), typeof(MainWindow));
-
-        public TimeSpan RiskRange
-        {
-            get { return (TimeSpan)GetValue(RiskRangeProperty); }
-            set { SetValue(RiskRangeProperty, value); }
-        }
-
-        public static readonly DependencyProperty DownTimeProperty =
-            DependencyProperty.Register("DownTime", typeof(TimeSpan), typeof(MainWindow));
-
-        public TimeSpan DownTime
-        {
-            get { return (TimeSpan)GetValue(DownTimeProperty); }
-            set { SetValue(DownTimeProperty, value); }
-        }
-
-        #endregion
-
-      
-
-        private void btnAddOneSec_Click(object sender, RoutedEventArgs e)
-        {
-            s_bl.Admin.ForwardClock(BO.Time.Minute); // TODO: change to second
-            CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
-        }
-
-        private void btnAddOneMin_Click(object sender, RoutedEventArgs e)
-        {
-            s_bl.Admin.ForwardClock(BO.Time.Minute);
-            CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
-        }
-
-        private void btnAddOneHr_Click(object sender, RoutedEventArgs e)
-        {
-            s_bl.Admin.ForwardClock(BO.Time.Hour);
-            CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
-        }
-
-        private void btnAddOneDay_Click(object sender, RoutedEventArgs e)
-        {
-            s_bl.Admin.ForwardClock(BO.Time.Day);
-            CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
-        }
-
-        private void btnAddOneYr_Click(object sender, RoutedEventArgs e)
-        {
-            s_bl.Admin.ForwardClock(BO.Time.Year);
-            CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
-        }
-
-        private void btnCreateObj_Click(object sender, RoutedEventArgs e)
-        {
-            var config = new BO.Config
-            {
-                AdminId = AdminId,
-                CompanyName = CompanyName,
-                MaxDist = MaxDist,
-                AvgCarMPH = AvgCarMPH,
-                AvgMotorcycleMPH = AvgMotorcycleMPH,
-                AvgBicycleMPH = AvgBikeMPH,
-                AvgWalkMPH = AvgWalkMPH,
-                MaxDelTime = MaxDeliveryTime,
-                RiskRange = RiskRange,
-                DownTime = DownTime
-            };
-
-            s_bl.Admin.SetConfig(config);
-        }
     }
-}
 
-/*  /// <summary>
-        /// Loads configuration from the Business Logic layer and updates all UI properties.
-        /// Called on window initialization to populate the UI with current BL state.
-        /// </summary>
-        private void LoadConfigFromBL()
+    #region Dependency Properties and CLR Wrappers
+
+    public static readonly DependencyProperty ConfigurationProperty =
+        DependencyProperty.Register("Configuration", typeof(BO.Config), typeof(MainWindow));
+
+    public BO.Config Configuration
+    {
+        get { return (BO.Config)GetValue(ConfigurationProperty); }
+        set { SetValue(ConfigurationProperty, value); }
+    }
+
+    public static readonly DependencyProperty CurrentTimeProperty =
+        DependencyProperty.Register("CurrentTime", typeof(DateTime), typeof(MainWindow));
+
+    public DateTime CurrentTime
+    {
+        get { return (DateTime)GetValue(CurrentTimeProperty); }
+        set { SetValue(CurrentTimeProperty, value); }
+    }
+
+    public static readonly DependencyProperty AdminIdProperty =
+        DependencyProperty.Register("AdminId", typeof(int), typeof(MainWindow));
+
+    public int AdminId
+    {
+        get { return (int)GetValue(AdminIdProperty); }
+        set { SetValue(AdminIdProperty, value); }
+    }
+
+    public static readonly DependencyProperty CompanyNameProperty =
+        DependencyProperty.Register("CompanyName", typeof(string), typeof(MainWindow));
+
+    public string CompanyName
+    {
+        get { return (string)GetValue(CompanyNameProperty); }
+        set { SetValue(CompanyNameProperty, value); }
+    }
+
+    public static readonly DependencyProperty MaxDistanceProperty =
+        DependencyProperty.Register("MaxDist", typeof(double), typeof(MainWindow));
+
+    public double MaxDist
+    {
+        get { return (double)GetValue(MaxDistanceProperty); }
+        set { SetValue(MaxDistanceProperty, value); }
+    }
+
+    public static readonly DependencyProperty AvgCarMPHProperty =
+        DependencyProperty.Register("AvgCarMPH", typeof(double), typeof(MainWindow));
+
+    public double AvgCarMPH
+    {
+        get { return (double)GetValue(AvgCarMPHProperty); }
+        set { SetValue(AvgCarMPHProperty, value); }
+    }
+
+    public static readonly DependencyProperty AvgMotorcycleMPHProperty =
+        DependencyProperty.Register("AvgMotorcycleMPH", typeof(double), typeof(MainWindow));
+
+    public double AvgMotorcycleMPH
+    {
+        get { return (double)GetValue(AvgMotorcycleMPHProperty); }
+        set { SetValue(AvgMotorcycleMPHProperty, value); }
+    }
+
+    public static readonly DependencyProperty AvgBicycleMPHProperty =
+        DependencyProperty.Register("AvgBikeMPH", typeof(double), typeof(MainWindow));
+
+    public double AvgBikeMPH
+    {
+        get { return (double)GetValue(AvgBicycleMPHProperty); }
+        set { SetValue(AvgBicycleMPHProperty, value); }
+    }
+
+    public static readonly DependencyProperty AvgWalkMPHProperty =
+        DependencyProperty.Register("AvgWalkMPH", typeof(double), typeof(MainWindow));
+
+    public double AvgWalkMPH
+    {
+        get { return (double)GetValue(AvgWalkMPHProperty); }
+        set { SetValue(AvgWalkMPHProperty, value); }
+    }
+
+    public static readonly DependencyProperty MaxDeliveryTimeProperty =
+        DependencyProperty.Register("MaxDeliveryTime", typeof(TimeSpan), typeof(MainWindow));
+
+    public TimeSpan MaxDeliveryTime
+    {
+        get { return (TimeSpan)GetValue(MaxDeliveryTimeProperty); }
+        set { SetValue(MaxDeliveryTimeProperty, value); }
+    }
+
+    public static readonly DependencyProperty RiskRangeProperty =
+        DependencyProperty.Register("RiskRange", typeof(TimeSpan), typeof(MainWindow));
+
+    public TimeSpan RiskRange
+    {
+        get { return (TimeSpan)GetValue(RiskRangeProperty); }
+        set { SetValue(RiskRangeProperty, value); }
+    }
+
+    public static readonly DependencyProperty DownTimeProperty =
+        DependencyProperty.Register("DownTime", typeof(TimeSpan), typeof(MainWindow));
+
+    public TimeSpan DownTime
+    {
+        get { return (TimeSpan)GetValue(DownTimeProperty); }
+        set { SetValue(DownTimeProperty, value); }
+    }
+
+    #endregion
+
+
+
+    private void btnAddOneSec_Click(object sender, RoutedEventArgs e)
+    {
+        s_bl.Admin.ForwardClock(BO.Time.Minute); // TODO: change to second
+        CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
+    }
+
+    private void btnAddOneMin_Click(object sender, RoutedEventArgs e)
+    {
+        s_bl.Admin.ForwardClock(BO.Time.Minute);
+        CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
+    }
+
+    private void btnAddOneHr_Click(object sender, RoutedEventArgs e)
+    {
+        s_bl.Admin.ForwardClock(BO.Time.Hour);
+        CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
+    }
+
+    private void btnAddOneDay_Click(object sender, RoutedEventArgs e)
+    {
+        s_bl.Admin.ForwardClock(BO.Time.Day);
+        CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
+    }
+
+    private void btnAddOneYr_Click(object sender, RoutedEventArgs e)
+    {
+        s_bl.Admin.ForwardClock(BO.Time.Year);
+        CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
+    }
+
+    private void btnUpdateObj_Click(object sender, RoutedEventArgs e)
+    {
+        var config = new BO.Config
+        {
+            AdminId = AdminId,
+            CompanyName = CompanyName,
+            MaxDist = MaxDist,
+            AvgCarMPH = AvgCarMPH,
+            AvgMotorcycleMPH = AvgMotorcycleMPH,
+            AvgBicycleMPH = AvgBikeMPH,
+            AvgWalkMPH = AvgWalkMPH,
+            MaxDelTime = MaxDeliveryTime,
+            RiskRange = RiskRange,
+            DownTime = DownTime
+        };
+
+        s_bl.Admin.SetConfig(config);
+    }
+
+    private void clockObserver()
+    {
+        CurrentTime = s_bl.Admin.GetClock(); // Set initial time from BL
+    }
+
+    private void configObserver()
+    {
+        Configuration = s_bl.Admin.GetConfig();
+    }
+
+    private void LoadAll(object sender, EventArgs e) // didnt say autheriztion so i gave it a private access
+    {
+        CurrentTime = s_bl.Admin.GetClock();
+        Configuration = s_bl.Admin.GetConfig();
+        s_bl.Admin.AddClockObserver(clockObserver);
+        s_bl.Admin.AddConfigObserver(configObserver);
+    }
+
+    private void Window_Closed(object sender, EventArgs e)
+    {
+        s_bl.Admin.RemoveClockObserver(clockObserver);
+        s_bl.Admin.RemoveConfigObserver(configObserver);
+
+    }
+
+    /// <summary>
+    /// Opens the list display window to view couriers and orders.
+    /// Uses Show() to keep the main window accessible.
+    /// </summary>
+    private void btnListDisplay_Click(object sender, RoutedEventArgs e) 
+    {
+        new CourierListWindow().Show(); 
+    }
+
+    private void btnInitialize_Click(object sender, RoutedEventArgs e)
+    {
+        MessageBoxResult result = MessageBox.Show("Are you sure u want to initialize","YES" ,MessageBoxButton.YesNo, MessageBoxImage.Warning );
+        if (result == MessageBoxResult.Yes)
         {
             try
             {
-                var config = s_bl.Admin.GetConfig();
-                CurrentTime = s_bl.Admin.GetClock(); // Set initial time from BL
-                AdminId = config.AdminId;
-                CompanyName = config.CompanyName;
-                MaxDist = config.MaxDist ?? 0.0;
-                AvgCarMPH = config.AvgCarMPH;
-                AvgMotorcycleMPH = config.AvgMotorcycleMPH;
-                AvgBikeMPH = config.AvgBicycleMPH;
-                AvgWalkMPH = config.AvgWalkMPH;
-                MaxDeliveryTime = config.MaxDelTime;
-                RiskRange = config.RiskRange;
-                DownTime = config.DownTime;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading configuration: {ex.Message}\n\nMake sure to click 'Initialize' button first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        /// <summary>
-        /// Initializes the database with test data and reloads all UI properties.
-        /// </summary>
-        private void btnInitialize_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
+                // Show loading cursor (hourglass)
+                this.Cursor = System.Windows.Input.Cursors.Wait;
+                
                 s_bl.Admin.InitializeDB();
-                LoadConfigFromBL();
+                
+                // Refresh the UI after initialization
+                LoadAll(null, null);
+                
                 MessageBox.Show("Database initialized successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error initializing database: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            finally
+            {
+                // Restore normal cursor
+                this.Cursor = System.Windows.Input.Cursors.Arrow;
+            }
         }
+    }
 
-        /// <summary>
-        /// Resets the database by clearing all data.
-        /// </summary>
-        private void btnResetDB_Click(object sender, RoutedEventArgs e)
+    private void btnResetDB_Click(object sender, RoutedEventArgs e)
+    {
+        MessageBoxResult result = MessageBox.Show("Are you sure u want to reset the database", "YES", MessageBoxButton.YesNo, MessageBoxImage.Warning);
+        if (result == MessageBoxResult.Yes)
         {
             try
             {
+                // Show loading cursor (hourglass)
+                this.Cursor = System.Windows.Input.Cursors.Wait;
+                
                 s_bl.Admin.ResetDB();
-                LoadConfigFromBL();
+                
+                // Refresh the UI after reset
+                LoadAll(null, null);
+                
                 MessageBox.Show("Database reset successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error resetting database: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-        }*/
+            finally
+            {
+                // Restore normal cursor
+                this.Cursor = System.Windows.Input.Cursors.Arrow;
+            }
+        }
+    }
+}
+
+
+
+/*  /// <summary>
+    /// Loads configuration from the Business Logic layer and updates all UI properties.
+    /// Called on window initialization to populate the UI with current BL state.
+    /// </summary>
+    private void LoadConfigFromBL()
+    {
+        try
+        {
+            var config = s_bl.Admin.GetConfig();
+            CurrentTime = s_bl.Admin.GetClock(); // Set initial time from BL
+            AdminId = config.AdminId;
+            CompanyName = config.CompanyName;
+            MaxDist = config.MaxDist ?? 0.0;
+            AvgCarMPH = config.AvgCarMPH;
+            AvgMotorcycleMPH = config.AvgMotorcycleMPH;
+            AvgBikeMPH = config.AvgBicycleMPH;
+            AvgWalkMPH = config.AvgWalkMPH;
+            MaxDeliveryTime = config.MaxDelTime;
+            RiskRange = config.RiskRange;
+            DownTime = config.DownTime;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error loading configuration: {ex.Message}\n\nMake sure to click 'Initialize' button first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    /// <summary>
+    /// Initializes the database with test data and reloads all UI properties.
+    /// </summary>
+    private void btnInitialize_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            s_bl.Admin.InitializeDB();
+            LoadConfigFromBL();
+            MessageBox.Show("Database initialized successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error initializing database: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    /// <summary>
+    /// Resets the database by clearing all data.
+    /// </summary>
+    private void btnResetDB_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            s_bl.Admin.ResetDB();
+            LoadConfigFromBL();
+            MessageBox.Show("Database reset successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error resetting database: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }*/

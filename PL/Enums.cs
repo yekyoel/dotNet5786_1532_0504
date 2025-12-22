@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace PL;
+
+internal class VehicleTypeCollections : IEnumerable
+{
+    static readonly IEnumerable<BO.ShippingMethod> s_enums =
+    (Enum.GetValues(typeof(BO.ShippingMethod)) as IEnumerable<BO.ShippingMethod>)!;
+
+    public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
+}
+    

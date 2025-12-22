@@ -10,7 +10,7 @@
     <Grid>
         <!--the clock section-->
         <Grid  Margin="10,0,10,380">
-            <Label Content="{Binding CurrentTime}" FontWeight="Bold" FontSize="20" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="30" Width="200" />
+            <Label Content="{Binding CurrentTime}" FontWeight="Bold" FontSize="15" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Height="30" Width="200" />
         
             <Button Content="Add Second" HorizontalAlignment="Left" Margin="235,10,0,0" VerticalAlignment="Top" Height="30" Width="70" Click="btnAddOneSec_Click" />
             <Button Content="Add Minute" HorizontalAlignment="Left" Margin="315,10,0,0" VerticalAlignment="Top" Height="30" Width="70" Click="btnAddOneMin_Click" />
@@ -45,8 +45,8 @@
                          Text="{Binding Configuration.RiskRange, UpdateSourceTrigger=PropertyChanged}"/>
                 <TextBox HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"
                          Text="{Binding Configuration.DownTime, UpdateSourceTrigger=PropertyChanged}"/>
-                <Button Content="Button" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"
-                        Click="btnCreateObj_Click"/>
+                <Button Content="Set Config Values" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"
+                        Click="btnUpdateObj_Click"/>
             </StackPanel>
 
             
@@ -54,9 +54,10 @@
 
         <!-- General Bottons-->
         <Grid Margin="10,375,10,10">
-            <Button Content="Initialize" HorizontalAlignment="Left" Margin="90,20,0,0" VerticalAlignment="Top"/>
-            <Button Content="Rest DB" HorizontalAlignment="Left" Margin="213,20,0,0" VerticalAlignment="Top"/>
-            <Button Content="List Display" HorizontalAlignment="Left" Margin="400,20,0,0" VerticalAlignment="Top"/>
+            <Button Content="Initialize" HorizontalAlignment="Left" Margin="90,20,0,0" VerticalAlignment="Top" Click="btnInitialize_Click"/>
+            <Button Content="Reset DB" HorizontalAlignment="Left" Margin="213,20,0,0" VerticalAlignment="Top" Click="btnResetDB_Click"/>
+            <!-- Button to open the list display window for viewing couriers and orders -->
+            <Button Content="View Lists" HorizontalAlignment="Left" Margin="400,20,0,0" VerticalAlignment="Top" Click="btnListDisplay_Click"/>
         </Grid>
 
     </Grid>

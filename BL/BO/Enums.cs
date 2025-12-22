@@ -7,7 +7,8 @@ public enum ShippingMethod
     Car,
     Motorcycle,
     Bike,
-    OnFoot
+    OnFoot,
+    None
 }
 
 /// <summary>
