@@ -185,7 +185,7 @@ namespace PL
 
         private void btnAddOneSec_Click(object sender, RoutedEventArgs e)
         {
-            s_bl.Admin.ForwardClock(BO.Time.Minute); // TODO: change to second
+            s_bl.Admin.ForwardClock(BO.Time.Second);
             CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
         }
 
