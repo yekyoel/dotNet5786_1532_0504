@@ -6,11 +6,61 @@
         xmlns:local="clr-namespace:PL.Courier"
         mc:Ignorable="d"
         Title="CourierListWindow" Height="450" Width="800"
-        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        Loaded="Window_Loaded" Closed="Window_Closed">
     <Grid>
-        <DataGrid Margin="5" Grid.Row="1" ItemsSource="{Binding CourierList}"> </DataGrid>
-        <ComboBox ItemsSource="{Binding Source={StaticResource VehicleTypeCollectionsKey}}"
-            Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <ComboBox Grid.Row="0" 
+                  ItemsSource="{Binding Source={StaticResource VehicleTypeCollectionsKey}}"
+                  HorizontalAlignment="Stretch" 
+                  VerticalAlignment="Stretch"
+                  Margin="5"
+                  SelectedValue="{Binding FilterShippingMethods, Mode=TwoWay}" 
+                  SelectionChanged="ComboBox_SelectionChanged" />
+        
+        <DataGrid Grid.Row="1" 
+                  Margin="5" 
+                  ItemsSource="{Binding CourierList}" 
+                  IsReadOnly="True" 
+                  AutoGenerateColumns="False"
+                  EnableRowVirtualization="True" 
+                  RowDetailsVisibilityMode="VisibleWhenSelected">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding CourierId}" Header="Courier ID" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding FullName}" Header="Full Name" Width="*"/>
+                
+                <DataGridTemplateColumn Header="Is Active" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <CheckBox IsEnabled="False" IsChecked="{Binding Path=IsActive}" 
+                                      HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTextColumn Binding="{Binding TypeOrder}" Header="Order Type" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding EmploymentStartDate, StringFormat='{}{0:dd/MM/yyyy}'}" 
+                                    Header="Employment Date" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding TotalDelSuppliedOnTime}" 
+                                    Header="On Time Deliveries" Width="Auto"/>
+                
+                <DataGridTemplateColumn Header="Late Deliveries" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding TotalLateDelSupplied}" 
+                                       Foreground="Red" 
+                                       FontWeight="Bold"
+                                       HorizontalAlignment="Center"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                
+                <DataGridTextColumn Binding="{Binding OrderId}" Header="Current Order ID" Width="Auto"/>
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>
