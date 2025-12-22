@@ -17,11 +17,24 @@ namespace PL
     public partial class MainWindow : Window
     {
         static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-        
+        private readonly Action _clockObserver;
+
         public MainWindow()
         {
             InitializeComponent();
-            
+
+            //needs checking
+            // create observer delegate once so we can remove it on close
+            _clockObserver = OnClockUpdated;
+
+            // load initial values from BL (including clock)
+            LoadConfigFromBL();
+
+            // subscribe to BL clock updates so UI refreshes automatically
+            s_bl.Admin.AddClockObserver(_clockObserver);
+
+            // ensure we unsubscribe when window closes
+            this.Closed += (_, _) => s_bl.Admin.RemoveClockObserver(_clockObserver);
         }
 
         #region Dependency Properties and CLR Wrappers
@@ -136,7 +149,39 @@ namespace PL
 
         #endregion
 
-      
+        private void OnClockUpdated()
+        {
+            // run on UI thread and fetch current clock from BL
+            Dispatcher.Invoke(() => CurrentTime = s_bl.Admin.GetClock());
+        }
+
+        /// <summary>
+        /// Loads configuration from the Business Logic layer and updates all UI properties.
+        /// Called on window initialization to populate the UI with current BL state.
+        /// </summary>
+        /// needs checking
+        private void LoadConfigFromBL()
+        {
+            try
+            {
+                var config = s_bl.Admin.GetConfig();
+                CurrentTime = s_bl.Admin.GetClock(); // Set initial time from BL
+                AdminId = config.AdminId;
+                CompanyName = config.CompanyName;
+                MaxDist = config.MaxDist ?? 0.0;
+                AvgCarMPH = config.AvgCarMPH;
+                AvgMotorcycleMPH = config.AvgMotorcycleMPH;
+                AvgBikeMPH = config.AvgBicycleMPH;
+                AvgWalkMPH = config.AvgWalkMPH;
+                MaxDeliveryTime = config.MaxDelTime;
+                RiskRange = config.RiskRange;
+                DownTime = config.DownTime;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading configuration: {ex.Message}\n\nMake sure to click 'Initialize' button first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
         private void btnAddOneSec_Click(object sender, RoutedEventArgs e)
         {
@@ -188,64 +233,3 @@ namespace PL
         }
     }
 }
-
-/*  /// <summary>
-        /// Loads configuration from the Business Logic layer and updates all UI properties.
-        /// Called on window initialization to populate the UI with current BL state.
-        /// </summary>
-        private void LoadConfigFromBL()
-        {
-            try
-            {
-                var config = s_bl.Admin.GetConfig();
-                CurrentTime = s_bl.Admin.GetClock(); // Set initial time from BL
-                AdminId = config.AdminId;
-                CompanyName = config.CompanyName;
-                MaxDist = config.MaxDist ?? 0.0;
-                AvgCarMPH = config.AvgCarMPH;
-                AvgMotorcycleMPH = config.AvgMotorcycleMPH;
-                AvgBikeMPH = config.AvgBicycleMPH;
-                AvgWalkMPH = config.AvgWalkMPH;
-                MaxDeliveryTime = config.MaxDelTime;
-                RiskRange = config.RiskRange;
-                DownTime = config.DownTime;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error loading configuration: {ex.Message}\n\nMake sure to click 'Initialize' button first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        /// <summary>
-        /// Initializes the database with test data and reloads all UI properties.
-        /// </summary>
-        private void btnInitialize_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                s_bl.Admin.InitializeDB();
-                LoadConfigFromBL();
-                MessageBox.Show("Database initialized successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error initializing database: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        /// <summary>
-        /// Resets the database by clearing all data.
-        /// </summary>
-        private void btnResetDB_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                s_bl.Admin.ResetDB();
-                LoadConfigFromBL();
-                MessageBox.Show("Database reset successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error resetting database: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }*/
