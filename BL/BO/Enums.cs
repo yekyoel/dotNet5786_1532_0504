@@ -139,9 +139,9 @@ public enum OpenOrderInListFilter
 /// configuring timeouts, or aggregating data. The values range from minutes to years.</remarks>
 public enum  Time
 {
+    Second,
     Minute,
     Hour,
     Day,
-    Month,
     Year
 }
