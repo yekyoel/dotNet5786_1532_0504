@@ -29,9 +29,6 @@ public partial class MainWindow : Window
         _clockObserver = OnClockUpdated;
         _configObserver = OnConfigUpdated;
 
-        // load initial values from BL (including clock)
-        LoadConfigFromBL();
-
         // subscribe to BL clock updates so UI refreshes automatically
         s_bl.Admin.AddClockObserver(_clockObserver);
         
@@ -179,7 +176,6 @@ public partial class MainWindow : Window
     }
 
 
-    // idk leave for now
     private void OnClockUpdated()
     {
         // run on UI thread and fetch current clock from BL
@@ -228,7 +224,8 @@ public partial class MainWindow : Window
     }
 
 
-    // clock buttons handlers
+
+    #region buttons for clock manipulation
     private void btnAddOneSec_Click(object sender, RoutedEventArgs e)
     {
         s_bl.Admin.ForwardClock(BO.Time.Second);
@@ -258,10 +255,10 @@ public partial class MainWindow : Window
         s_bl.Admin.ForwardClock(BO.Time.Year);
         CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
     }
+    #endregion
 
 
-
-    // database buttons handlers
+    #region database buttons handlers
 
     /// <summary>
     /// Initializes the database with test data and reloads all UI properties.
@@ -333,4 +330,6 @@ public partial class MainWindow : Window
     {
         new CourierListWindow().Show();
     }
+
+    #endregion
 }
