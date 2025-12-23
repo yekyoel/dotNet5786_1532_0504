@@ -103,8 +103,7 @@ internal class CourierImplementation : ICourier
                 CourierId = bo.Id,
                 FullName = bo.FullName,
                 IsActive = bo.IsActive,
-                // derive the food type most associated with this courier
-                TypeOrder = FindCourierOrderType(d),
+                ShippingMethod = bo.ShippingMethod,
                 EmploymentStartDate = bo.EmploymentStartDate,
                 TotalDelSuppliedOnTime = bo.TotalDelSuppliedOnTime,
                 TotalLateDelSupplied = bo.TotalDelSuppliedLate,

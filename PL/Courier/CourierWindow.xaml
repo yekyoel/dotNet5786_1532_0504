@@ -80,8 +80,9 @@
                         <!-- ID -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Courier ID:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True" 
-                                     Text="{Binding CurrentCourier.Id, Mode=OneWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            <TextBox Style="{StaticResource TextBoxStyle}" 
+                                     IsReadOnly="{Binding IsUpdateMode}"
+                                     Text="{Binding CurrentCourier.Id, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
                         </StackPanel>
 
                         <!-- Full Name -->
@@ -126,12 +127,8 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Shipping Method:" Style="{StaticResource LabelStyle}"/>
                             <ComboBox Style="{StaticResource ComboBoxStyle}" 
-                                      SelectedValue="{Binding CurrentCourier.ShippingMethod, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}">
-                                <ComboBoxItem>Car</ComboBoxItem>
-                                <ComboBoxItem>Motorcycle</ComboBoxItem>
-                                <ComboBoxItem>Bike</ComboBoxItem>
-                                <ComboBoxItem>OnFoot</ComboBoxItem>
-                            </ComboBox>
+                                      ItemsSource="{Binding Source={StaticResource VehicleTypeCollectionsKey}}"
+                                      SelectedValue="{Binding CurrentCourier.ShippingMethod, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
                         </StackPanel>
 
                         <!-- Employment Start Date -->

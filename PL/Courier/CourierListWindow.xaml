@@ -14,17 +14,31 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
-        <ComboBox Grid.Row="0" 
-                  ItemsSource="{Binding Source={StaticResource VehicleTypeCollectionsKey}}"
-                  HorizontalAlignment="Stretch" 
-                  VerticalAlignment="Stretch"
-                  Margin="5"
-                  SelectedValue="{Binding FilterShippingMethods, Mode=TwoWay}" 
-                  SelectionChanged="ComboBox_SelectionChanged" />
+        <Grid Grid.Row="0" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <ComboBox Grid.Column="0"
+                      ItemsSource="{Binding Source={StaticResource VehicleTypeCollectionsKey}}"
+                      VerticalAlignment="Center"
+                      SelectedValue="{Binding FilterShippingMethods, Mode=TwoWay}" 
+                      SelectionChanged="ComboBox_SelectionChanged" />
+            
+            <Button Grid.Column="1"
+                    Content="Add"
+                    Margin="10,0,0,0"
+                    Padding="15,5"
+                    HorizontalAlignment="Right"
+                    Click="btnAdd_Click" />
+        </Grid>
         
         <DataGrid Grid.Row="1" 
                   Margin="5" 
                   ItemsSource="{Binding CourierList}" 
+                  SelectedItem="{Binding SelectedCouriers}" 
+                  MouseDoubleClick="lsvCouriersList_MouseDoubleClick"
                   IsReadOnly="True" 
                   AutoGenerateColumns="False"
                   EnableRowVirtualization="True" 
@@ -42,7 +56,7 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 
-                <DataGridTextColumn Binding="{Binding TypeOrder}" Header="Order Type" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding ShippingMethod}" Header="Shipping Method" Width="Auto"/>
                 <DataGridTextColumn Binding="{Binding EmploymentStartDate, StringFormat='{}{0:dd/MM/yyyy}'}" 
                                     Header="Employment Date" Width="Auto"/>
                 <DataGridTextColumn Binding="{Binding TotalDelSuppliedOnTime}" 
@@ -60,6 +74,19 @@
                 </DataGridTemplateColumn>
                 
                 <DataGridTextColumn Binding="{Binding OrderId}" Header="Current Order ID" Width="Auto"/>
+                
+                <DataGridTemplateColumn Header="Actions" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Delete" 
+                                    Padding="8,4"
+                                    Background="#FF6B6B"
+                                    Foreground="White"
+                                    Click="btnDelete_Click"
+                                    Tag="{Binding CourierId}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

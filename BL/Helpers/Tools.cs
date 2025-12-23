@@ -178,55 +178,6 @@ internal static class Tools
     }
 
    /// <summary>
-   /// Determines the most frequent order type delivered by the specified courier based on their delivery history.
-   /// </summary>
-   /// <remarks>If the courier has not delivered any orders, the method defaults to returning
-   /// BO.OrderType.Pizza.</remarks>
-   /// <param name="courier">The courier whose delivery history is analyzed to determine the predominant order type. Cannot be null.</param>
-   /// <returns>A value of type BO.OrderType representing the order type most frequently delivered by the courier. Returns
-   /// BO.OrderType.Pizza if the courier has no delivery history.</returns>
-   /// <exception cref="ArgumentNullException">Thrown if the courier parameter is null.</exception>
-    internal static BO.OrderType FindCourierOrderType(DO.Courier courier)
-    {
-        if (courier is null)
-            throw new ArgumentNullException(nameof(courier)); // throw an exception if courier is null
-
-        var dal = Factory.Get; // get DAL instance
-        // read deliveries assigned to this courier
-        var deliveries = dal.Delivery.ReadAll(d => d.CourierId == courier.Id);
-
-        // count foods by DO.OrderType
-        var counts = new Dictionary<DO.OrderType, int>();
-        foreach (var del in deliveries)
-        {
-            // safe read of order (Read returns Order? in DAL implementations)
-            var order = dal.Order.Read(del.OrderId);
-            if (order?.Food is DO.OrderType ot)
-            {
-                if (counts.ContainsKey(ot)) counts[ot]++; else counts[ot] = 1;
-            }
-        }
-
-        if (counts.Count == 0)
-        {
-            // no history -> choose default
-            return BO.OrderType.Pizza;
-        }
-
-        var mostFrequent = counts.OrderByDescending(kv => kv.Value).First().Key; // get most frequent DO.OrderType
-
-        // map DO.OrderType to BO.OrderType and return
-        return mostFrequent switch
-        {
-            DO.OrderType.Pizza => BO.OrderType.Pizza,
-            DO.OrderType.Hamburger => BO.OrderType.Hamburger,
-            DO.OrderType.Fries => BO.OrderType.Fries,
-            DO.OrderType.IceCream => BO.OrderType.IceCream,
-            _ => BO.OrderType.Pizza
-        };
-    }
-
-   /// <summary>
    /// Maps the preferred shipping method of the specified courier to its corresponding business object shipping method.
    /// </summary>
    /// <param name="courier">The courier whose preferred shipping method is to be mapped. Cannot be null.</param>

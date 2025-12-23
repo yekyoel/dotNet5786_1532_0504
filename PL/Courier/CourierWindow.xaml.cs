@@ -24,11 +24,12 @@ public partial class CourierWindow : Window
     public CourierWindow(int id = 0)
     {
         ButtonText = id == 0 ? "Add" : "Update";
+        IsUpdateMode = id != 0;
         InitializeComponent();
         
         try
         {
-            CurrentCourier = (id != 0) ? s_bl.Courier.GetCourierDetails(0, id)! : new BO.Courier();
+            CurrentCourier = (id != 0) ? s_bl.Courier.GetCourierDetails(123456789, id)! : new BO.Courier();
         }
         catch (Exception ex)
         {
@@ -53,7 +54,7 @@ public partial class CourierWindow : Window
     {
         int id = CurrentCourier!.Id;
         CurrentCourier = null;
-        CurrentCourier = s_bl.Courier.GetCourierDetails(0, id);
+        CurrentCourier = s_bl.Courier.GetCourierDetails(123456789, id);
     }
 
 
@@ -65,6 +66,15 @@ public partial class CourierWindow : Window
         get { return (string)GetValue(ButtonTextProperty); }
         set { SetValue(ButtonTextProperty, value); }
     }
+
+    public bool IsUpdateMode
+    {
+        get { return (bool)GetValue(IsUpdateModeProperty); }
+        set { SetValue(IsUpdateModeProperty, value); }
+    }
+
+    public static readonly DependencyProperty IsUpdateModeProperty =
+        DependencyProperty.Register("IsUpdateMode", typeof(bool), typeof(CourierWindow), new PropertyMetadata(false));
 
 
     public BO.Courier? CurrentCourier
@@ -85,13 +95,13 @@ public partial class CourierWindow : Window
         {
             if (ButtonText == "Add")
             {
-                s_bl.Courier.AddCourier(0, CurrentCourier!);
+                s_bl.Courier.AddCourier(123456789, CurrentCourier!);
                 MessageBox.Show("Courier added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
             else
             {
-                s_bl.Courier.UpdateCourierDetails(0, CurrentCourier!);
+                s_bl.Courier.UpdateCourierDetails(123456789, CurrentCourier!);
                 MessageBox.Show("Courier updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 this.Close();
             }
