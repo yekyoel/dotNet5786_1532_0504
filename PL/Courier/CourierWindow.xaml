@@ -6,7 +6,9 @@
     xmlns:local="clr-namespace:PL.Courier"
     mc:Ignorable="d"
     Title="Courier Details" Height="700" Width="900"
-    DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
+    DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+    Loaded="Window_Loaded"
+    Closed="Window_Closed">
     
 
     <Window.Resources>
@@ -79,43 +81,42 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Courier ID:" Style="{StaticResource LabelStyle}"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True" 
-                                     Text="{Binding CourierId, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Text="{Binding CurrentCourier.Id, Mode=OneWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
                         </StackPanel>
 
                         <!-- Full Name -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Full Name:" Style="{StaticResource LabelStyle}"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" 
-                                     Text="{Binding FullName, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Text="{Binding CurrentCourier.FullName, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
                         </StackPanel>
 
                         <!-- Phone Number -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Phone Number:" Style="{StaticResource LabelStyle}"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" 
-                                     Text="{Binding PhoneNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Text="{Binding CurrentCourier.PhoneNumber, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
                         </StackPanel>
 
                         <!-- Email -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Email:" Style="{StaticResource LabelStyle}"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" 
-                                     Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Text="{Binding CurrentCourier.Email, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
                         </StackPanel>
 
                         <!-- Is Active -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Is Active:" Style="{StaticResource LabelStyle}"/>
                             <CheckBox Style="{StaticResource CheckBoxStyle}" 
-                                      IsChecked="{Binding IsActive, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"/>
-                            
+                                      IsChecked="{Binding CurrentCourier.IsActive, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
                         </StackPanel>
 
                         <!-- Max Distance -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Max Distance (km):" Style="{StaticResource LabelStyle}"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" 
-                                     Text="{Binding MaxDist, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Text="{Binding CurrentCourier.MaxDist, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
                         </StackPanel>
                     </StackPanel>
 
@@ -125,7 +126,7 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Shipping Method:" Style="{StaticResource LabelStyle}"/>
                             <ComboBox Style="{StaticResource ComboBoxStyle}" 
-                                      SelectedItem="{Binding ShippingMethod, UpdateSourceTrigger=PropertyChanged}">
+                                      SelectedValue="{Binding CurrentCourier.ShippingMethod, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}">
                                 <ComboBoxItem>Car</ComboBoxItem>
                                 <ComboBoxItem>Motorcycle</ComboBoxItem>
                                 <ComboBoxItem>Bike</ComboBoxItem>
@@ -137,21 +138,21 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Employment Date:" Style="{StaticResource LabelStyle}"/>
                             <DatePicker Style="{StaticResource DatePickerStyle}" 
-                                        SelectedDate="{Binding EmploymentStartDate, UpdateSourceTrigger=PropertyChanged}"/>
+                                        SelectedDate="{Binding CurrentCourier.EmploymentStartDate, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
                         </StackPanel>
 
                         <!-- Total On Time Deliveries (Read-only) -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="On-Time Deliveries:" Style="{StaticResource LabelStyle}"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding TotalDelSuppliedOnTime, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Text="{Binding CurrentCourier.TotalDelSuppliedOnTime, Mode=OneWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
                         </StackPanel>
 
                         <!-- Total Late Deliveries (Read-only) -->
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Late Deliveries:" Style="{StaticResource LabelStyle}"/>
                             <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding TotalDelSuppliedLate, UpdateSourceTrigger=PropertyChanged}"/>
+                                     Text="{Binding CurrentCourier.TotalDelSuppliedLate, Mode=OneWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
                         </StackPanel>
                     </StackPanel>
                 </Grid>

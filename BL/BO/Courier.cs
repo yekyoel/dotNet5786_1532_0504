@@ -21,6 +21,6 @@ public class Courier
 
     public int TotalDelSuppliedLate { get; init; } // Total number of deliveries supplied late by the courier
 
-    BO.OrderInProgress OrderInProg { get; set; } // Current order being handled by the courier
+    public BO.OrderInProgress OrderInProg { get; set; } // Current order being handled by the courier
 
 }
