@@ -21,6 +21,13 @@ public partial class CourierWindow : Window
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
+    /// <summary>
+    /// Initializes a new instance of the CourierWindow class for adding a new courier or updating an existing one.
+    /// </summary>
+    /// <remarks>If an error occurs while loading the courier details, an error message is displayed and the
+    /// window is closed.</remarks>
+    /// <param name="id">The identifier of the courier to update. If 0, a new courier is created; otherwise, the courier with the
+    /// specified identifier is loaded for editing.</param>
     public CourierWindow(int id = 0)
     {
         ButtonText = id == 0 ? "Add" : "Update";
@@ -38,18 +45,37 @@ public partial class CourierWindow : Window
         }
     }
 
+    /// <summary>
+    /// Handles the Loaded event of the window to perform initialization tasks when the window is first displayed.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the window being loaded.</param>
+    /// <param name="e">The event data associated with the Loaded event.</param>
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         if (CurrentCourier?.Id != 0)
             s_bl.Courier.AddObserver(CurrentCourier!.Id, courierObserver);
     }
 
+    /// <summary>
+    /// Handles the Closed event of the window and performs necessary cleanup operations.
+    /// </summary>
+    /// <remarks>This method is intended to be used as an event handler for the window's Closed event. It
+    /// ensures that any observers associated with the current courier are properly removed when the window is
+    /// closed.</remarks>
+    /// <param name="sender">The source of the event, typically the window being closed.</param>
+    /// <param name="e">An EventArgs object that contains the event data.</param>
     private void Window_Closed(object sender, EventArgs e)
     {
         if (CurrentCourier?.Id != 0)
             s_bl.Courier.RemoveObserver(CurrentCourier!.Id, courierObserver);
     }
 
+    /// <summary>
+    /// Refreshes the details of the current courier by retrieving the latest information from the data source.
+    /// </summary>
+    /// <remarks>This method updates the CurrentCourier property with the most recent data for the currently
+    /// selected courier. If CurrentCourier is null, a NullReferenceException will occur. This method is intended for
+    /// internal use within the class to ensure that courier information remains up to date.</remarks>
     private void courierObserver()
     {
         int id = CurrentCourier!.Id;
@@ -57,10 +83,18 @@ public partial class CourierWindow : Window
         CurrentCourier = s_bl.Courier.GetCourierDetails(123456789, id);
     }
 
-
+    /// <summary>
+    /// Identifies the ButtonText dependency property.
+    /// </summary>
+    /// <remarks>This field is used to register and reference the ButtonText property with the Windows
+    /// Presentation Foundation (WPF) property system. It is typically used when calling methods such as SetValue or
+    /// GetValue on instances of CourierWindow.</remarks>
     public static readonly DependencyProperty ButtonTextProperty =
         DependencyProperty.Register("ButtonText", typeof(string), typeof(CourierWindow));
 
+    /// <summary>
+    /// Gets or sets the text displayed on the action button (Add/Update).
+    /// </summary>
     public string ButtonText
     {
         get { return (string)GetValue(ButtonTextProperty); }
@@ -77,6 +111,9 @@ public partial class CourierWindow : Window
         DependencyProperty.Register("IsUpdateMode", typeof(bool), typeof(CourierWindow), new PropertyMetadata(false));
 
 
+    /// <summary>
+    /// Gets or sets the currently selected courier.
+    /// </summary>
     public BO.Courier? CurrentCourier
     {
         get { return (BO.Courier?)GetValue(CurrentCourierProperty); }

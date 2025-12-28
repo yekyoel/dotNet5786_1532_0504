@@ -152,10 +152,22 @@ internal class CourierImplementation : ICourier
             throw new ArgumentNullException(nameof(courier));
 
         var adminId = AdminManager.GetConfig().AdminId;
-        if (userId != adminId && userId != courier.Id)
+        if (userId != adminId && userId != courier.Id) // only admin or the courier themselves
             throw new UnauthorizedAccessException("Only admin or the courier may update details.");
 
         // Delegate update to manager (handles mapping + DAL)
         CourierManager.UpdateCourier(courier);
+    }
+    
+    /// <summary>
+    /// Determines whether the specified user has access to the courier's information or actions.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user whose access is being checked.</param>
+    /// <param name="courierId">The unique identifier of the courier to which access is being evaluated.</param>
+    /// <returns>true if the user is either the administrator or the courier specified by courierId; otherwise, false.</returns>
+    public bool AccessToCourier(int userId, int courierId)
+    {
+        var adminId = AdminManager.GetConfig().AdminId;
+        return userId == adminId || userId == courierId;
     }
 }

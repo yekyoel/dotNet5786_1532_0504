@@ -8,9 +8,17 @@ namespace BITest;
 class Program
 {
     static readonly IBl s_bl = Factory.Get();  // Singleton BL instance
+    static int s_userId; // Store userId at class level
 
     public static void Main()
     {
+        Console.WriteLine("Enter Your Id:");
+        if (!int.TryParse(Console.ReadLine(), out s_userId))
+        {
+            Console.WriteLine("Invalid ID. Exiting...");
+            return;
+        }
+        
         bool exit = false;
 
         while (!exit) 
@@ -86,7 +94,7 @@ class Program
                         break;
 
                     case 3:
-                        Console.WriteLine("Forward Clock by: 1-Minute, 2-Hour, 3-Day, 4-Month, 5-Year");
+                        Console.WriteLine("Forward Clock by: 1-Second, 2-Minute, 3-Hour, 4-Day, 5-Year");
                         if (int.TryParse(Console.ReadLine(), out int timeUnit))
                         {
                             var time = timeUnit switch
@@ -161,7 +169,7 @@ class Program
                 {
                     case 1:
                         Console.WriteLine("Viewing all couriers...");
-                        var couriers = s_bl.Courier.GetListOfCouriers(0, null, null);
+                        var couriers = s_bl.Courier.GetListOfCouriers(s_userId, null, null);
                         foreach (var courier in couriers)
                         {
                             Console.WriteLine($"ID: {courier.CourierId}, Name: {courier.FullName}, Active: {courier.IsActive}");
@@ -172,7 +180,7 @@ class Program
                         Console.Write("Enter courier ID: ");
                         if (int.TryParse(Console.ReadLine(), out int courierId))
                         {
-                            var courier = s_bl.Courier.GetCourierDetails(0, courierId);
+                            var courier = s_bl.Courier.GetCourierDetails(s_userId, courierId);
                             Console.WriteLine($"Courier: {courier.FullName}, Email: {courier.Email}, Phone: {courier.PhoneNumber}");
                         }
                         break;
@@ -216,7 +224,7 @@ class Program
                 {
                     case 1:
                         Console.WriteLine("Viewing all orders...");
-                        var orders = s_bl.Order.GetListOfOrders(0, null, null, null);
+                        var orders = s_bl.Order.GetListOfOrders(s_userId, null, null, null);
                         foreach (var order in orders)
                         {
                             Console.WriteLine($"Order ID: {order.OrderId}, Type: {order.OrderType}, Status: {order.OrderStatus}");
@@ -227,7 +235,7 @@ class Program
                         Console.Write("Enter order ID: ");
                         if (int.TryParse(Console.ReadLine(), out int orderId))
                         {
-                            var order = s_bl.Order.GetOrderDetails(0, orderId);
+                            var order = s_bl.Order.GetOrderDetails(s_userId, orderId);
                             Console.WriteLine($"Order: {order.Id}, Customer: {order.CustomerName}, Address: {order.OrderAddress}");
                         }
                         break;
