@@ -20,6 +20,7 @@ namespace PL.Courier;
 public partial class CourierWindow : Window
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    bool _isObserverRegistered;
 
     /// <summary>
     /// Initializes a new instance of the CourierWindow class for adding a new courier or updating an existing one.
@@ -33,7 +34,7 @@ public partial class CourierWindow : Window
         ButtonText = id == 0 ? "Add" : "Update";
         IsUpdateMode = id != 0;
         InitializeComponent();
-        
+
         try
         {
             CurrentCourier = (id != 0) ? s_bl.Courier.GetCourierDetails(123456789, id)! : new BO.Courier();
@@ -41,7 +42,7 @@ public partial class CourierWindow : Window
         catch (Exception ex)
         {
             MessageBox.Show($"Error loading courier: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            this.Close();
+            Close();
         }
     }
 
@@ -52,8 +53,19 @@ public partial class CourierWindow : Window
     /// <param name="e">The event data associated with the Loaded event.</param>
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-        if (CurrentCourier?.Id != 0)
-            s_bl.Courier.AddObserver(CurrentCourier!.Id, courierObserver);
+        try
+        {
+            var courier = CurrentCourier;
+            if (courier?.Id > 0)
+            {
+                s_bl.Courier.AddObserver(courier.Id, courierObserver);
+                _isObserverRegistered = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error while subscribing to updates: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     /// <summary>
@@ -66,8 +78,19 @@ public partial class CourierWindow : Window
     /// <param name="e">An EventArgs object that contains the event data.</param>
     private void Window_Closed(object sender, EventArgs e)
     {
-        if (CurrentCourier?.Id != 0)
-            s_bl.Courier.RemoveObserver(CurrentCourier!.Id, courierObserver);
+        if (!_isObserverRegistered)
+            return;
+
+        try
+        {
+            var courier = CurrentCourier;
+            if (courier?.Id > 0)
+                s_bl.Courier.RemoveObserver(courier.Id, courierObserver);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error while unsubscribing from updates: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     /// <summary>
@@ -78,9 +101,19 @@ public partial class CourierWindow : Window
     /// internal use within the class to ensure that courier information remains up to date.</remarks>
     private void courierObserver()
     {
-        int id = CurrentCourier!.Id;
-        CurrentCourier = null;
-        CurrentCourier = s_bl.Courier.GetCourierDetails(123456789, id);
+        try
+        {
+            var courier = CurrentCourier;
+            if (courier is null || courier.Id <= 0)
+                return;
+
+            CurrentCourier = s_bl.Courier.GetCourierDetails(123456789, courier.Id);
+        }
+        catch (Exception ex)
+        {
+            Dispatcher.Invoke(() =>
+                MessageBox.Show($"Error refreshing courier details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
+        }
     }
 
     /// <summary>
@@ -110,7 +143,6 @@ public partial class CourierWindow : Window
     public static readonly DependencyProperty IsUpdateModeProperty =
         DependencyProperty.Register("IsUpdateMode", typeof(bool), typeof(CourierWindow), new PropertyMetadata(false));
 
-
     /// <summary>
     /// Gets or sets the currently selected courier.
     /// </summary>
@@ -134,13 +166,13 @@ public partial class CourierWindow : Window
             {
                 s_bl.Courier.AddCourier(123456789, CurrentCourier!);
                 MessageBox.Show("Courier added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                this.Close();
+                Close();
             }
             else
             {
                 s_bl.Courier.UpdateCourierDetails(123456789, CurrentCourier!);
                 MessageBox.Show("Courier updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                this.Close();
+                Close();
             }
         }
         catch (Exception ex)
@@ -154,6 +186,6 @@ public partial class CourierWindow : Window
     /// </summary>
     private void btnClose_Click(object sender, RoutedEventArgs e)
     {
-        this.Close();
+        Close();
     }
 }

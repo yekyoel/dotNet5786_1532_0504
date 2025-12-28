@@ -1,4 +1,5 @@
-﻿using PL.Courier;
+﻿using System.Globalization;
+using PL.Courier;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -158,23 +159,66 @@ public partial class MainWindow : Window
     // update config button handler
     private void btnUpdateObj_Click(object sender, RoutedEventArgs e)
     {
-        var config = new BO.Config
+        try
         {
-            AdminId = AdminId,
-            CompanyName = CompanyName,
-            MaxDist = MaxDist,
-            AvgCarMPH = AvgCarMPH,
-            AvgMotorcycleMPH = AvgMotorcycleMPH,
-            AvgBicycleMPH = AvgBikeMPH,
-            AvgWalkMPH = AvgWalkMPH,
-            MaxDelTime = MaxDeliveryTime,
-            RiskRange = RiskRange,
-            DownTime = DownTime
-        };
+            // Your XAML edits Configuration.* (TwoWay), so validate + persist Configuration.
+            if (Configuration is null)
+                throw new InvalidOperationException("Configuration is not loaded. Click Initialize first.");
 
-        s_bl.Admin.SetConfig(config);
+            ValidateConfigOrThrow(Configuration);
+
+            s_bl.Admin.SetConfig(Configuration);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
+    private static void ValidateConfigOrThrow(BO.Config config)
+    {
+        // AdminId
+        if (config.AdminId <= 0)
+            throw new ArgumentOutOfRangeException(nameof(config.AdminId), "Admin ID must be a positive integer.");
+
+        // CompanyName
+        if (string.IsNullOrWhiteSpace(config.CompanyName))
+            throw new ArgumentException("Company Name is required.", nameof(config.CompanyName));
+
+        // MaxDist (nullable double in BO)
+        if (config.MaxDist is null)
+            throw new ArgumentException("Max Distance is required.", nameof(config.MaxDist));
+
+        if (config.MaxDist <= 0)
+            throw new ArgumentOutOfRangeException(nameof(config.MaxDist), "Max Distance must be greater than 0.");
+
+        // Speeds
+        if (config.AvgCarMPH <= 0)
+            throw new ArgumentOutOfRangeException(nameof(config.AvgCarMPH), "Avg Car MPH must be greater than 0.");
+
+        if (config.AvgMotorcycleMPH <= 0)
+            throw new ArgumentOutOfRangeException(nameof(config.AvgMotorcycleMPH), "Avg Motorcycle MPH must be greater than 0.");
+
+        if (config.AvgBicycleMPH <= 0)
+            throw new ArgumentOutOfRangeException(nameof(config.AvgBicycleMPH), "Avg Bicycle MPH must be greater than 0.");
+
+        if (config.AvgWalkMPH <= 0)
+            throw new ArgumentOutOfRangeException(nameof(config.AvgWalkMPH), "Avg Walk MPH must be greater than 0.");
+
+        // Time spans
+        if (config.MaxDelTime <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(config.MaxDelTime), "Max Delivery Time must be greater than 00:00:00.");
+
+        if (config.RiskRange < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(config.RiskRange), "Risk Range cannot be negative.");
+
+        if (config.DownTime < TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(config.DownTime), "Down Time cannot be negative.");
+
+        // Optional sanity constraints (if you want them strict)
+        if (config.RiskRange > config.MaxDelTime)
+            throw new ArgumentException("Risk Range cannot be greater than Max Delivery Time.", nameof(config.RiskRange));
+    }
 
     private void OnClockUpdated()
     {
@@ -333,5 +377,4 @@ public partial class MainWindow : Window
 
     #endregion
 
-  
 }
