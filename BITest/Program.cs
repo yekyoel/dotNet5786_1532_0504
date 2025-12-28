@@ -99,10 +99,10 @@ class Program
                         {
                             var time = timeUnit switch
                             {
-                                1 => Time.Second,
-                                2 => Time.Minute,
-                                3 => Time.Hour,
-                                4 => Time.Day, 
+                                1 => Time.Minute,
+                                2 => Time.Hour,
+                                3 => Time.Day,
+                                //4 => Time.Month,
                                 5 => Time.Year,
                                 _ => Time.Hour
                             };

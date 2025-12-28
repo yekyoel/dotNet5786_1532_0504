@@ -48,12 +48,12 @@ public partial class CourierListWindow : Window
     /// </summary>
     private void queryCourierList()
     {
-        var allCouriers = s_bl?.Courier.GetListOfCouriers(0, null, null)!;
+        var allCouriers = s_bl?.Courier.GetListOfCouriers(123456789, null, null)!;
 
         // Filter by ShippingMethod in UI
         CourierList = (FilterShippingMethods == BO.ShippingMethod.None) ?
             allCouriers :
-            allCouriers.Where(c => (BO.ShippingMethod)c.TypeOrder == FilterShippingMethods);
+            allCouriers.Where(c => c.ShippingMethod == FilterShippingMethods);
     }
 
     /// <summary>
@@ -67,4 +67,47 @@ public partial class CourierListWindow : Window
 
     private void Window_Closed(object sender, EventArgs e)
         => s_bl?.Courier.RemoveObserver(courierListObserver);
+
+    public BO.CourierInList? SelectedCouriers { get; set; }
+
+    private void lsvCouriersList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (SelectedCouriers != null)
+            new CourierWindow(SelectedCouriers.CourierId).Show();
+    }
+
+    private void btnAdd_Click(object sender, RoutedEventArgs e)
+    {
+        new CourierWindow().Show();
+    }
+
+    /// <summary>
+    /// Handles the delete button click event for removing a courier from the list.
+    /// </summary>
+    private void btnDelete_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button button || button.Tag is not int courierId)
+            return;
+
+        // Confirm deletion with the user
+        MessageBoxResult result = MessageBox.Show(
+            $"Are you sure you want to delete courier ID {courierId}?",
+            "Confirm Deletion",
+            MessageBoxButton.YesNo,
+            MessageBoxImage.Warning);
+
+        if (result != MessageBoxResult.Yes)
+            return;
+
+        try
+        {
+            // Attempt to delete the courier
+            s_bl.Courier.DeleteCourier(123456789, courierId);
+            MessageBox.Show("Courier deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error deleting courier: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
 }

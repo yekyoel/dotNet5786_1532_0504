@@ -66,7 +66,7 @@ public enum CourierInListFilter
    CourierId, // Identifier for the courier
    FullName, // Full name of the courier
    IsActive, // Indicates if the courier is currently active
-   TypeOrder, // Most associated order type for the courier
+   ShippingMethod, // Preferred shipping method of the courier
    EmploymentStartDate, // Employment start date of the courier
    TotalDelSuppliedOnTime, // Total number of deliveries supplied on time by the courier
    TotalLateDelSupplied,  // Total number of deliveries supplied late by the courier

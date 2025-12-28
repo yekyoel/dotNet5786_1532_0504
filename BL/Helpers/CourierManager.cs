@@ -119,6 +119,16 @@ internal static class CourierManager
     /// <returns>A data object courier containing the values from the specified business object.</returns>
     internal static DO.Courier fromBOToDO(BO.Courier boCourier) // Convert BO.Courier to DO.Courier
     {
+        // Convert ShippingMethod from BO to DO
+        DO.ShippingMethod? doMethod = boCourier.ShippingMethod switch
+        {
+            BO.ShippingMethod.Car => DO.ShippingMethod.Car,
+            BO.ShippingMethod.Motorcycle => DO.ShippingMethod.Motorcycle,
+            BO.ShippingMethod.Bike => DO.ShippingMethod.Bike,
+            BO.ShippingMethod.OnFoot => DO.ShippingMethod.OnFoot,
+            _ => null
+        };
+
         return new DO.Courier
         (
             Id: boCourier.Id,
@@ -127,7 +137,7 @@ internal static class CourierManager
             Email: boCourier.Email,
             IsActive: boCourier.IsActive,
             MaxDist: boCourier.MaxDist,
-            PreferredShippingMethod: null,
+            PreferredShippingMethod: doMethod,
             DayStarted: boCourier.EmploymentStartDate
         );
     }
@@ -210,6 +220,8 @@ internal static class CourierManager
 
         var doCourier = fromBOToDO(courier);
         dal.Courier.Update(doCourier);
+        Observers.NotifyItemUpdated(courier.Id); //stage 5
+        Observers.NotifyListUpdated();  //stage 5
     }
 
     // Delete courier by id
