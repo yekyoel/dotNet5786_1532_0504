@@ -165,5 +165,9 @@ internal class CourierImplementation : ICourier
     /// <param name="userId">The unique identifier of the user whose access is being checked.</param>
     /// <param name="courierId">The unique identifier of the courier to which access is being evaluated.</param>
     /// <returns>true if the user is either the administrator or the courier specified by courierId; otherwise, false.</returns>
-   
+    public bool AccessToCourier(int userId, int courierId)
+    {
+        var adminId = AdminManager.GetConfig().AdminId;
+        return userId == adminId || userId == courierId;
+    }
 }
