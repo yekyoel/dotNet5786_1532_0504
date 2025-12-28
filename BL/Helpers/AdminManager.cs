@@ -158,7 +158,8 @@ internal static class AdminManager //stage 4
         {
             s_dal.ResetDB(); //stage 4
             AdminManager.UpdateClock(AdminManager.Now); //stage 5 - needed since we want the label on Pl to be updated
-            AdminManager.SetConfig(AdminManager.GetConfig()); //stage 5 - needed to update PL 
+            //AdminManager.SetConfig(AdminManager.GetConfig()); //stage 5 - needed to update PL 
+            ConfigUpdatedObservers?.Invoke();
         }
     }
 
@@ -168,7 +169,8 @@ internal static class AdminManager //stage 4
         {
             DalTest.Initialization.Do(); //stage 4
             AdminManager.UpdateClock(AdminManager.Now);  //stage 5 - needed since we want the label on Pl to be updated           
-            AdminManager.SetConfig(AdminManager.GetConfig()); //stage 5 - needed for update the PL
+            //AdminManager.SetConfig(AdminManager.GetConfig()); //stage 5 - needed for update the PL
+            ConfigUpdatedObservers?.Invoke(); 
         }
     }
 
