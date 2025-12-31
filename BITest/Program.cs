@@ -102,7 +102,7 @@ class Program
                                 1 => Time.Minute,
                                 2 => Time.Hour,
                                 3 => Time.Day,
-                                //4 => Time.Month,
+                                4 => Time.Month,
                                 5 => Time.Year,
                                 _ => Time.Hour
                             };

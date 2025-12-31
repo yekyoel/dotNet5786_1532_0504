@@ -18,10 +18,10 @@ internal class AdminImplementation : IAdmin
         var now = AdminManager.Now;
         System.DateTime newClock = forward switch
         {
-            BO.Time.Second => now.AddSeconds(1),
             BO.Time.Minute => now.AddMinutes(1),
             BO.Time.Hour => now.AddHours(1),
             BO.Time.Day => now.AddDays(1),
+            BO.Time.Month => now.AddMonths(1),
             BO.Time.Year => now.AddYears(1),
             _ => throw new System.ArgumentOutOfRangeException(nameof(forward), "Unsupported time unit") // in case of an invalid enum value
         };
