@@ -124,8 +124,9 @@
 
 
         <!-- General Bottons-->
-        <Grid Grid.Row="2">
+        <Grid Grid.Row="2" Background="#24313E">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
@@ -142,7 +143,7 @@
                     <Setter Property="Height" Value="34"/>
                     <Setter Property="FontSize" Value="14"/>
                     <!-- Spacing -->
-                    <Setter Property="Margin" Value="10,0,10,0"/>
+                    <Setter Property="Margin" Value="10,6,10,0"/>
                     <Setter Property="Padding" Value="12,4"/>
                 </Style>
             </Grid.Resources>
@@ -150,7 +151,8 @@
             <Button Content="Initialize" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnInitialize_Click" />
             <Button Content="Reset DB"   Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnResetDB_Click"/>
 
-            <Button Content="View CourierLists" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnListDisplay_Click"/>
+            <Button Content="View CourierLists" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnCourierListDisplay_Click"/>
+            <Button Content="View OrderLists"   Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center"  Click="btnOrderListDisplay_Click"/>
         </Grid>
 
     </Grid>

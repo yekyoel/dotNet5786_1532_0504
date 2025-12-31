@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using PL.Courier;
+using PL.Order;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -419,9 +420,14 @@ public partial class MainWindow : Window
         }
     }
 
-    private void btnListDisplay_Click(object sender, RoutedEventArgs e)
+    private void btnCourierListDisplay_Click(object sender, RoutedEventArgs e)
     {
         new CourierListWindow().Show();
+    }
+
+    private void btnOrderListDisplay_Click(object sender, RoutedEventArgs e)
+    {
+        new OrderListWindow().Show();
     }
 
     #endregion

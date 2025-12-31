@@ -8,24 +8,37 @@
         Title="CourierListWindow" Height="450" Width="800"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Loaded="Window_Loaded" Closed="Window_Closed">
+    
+    <!-- Main Grid layout with 2 rows: Filter/Buttons section and DataGrid -->
     <Grid>
         <Grid.RowDefinitions>
+            <!-- Row 0: Filter ComboBox and Add Button -->
             <RowDefinition Height="Auto"/>
+            <!-- Row 1: Courier DataGrid (takes remaining space) -->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
+        <!-- Filter and Action Buttons Section -->
         <Grid Grid.Row="0" Margin="5">
             <Grid.ColumnDefinitions>
+                <!-- Column 0: Filter ComboBox (fills available space) -->
                 <ColumnDefinition Width="*"/>
+                <!-- Column 1: Add Button (auto-sized) -->
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
+            <!-- Filter by Shipping Method ComboBox
+                 - Binds to VehicleTypeCollectionsKey resource for available shipping methods
+                 - SelectedValue binds to FilterShippingMethods property in code-behind
+                 - SelectionChanged event triggers list filtering -->
             <ComboBox Grid.Column="0"
                       ItemsSource="{Binding Source={StaticResource VehicleTypeCollectionsKey}}"
                       VerticalAlignment="Center"
                       SelectedValue="{Binding FilterShippingMethods, Mode=TwoWay}" 
                       SelectionChanged="ComboBox_SelectionChanged" />
             
+            <!-- Add New Courier Button
+                 - Opens CourierWindow in "Add" mode (new courier) -->
             <Button Grid.Column="1"
                     Content="Add"
                     Margin="10,0,0,0"
@@ -34,6 +47,12 @@
                     Click="btnAdd_Click" />
         </Grid>
         
+        <!-- Couriers DataGrid
+             - Displays list of all couriers with their details
+             - IsReadOnly: Prevents inline editing
+             - RowDetailsVisibilityMode: Shows details when row is selected
+             - MouseDoubleClick: Opens CourierWindow in "Update" mode for selected courier
+             - EnableRowVirtualization: Improves performance with large datasets -->
         <DataGrid Grid.Row="1" 
                   Margin="5" 
                   ItemsSource="{Binding CourierList}" 
@@ -42,11 +61,20 @@
                   IsReadOnly="True" 
                   AutoGenerateColumns="False"
                   EnableRowVirtualization="True" 
-                  RowDetailsVisibilityMode="VisibleWhenSelected">
+                  RowDetailsVisibilityMode="VisibleWhenSelected"
+                  Background="LightGray">
+            
+            <!-- DataGrid Columns Definition -->
             <DataGrid.Columns>
+                <!-- Courier ID Column - Auto-sized based on content -->
                 <DataGridTextColumn Binding="{Binding CourierId}" Header="Courier ID" Width="Auto"/>
+                
+                <!-- Full Name Column - Takes remaining horizontal space -->
                 <DataGridTextColumn Binding="{Binding FullName}" Header="Full Name" Width="*"/>
                 
+                <!-- Is Active Status Column
+                     - Uses CheckBox template (read-only)
+                     - Shows courier's active status at a glance -->
                 <DataGridTemplateColumn Header="Is Active" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -56,12 +84,20 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 
+                <!-- Shipping Method Column - Shows preferred delivery method (Car, Motorcycle, Bike, OnFoot) -->
                 <DataGridTextColumn Binding="{Binding ShippingMethod}" Header="Shipping Method" Width="Auto"/>
+                
+                <!-- Employment Date Column - Formatted as DD/MM/YYYY -->
                 <DataGridTextColumn Binding="{Binding EmploymentStartDate, StringFormat='{}{0:dd/MM/yyyy}'}" 
                                     Header="Employment Date" Width="Auto"/>
+                
+                <!-- On-Time Deliveries Column - Displays count of successful on-time deliveries -->
                 <DataGridTextColumn Binding="{Binding TotalDelSuppliedOnTime}" 
                                     Header="On Time Deliveries" Width="Auto"/>
                 
+                <!-- Late Deliveries Column
+                     - Uses custom template with red text to highlight performance issues
+                     - Bold font makes it stand out -->
                 <DataGridTemplateColumn Header="Late Deliveries" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -73,8 +109,13 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 
+                <!-- Current Order ID Column - Shows the order currently being handled by this courier -->
                 <DataGridTextColumn Binding="{Binding OrderId}" Header="Current Order ID" Width="Auto"/>
                 
+                <!-- Actions Column - Delete Button
+                     - Each row has a "Delete" button
+                     - Tag stores the CourierId for identifying which courier to delete
+                     - Click handler triggers delete confirmation dialog -->
                 <DataGridTemplateColumn Header="Actions" Width="Auto">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
