@@ -97,6 +97,76 @@ internal static class CourierManager
    /// <returns>A business object representing the courier with values mapped from the provided data object.</returns>
     internal static BO.Courier fromDOToBO(DO.Courier doCourier) // Convert DO.Courier to BO.Courier
     {
+        var dalCouriers = s_dal.Courier.ReadAll().ToList(); // For calculating delivery stats
+        var couriers = dalCouriers.Where(c => c.Id == doCourier.Id); // Make a collection for LINQ
+
+        var delivery = dal.Delivery.ReadAll()
+            .FirstOrDefault(d => d.CourierId == doCourier.Id && d.DeliveryEndTime is null);
+
+        var order = delivery is null ? null : dal.Order.Read(delivery.OrderId);
+
+        // Calculate delivery statistics
+        BO.OrderInProgress orderInProg;
+
+        // If there's an active delivery and order, populate OrderInProgress
+        if (delivery is not null && order is not null)
+        {
+            // Calculate aerial distance from store to customer
+            var cfg = AdminManager.GetConfig();
+            var storeLat = cfg?.Latitude ?? 0.0;
+            var storeLon = cfg?.Longitude ?? 0.0;
+
+            // Aerial distance between store and order delivery location
+            var aerialDistance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
+            var expectedDeliveryTime = Tools.CalculateExpectedDeliveryTime(order, delivery);
+            var maxDeliveryTime = (order.StartTimeForOrdering ?? (cfg?.Clock ?? DateTime.Now))
+                .Add(cfg?.MaxDelTime ?? TimeSpan.Zero);
+
+            // Populate OrderInProgress details
+            orderInProg = new BO.OrderInProgress
+            {
+                DeliveryId = delivery.Id,
+                OrderId = order.Id,
+                OrderType = Tools.SwitchOrderTypeTOBO(order) ?? BO.OrderType.Pizza,
+                Description = order.Description,
+                DeliveryAddress = order.FullAdd ?? string.Empty,
+                ArealDistance = aerialDistance,
+                ActualDistance = delivery.Distance,
+                CustomerName = order.CustFullName ?? string.Empty,
+                CustomerNumber = order.CusNum ?? string.Empty,
+                OrderPlacedTime = order.StartTimeForOrdering ?? (cfg?.Clock ?? DateTime.Now),
+                DeliveryTime = delivery.DeliveryStartTime ?? (cfg?.Clock ?? DateTime.Now),
+                ExpectedDeliveryTime = expectedDeliveryTime ?? maxDeliveryTime,
+                MaxDeliveryTime = maxDeliveryTime,
+                OrderStats = Tools.FindOrderStatusType(order) ?? BO.OrderStatus.Open,
+                ScheduleStat = Tools.FindScheduleStatusType(order) ?? BO.ScheduleStatus.OnTime,
+                TotalTimeLeft = Tools.CalculateTotalTimeLeft(order, delivery)
+            };
+        }
+        else // No active delivery/order found for this courier
+        {
+            // No active delivery/order found for this courier -> still initialize (non-null)
+            orderInProg = new BO.OrderInProgress
+            {
+                DeliveryId = 0,
+                OrderId = 0,
+                OrderType = BO.OrderType.Pizza,
+                Description = null,
+                DeliveryAddress = string.Empty,
+                ArealDistance = 0,
+                ActualDistance = null,
+                CustomerName = string.Empty,
+                CustomerNumber = string.Empty,
+                OrderPlacedTime = DateTime.MinValue,
+                DeliveryTime = DateTime.MinValue,
+                ExpectedDeliveryTime = DateTime.MinValue,
+                MaxDeliveryTime = DateTime.MinValue,
+                OrderStats = BO.OrderStatus.Open,
+                ScheduleStat = BO.ScheduleStatus.OnTime,
+                TotalTimeLeft = TimeSpan.Zero
+            };
+        }
+
         return new BO.Courier
         {
             Id = doCourier.Id,
@@ -108,7 +178,8 @@ internal static class CourierManager
             ShippingMethod = FindType(doCourier),
             EmploymentStartDate = doCourier.DayStarted,
             TotalDelSuppliedOnTime = 0,
-            TotalDelSuppliedLate = 0
+            TotalDelSuppliedLate = 0,
+            OrderInProg = orderInProg
         };
     }
 

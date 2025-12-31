@@ -26,6 +26,7 @@ internal class CourierImplementation : ICourier
 
         // Use manager wrapper
         CourierManager.CreateCourier(courier);
+
     }
 
     /// <summary>
