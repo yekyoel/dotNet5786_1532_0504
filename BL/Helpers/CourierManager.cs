@@ -233,6 +233,27 @@ internal static class CourierManager
     }
 
     /// <summary>
+    /// Retrieves the full name of a courier by their unique identifier.
+    /// </summary>
+    /// <param name="courierId">The unique identifier of the courier whose name is to be retrieved. If 0 or invalid, returns "N/A".</param>
+    /// <returns>The full name of the courier if found; otherwise, "N/A".</returns>
+    internal static string GetCourierNameById(int courierId)
+    {
+        if (courierId <= 0)
+            return "N/A";
+
+        try
+        {
+            var doCourier = dal.Courier.Read(courierId);
+            return doCourier?.FullName ?? "N/A";
+        }
+        catch
+        {
+            return "N/A";
+        }
+    }
+
+    /// <summary>
     /// Periodic updates specific to couriers. Called after clock changes.
     /// Current policy:
     /// - If a courier has no deliveries (start or end) within the inactivity threshold, mark them inactive.

@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 namespace PL;
 
 /// <summary>
-/// Interaction logic for MainWindow.xaml
+/// Interaction logic for MainWindow.xamlonfig
 /// </summary>
 public partial class MainWindow : Window
 {
@@ -161,13 +161,27 @@ public partial class MainWindow : Window
     {
         try
         {
-            // Your XAML edits Configuration.* (TwoWay), so validate + persist Configuration.
-            if (Configuration is null)
-                throw new InvalidOperationException("Configuration is not loaded. Click Initialize first.");
+            // Create or update configuration from UI values
+            var config = Configuration ?? new BO.Config();
 
-            ValidateConfigOrThrow(Configuration);
+            // Update config with current UI values
+            config.AdminId = AdminId;
+            config.CompanyName = CompanyName;
+            config.MaxDist = MaxDist;
+            config.AvgCarMPH = AvgCarMPH;
+            config.AvgMotorcycleMPH = AvgMotorcycleMPH;
+            config.AvgBicycleMPH = AvgBikeMPH;
+            config.AvgWalkMPH = AvgWalkMPH;
+            config.MaxDelTime = MaxDeliveryTime;
+            config.RiskRange = RiskRange;
+            config.DownTime = DownTime;
 
-            s_bl.Admin.SetConfig(Configuration);
+            ValidateConfigOrThrow(config);
+
+            s_bl.Admin.SetConfig(config);
+            Configuration = config;
+
+            MessageBox.Show("Configuration saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)
         {
@@ -272,32 +286,67 @@ public partial class MainWindow : Window
     #region buttons for clock manipulation
     private void btnAddOneSec_Click(object sender, RoutedEventArgs e)
     {
-        s_bl.Admin.ForwardClock(BO.Time.Second);
-        CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
+        try
+        {
+            s_bl.Admin.ForwardClock(BO.Time.Second);
+            CurrentTime = s_bl.Admin.GetClock();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error updating clock: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void btnAddOneMin_Click(object sender, RoutedEventArgs e)
     {
-        s_bl.Admin.ForwardClock(BO.Time.Minute);
-        CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
+        try
+        {
+            s_bl.Admin.ForwardClock(BO.Time.Minute);
+            CurrentTime = s_bl.Admin.GetClock();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error updating clock: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void btnAddOneHr_Click(object sender, RoutedEventArgs e)
     {
-        s_bl.Admin.ForwardClock(BO.Time.Hour);
-        CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
+        try
+        {
+            s_bl.Admin.ForwardClock(BO.Time.Hour);
+            CurrentTime = s_bl.Admin.GetClock();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error updating clock: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void btnAddOneDay_Click(object sender, RoutedEventArgs e)
     {
-        s_bl.Admin.ForwardClock(BO.Time.Day);
-        CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
+        try
+        {
+            s_bl.Admin.ForwardClock(BO.Time.Day);
+            CurrentTime = s_bl.Admin.GetClock();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error updating clock: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void btnAddOneYr_Click(object sender, RoutedEventArgs e)
     {
-        s_bl.Admin.ForwardClock(BO.Time.Year);
-        CurrentTime = s_bl.Admin.GetClock(); // Refresh the time display
+        try
+        {
+            s_bl.Admin.ForwardClock(BO.Time.Year);
+            CurrentTime = s_bl.Admin.GetClock();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error updating clock: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
     #endregion
 

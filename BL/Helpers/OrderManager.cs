@@ -55,7 +55,19 @@ internal static class OrderManager
             OrderStatus = Tools.FindOrderStatusType(dalOrder),
             ScheduleStatus = Tools.FindScheduleStatusType(dalOrder),
             TotalTimeLeft = totalTimeLeft,
-            DeliveriesList = new List<BO.DeliveryPerOrderInList>()
+            DeliveriesList = new List<BO.DeliveryPerOrderInList>
+            {
+                new BO.DeliveryPerOrderInList
+                {
+                    DeliveryId = delivery?.Id ?? 0,
+                    CourierId = delivery?.CourierId,
+                    CourierName = CourierManager.GetCourierNameById(delivery?.CourierId ?? 0),
+                    TypeOrder = Tools.SwitchOrderTypeTOBO(dalOrder) ?? BO.OrderType.Pizza,
+                    OrderStart = dalOrder.StartTimeForOrdering ?? DateTime.Now,
+                    CompType = Tools.SwitchCompletionTypeTOBO(delivery?.End),
+                    DeliveryEndTime = delivery?.DeliveryEndTime
+                }
+            }
         };
     }
 
@@ -67,6 +79,7 @@ internal static class OrderManager
   /// data from multiple sources to provide a comprehensive overview of all orders.</remarks>
   /// <returns>An enumerable collection of <see cref="BO.OrderInList"/> objects, each representing an order and its associated
   /// summary details. The collection is empty if no orders exist.</returns>
+   
     internal static IEnumerable<BO.OrderInList> GetAllOrders()
     {
         var dalOrders = s_dal.Order.ReadAll(); // read all orders from DAL
@@ -105,6 +118,7 @@ internal static class OrderManager
    /// </summary>
    /// <param name="order">The order to update. Cannot be null.</param>
    /// <exception cref="BlNullPropertyException">Thrown if <paramref name="order"/> is null.</exception>
+    
     internal static void UpdateOrder(BO.Order order)
     {
         if (order == null)
@@ -123,6 +137,7 @@ internal static class OrderManager
     /// <exception cref="KeyNotFoundException">Thrown if an order with the specified orderId does not exist.</exception>
     /// <exception cref="InvalidOperationException">Thrown if the order is in progress but has no associated delivery, or if the order cannot be cancelled because
     /// it is already completed or cancelled.</exception>
+    
     internal static void TryToCancelOrder(int orderId)
     {
         Delivery? delivery;
@@ -168,6 +183,7 @@ internal static class OrderManager
     /// </summary>
     /// <param name="orderId">The unique identifier of the order to delete.</param>
     /// <exception cref="KeyNotFoundException">Thrown if an order with the specified orderId does not exist.</exception>
+    
     internal static void TryToDeleteOrder(int orderId)
     {
         var dalOrder = s_dal.Order.Read(orderId);
@@ -186,6 +202,7 @@ internal static class OrderManager
     /// latitude/longitude within valid ranges.</param>
     /// <exception cref="BO.BLInvalidOrderException">Thrown if the order is null or contains invalid or incomplete information, such as missing customer details,
     /// address, non-positive weight, or out-of-range latitude/longitude.</exception>
+  
     internal static void AddOrder(BO.Order order)
     {
         if (order is null)
@@ -238,6 +255,7 @@ internal static class OrderManager
     /// courier.</param>
     /// <param name="courierId">The unique identifier of the courier to whom the order will be assigned.</param>
     /// <exception cref="InvalidOperationException">Thrown if the order is not pending assignment or already has a delivery.</exception>
+  
     internal static void AssignOrderToCourier(int orderId, int courierId)
     { 
         var delivery = DeliveryManager.GetDeliveryByOrderId(orderId); // read delivery from DAL
@@ -267,6 +285,7 @@ internal static class OrderManager
     ///   mark the delivery as Failed and set DeliveryEndTime to the new clock.
     /// - Method is lightweight and resilient: exceptions are swallowed so clock update will not fail.
     /// </summary>
+  
     internal static void PeriodicOrdersUpdates(DateTime oldClock, DateTime newClock)
     {
         try
@@ -332,6 +351,7 @@ internal static class OrderManager
     /// - Creates a DO.Delivery with End=Pending and DeliveryStartTime set to the new clock.
     /// - Lightweight and resilient: exceptions are swallowed per-order.
     /// </summary>
+   
     internal static void PeriodicAutoAssignPendingOrders(DateTime oldClock, DateTime newClock)
     {
         try
@@ -412,6 +432,7 @@ internal static class OrderManager
     /// <param name="sort">An optional sort order to apply to the closed deliveries. If null, the default order is used.</param>
     /// <returns>An enumerable collection of closed deliveries matching the specified criteria. The collection is empty if no
     /// closed deliveries are found for the courier.</returns>
+   
     internal static IEnumerable<BO.ClosedDeliveryInList> GetClosedDeliveries(int courierId, ClosedDeliveryInListFilter? filter, ClosedDeliveryInListFilter? sort)
     {
         var dalDeliveries = DeliveryManager.GetAllDeliveries()
@@ -455,6 +476,7 @@ internal static class OrderManager
     /// <param name="deliveries">The list of deliveries to filter. Cannot be null.</param>
     /// <param name="filter">The filter to apply when selecting closed deliveries.</param>
     /// <returns>A list of deliveries that match the specified filter. If no deliveries match, the returned list may be empty.</returns>
+  
     private static List<DO.Delivery> ApplyClosedDeliveryFilter(List<DO.Delivery> deliveries, ClosedDeliveryInListFilter filter)
     {
         return filter switch
@@ -481,6 +503,7 @@ internal static class OrderManager
     /// <param name="sort">The sorting criterion to apply to the deliveries.</param>
     /// <returns>A new list of deliveries sorted according to the specified filter. If the filter is not recognized, the original
     /// order is preserved.</returns>
+  
     private static List<DO.Delivery> ApplyClosedDeliverySort(List<DO.Delivery> deliveries, ClosedDeliveryInListFilter sort)
     {
         return sort switch
@@ -509,6 +532,7 @@ internal static class OrderManager
     /// to the provided criteria.</param>
     /// <returns>An enumerable collection of open orders available to the specified courier, each represented as an
     /// OpenOrderInList object. The collection may be empty if no orders match the criteria.</returns>
+   
     internal static IEnumerable<BO.OpenOrderInList> GetOpenOrders(int courierId, OpenOrderInListFilter? filter, OpenOrderInListFilter? sort)
     {
         var dalOrders = s_dal.Order.ReadAll().ToList();
@@ -584,6 +608,7 @@ internal static class OrderManager
     /// <param name="orders">The list of orders to be filtered.</param>
     /// <param name="filter">The filter criterion to apply to the orders.</param>
     /// <returns>A list of orders that match the specified filter criterion. If no orders match, the returned list may be empty.</returns>
+  
     private static List<DO.Order> ApplyOpenOrderFilter(List<DO.Order> orders, OpenOrderInListFilter filter)
     {
         return filter switch
@@ -613,6 +638,7 @@ internal static class OrderManager
     /// <param name="sort">The sorting criteria to apply to the orders.</param>
     /// <returns>A new list of orders sorted according to the specified criteria. If an unrecognized sort option is provided, the
     /// original list is returned in its current order.</returns>
+   
     private static List<DO.Order> ApplyOpenOrderSort(List<DO.Order> orders, OpenOrderInListFilter sort)
     {
         var cfg = AdminManager.GetConfig();

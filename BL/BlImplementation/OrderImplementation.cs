@@ -25,6 +25,12 @@ internal class OrderImplementation : IOrder
     /// (int)ScheduleStatus</c>, where <c>N</c> is the number of schedule status values.</returns>
     public int[] StatusTotal(int userId)
     {
+        // check this  again
+        var adminId = AdminManager.GetConfig().AdminId;
+        if (userId != adminId )
+            throw new UnauthorizedAccessException("Only admin can access status totals.");
+        // up to here
+
         var orders = Helpers.OrderManager.GetAllOrders();
 
         int orderStatusCount =
@@ -49,6 +55,7 @@ internal class OrderImplementation : IOrder
 
         return result;
     }
+
     /// <summary>
     /// Returns a delegate that selects a property from a <see cref="BO.OrderInList"/> instance based on the specified
     /// filter.
@@ -70,6 +77,7 @@ internal class OrderImplementation : IOrder
             _ => _ => null
         };
     }
+
     /// <summary>
     /// Retrieves a filtered and sorted list of orders for a specified user.
     /// </summary>
@@ -85,6 +93,7 @@ internal class OrderImplementation : IOrder
     /// by status.</param>
     /// <returns>An <see cref="IEnumerable{T}"/> of <see cref="BO.OrderInList"/> objects representing the user's orders after
     /// applying the specified filter and sort criteria. The collection is empty if no orders match the criteria.</returns>
+   
     public IEnumerable<BO.OrderInList> GetListOfOrders(int userId, BO.OrderInListFilter? filter, object? filterValue, BO.OrderInListFilter? sort)
     {
         // recieve all orders
@@ -123,6 +132,7 @@ internal class OrderImplementation : IOrder
 
         return orders;
     }
+
     /// <summary>
     /// Retrieves the details of a specific order for the specified user.
     /// </summary>
@@ -130,6 +140,7 @@ internal class OrderImplementation : IOrder
     /// <param name="orderId">The unique identifier of the order to retrieve.</param>
     /// <returns>The <see cref="BO.Order"/> object containing the details of the specified order.</returns>
     /// <exception cref="KeyNotFoundException">Thrown if an order with the specified <paramref name="orderId"/> does not exist.</exception>
+   
     public BO.Order GetOrderDetails(int userId, int orderId)
     {
         var order = Helpers.OrderManager.GetOrderById(orderId);
@@ -149,6 +160,10 @@ internal class OrderImplementation : IOrder
     /// <param name="order">The order object containing the updated details. Cannot be <see langword="null"/>.</param>
     public void UpdateOrderDetails(int userId, BO.Order order)
     {
+        var adminId = AdminManager.GetConfig().AdminId;
+        if (userId != adminId)
+            throw new UnauthorizedAccessException("Only admin can update order details.");
+
         Helpers.OrderManager.UpdateOrder(order);
     }
 
@@ -160,6 +175,9 @@ internal class OrderImplementation : IOrder
     /// <param name="orderId">The identifier of the order to cancel.</param>
     public void CancelOrder(int userId, int orderId)
     {
+        var adminId = AdminManager.GetConfig().AdminId;
+        if (userId != adminId)
+            throw new UnauthorizedAccessException("Only admin can update order details.");
         Helpers.OrderManager.TryToCancelOrder(orderId);
     }
 
@@ -172,6 +190,10 @@ internal class OrderImplementation : IOrder
     /// <param name="orderId">The identifier of the order to delete.</param>
     public void DeleteOrder(int userId, int orderId)
     {
+        var adminId = AdminManager.GetConfig().AdminId;
+        if (userId != adminId)
+            throw new UnauthorizedAccessException("Only admin can update order details.");
+
         Helpers.OrderManager.TryToDeleteOrder(orderId);
     }
 
@@ -180,6 +202,7 @@ internal class OrderImplementation : IOrder
     /// </summary>
     /// <param name="userId">The unique identifier of the user for whom the order is being added.</param>
     /// <param name="order">The order to add. Cannot be <see langword="null"/>.</param>
+   
     public void AddOrder(int userId, BO.Order order)
     {
         Helpers.OrderManager.AddOrder(order);
@@ -193,6 +216,7 @@ internal class OrderImplementation : IOrder
     /// <param name="deliveryId">The identifier of the delivery to mark as complete.</param>
     /// <exception cref="InvalidOperationException">Thrown if <paramref name="userId"/> does not match <paramref name="courierId"/>, indicating the user is not
     /// authorized to complete the delivery.</exception>
+   
     public void OrderComplete(int userId, int courierId, int deliveryId)
     {
         if(userId == courierId)
@@ -214,6 +238,7 @@ internal class OrderImplementation : IOrder
     /// <param name="orderId">The identifier of the order to assign.</param>
     /// <exception cref="InvalidOperationException">Thrown if <paramref name="userId"/> does not match <paramref name="courierId"/>, indicating the user is not
     /// authorized to assign the order.</exception>
+    
     public void ChooseOrder(int userId, int courierId, int orderId)
     {
         if (userId == courierId)
@@ -238,6 +263,7 @@ internal class OrderImplementation : IOrder
     /// used.</param>
     /// <returns>An enumerable collection of <see cref="BO.ClosedDeliveryInList"/> objects representing the completed deliveries
     /// for the specified courier. The collection is empty if no completed deliveries are found.</returns>
+   
     public IEnumerable<BO.ClosedDeliveryInList> GetCompletedCourierDeliveries(int userId, int courierId, BO.ClosedDeliveryInListFilter? filter, BO.ClosedDeliveryInListFilter? sort)
     {
         return Helpers.OrderManager.GetClosedDeliveries(courierId, filter, sort);

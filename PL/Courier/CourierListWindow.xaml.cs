@@ -48,32 +48,76 @@ public partial class CourierListWindow : Window
     /// </summary>
     private void queryCourierList()
     {
-        var allCouriers = s_bl?.Courier.GetListOfCouriers(123456789, null, null)!;
+        try
+        {
+            var allCouriers = s_bl?.Courier.GetListOfCouriers(123456789, null, null)!;
 
-        // Filter by ShippingMethod in UI
-        CourierList = (FilterShippingMethods == BO.ShippingMethod.None) ?
-            allCouriers :
-            allCouriers.Where(c => c.ShippingMethod == FilterShippingMethods);
+            // Filter by ShippingMethod in UI
+            CourierList = (FilterShippingMethods == BO.ShippingMethod.None) ?
+                allCouriers :
+                allCouriers.Where(c => c.ShippingMethod == FilterShippingMethods);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error loading courier list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            CourierList = null;
+        }
     }
 
     /// <summary>
     /// Private observer method - called by BL when the courier list is updated
     /// </summary>
     private void courierListObserver()
-        => queryCourierList();
+    {
+        try
+        {
+            queryCourierList();
+        }
+        catch (Exception ex)
+        {
+            Dispatcher.Invoke(() =>
+                MessageBox.Show($"Error updating courier list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
+        }
+    }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
-        => s_bl?.Courier.AddObserver(courierListObserver);
+    {
+        try
+        {
+            s_bl?.Courier.AddObserver(courierListObserver);
+            queryCourierList();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error initializing courier list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
 
     private void Window_Closed(object sender, EventArgs e)
-        => s_bl?.Courier.RemoveObserver(courierListObserver);
+    {
+        try
+        {
+            s_bl?.Courier.RemoveObserver(courierListObserver);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error while unsubscribing from updates: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
 
     public BO.CourierInList? SelectedCouriers { get; set; }
 
     private void lsvCouriersList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (SelectedCouriers != null)
-            new CourierWindow(SelectedCouriers.CourierId).Show();
+        try
+        {
+            if (SelectedCouriers != null)
+                new CourierWindow(SelectedCouriers.CourierId).Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error opening courier details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void btnAdd_Click(object sender, RoutedEventArgs e)

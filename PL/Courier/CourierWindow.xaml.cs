@@ -162,6 +162,9 @@ public partial class CourierWindow : Window
     {
         try
         {
+            // Validate courier before sending to BL
+            ValidateCourierOrThrow(CurrentCourier!);
+
             if (ButtonText == "Add")
             {
                 s_bl.Courier.AddCourier(123456789, CurrentCourier!);
@@ -179,6 +182,43 @@ public partial class CourierWindow : Window
         {
             MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    /// <summary>
+    /// Validates the courier data before adding or updating.
+    /// </summary>
+    private static void ValidateCourierOrThrow(BO.Courier courier)
+    {
+        if (courier is null)
+            throw new ArgumentNullException(nameof(courier), "Courier cannot be null.");
+
+        // ID validation (if adding, ID should be 0; if updating, ID should be positive)
+        if (courier.Id < 0)
+            throw new ArgumentException("Courier ID cannot be negative.", nameof(courier.Id));
+
+        // Full Name
+        if (string.IsNullOrWhiteSpace(courier.FullName))
+            throw new ArgumentException("Full Name is required.", nameof(courier.FullName));
+
+        // Phone Number
+        if (string.IsNullOrWhiteSpace(courier.PhoneNumber))
+            throw new ArgumentException("Phone Number is required.", nameof(courier.PhoneNumber));
+
+        // Email
+        if (string.IsNullOrWhiteSpace(courier.Email))
+            throw new ArgumentException("Email is required.", nameof(courier.Email));
+
+        // Max Distance
+        if (courier.MaxDist is null || courier.MaxDist <= 0)
+            throw new ArgumentException("Max Distance must be a positive number.", nameof(courier.MaxDist));
+
+        // Employment Start Date
+        if (courier.EmploymentStartDate is null)
+            throw new ArgumentException("Employment Start Date is required.", nameof(courier.EmploymentStartDate));
+
+        // Shipping Method
+        if (courier.ShippingMethod is null || courier.ShippingMethod == BO.ShippingMethod.None)
+            throw new ArgumentException("Shipping Method is required.", nameof(courier.ShippingMethod));
     }
 
     /// <summary>

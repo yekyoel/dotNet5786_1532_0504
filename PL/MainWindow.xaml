@@ -86,37 +86,37 @@
 
             <!-- Row 0: Admin ID, Company Name, Car Speed -->
             <TextBlock Grid.Row="0" Grid.Column="0" Text="Admin ID:"/>
-            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Configuration.AdminId, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding AdminId, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="0" Grid.Column="2" Text="Company Name:"/>
-            <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding Configuration.CompanyName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding CompanyName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="0" Grid.Column="4" Text="Avg Car MPH:"/>
-            <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding Configuration.AvgCarMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding AvgCarMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
             <!-- Row 1: Max Distance, Motorcycle Speed, Bicycle Speed -->
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Max Distance:"/>
-            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Configuration.MaxDist, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding MaxDist, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="1" Grid.Column="2" Text="Avg Motorcycle MPH:" />
-            <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding Configuration.AvgMotorcycleMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding AvgMotorcycleMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="1" Grid.Column="4" Text="Avg Bicycle MPH:"/>
-            <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding Configuration.AvgBicycleMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding AvgBikeMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
             <!-- Row 2: Walk Speed, Down Time, Max Del Time, Risk Range -->
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Avg Walk MPH:"/>
-            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Configuration.AvgWalkMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding AvgWalkMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="2" Grid.Column="2" Text="Down Time:"/>
-            <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Configuration.DownTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding DownTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
             <TextBlock Grid.Row="2" Grid.Column="4" Text="Max Del Time:"/>
-            <TextBox Grid.Row="2" Grid.Column="5" Text="{Binding Configuration.MaxDelTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <TextBox Grid.Row="2" Grid.Column="5" Text="{Binding MaxDeliveryTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
 
-            <TextBlock Grid.Row="4"  Grid.Column="0" Text="Risk Range:"/>
-            <TextBox  Grid.Row="4" Grid.Column="1" Text="{Binding Configuration.RiskRange, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
+            <TextBlock Grid.Row="3"  Grid.Column="0" Text="Risk Range:"/>
+            <TextBox  Grid.Row="3" Grid.Column="1" Text="{Binding RiskRange, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"/>
 
             <Button Grid.Row="3" Grid.Column="4" Content="Set Config Values"   HorizontalAlignment="Right" Click="btnUpdateObj_Click" Height="50" Margin="0,5,10,10"/>
 
