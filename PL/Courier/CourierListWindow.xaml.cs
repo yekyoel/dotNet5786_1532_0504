@@ -154,4 +154,9 @@ public partial class CourierListWindow : Window
             MessageBox.Show($"Error deleting courier: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+
+    private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+
+    }
 }

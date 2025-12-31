@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL.Courier"
         mc:Ignorable="d"
-        Title="CourierListWindow" Height="450" Width="800"
+        Title="CourierListWindow" Height="450" Width="900"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
-        Loaded="Window_Loaded" Closed="Window_Closed">
+        Loaded="Window_Loaded" Closed="Window_Closed" 
+        Background="{StaticResource MainBackgroundBrush}">
     
     <!-- Main Grid layout with 2 rows: Filter/Buttons section and DataGrid -->
     <Grid>
@@ -19,7 +20,7 @@
         </Grid.RowDefinitions>
         
         <!-- Filter and Action Buttons Section -->
-        <Grid Grid.Row="0" Margin="5">
+        <Grid Grid.Row="0" Margin="5" Background="{StaticResource CardBackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <!-- Column 0: Filter ComboBox (fills available space) -->
                 <ColumnDefinition Width="*"/>
@@ -30,21 +31,24 @@
             <!-- Filter by Shipping Method ComboBox
                  - Binds to VehicleTypeCollectionsKey resource for available shipping methods
                  - SelectedValue binds to FilterShippingMethods property in code-behind
-                 - SelectionChanged event triggers list filtering -->
+                 - SelectionChanged event triggers list filtering
+                 - Custom style to change background color -->
             <ComboBox Grid.Column="0"
                       ItemsSource="{Binding Source={StaticResource VehicleTypeCollectionsKey}}"
                       VerticalAlignment="Center"
                       SelectedValue="{Binding FilterShippingMethods, Mode=TwoWay}" 
-                      SelectionChanged="ComboBox_SelectionChanged" />
+                      SelectionChanged="ComboBox_SelectionChanged">
+            </ComboBox>
             
             <!-- Add New Courier Button
                  - Opens CourierWindow in "Add" mode (new courier) -->
             <Button Grid.Column="1"
                     Content="Add"
-                    Margin="10,0,0,0"
+                    Margin="5,0,0,0"
                     Padding="15,5"
                     HorizontalAlignment="Right"
-                    Click="btnAdd_Click" />
+                    Click="btnAdd_Click" 
+                    MinWidth="40"/>
         </Grid>
         
         <!-- Couriers DataGrid
@@ -62,7 +66,17 @@
                   AutoGenerateColumns="False"
                   EnableRowVirtualization="True" 
                   RowDetailsVisibilityMode="VisibleWhenSelected"
-                  Background="LightGray">
+                  Background="{StaticResource CardBackgroundBrush}" SelectionChanged="DataGrid_SelectionChanged">
+            
+            <!-- DataGrid Column Headers Style - Blue background with white text -->
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <!-- Blue background for headers -->
+                    <Setter Property="Background" Value="{StaticResource ButtonGradientBrush}"/>
+                    <!-- Padding for spacing -->
+                    <Setter Property="Padding" Value="6,6"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
             
             <!-- DataGrid Columns Definition -->
             <DataGrid.Columns>
@@ -121,7 +135,7 @@
                         <DataTemplate>
                             <Button Content="Delete" 
                                     Padding="8,4"
-                                    Background="#FF6B6B"
+                                    Background="{StaticResource ButtonGradientBrush}"
                                     Foreground="White"
                                     Click="btnDelete_Click"
                                     Tag="{Binding CourierId}"/>

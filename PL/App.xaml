@@ -3,7 +3,218 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PL"
              StartupUri="LoginWindow.xaml">
+    <!-- 
+    ===================================
+    APPLICATION CONFIGURATION
+    ===================================
+    StartupUri="LoginWindow.xaml" - Sets LoginWindow as the first window to display when app starts
+    This creates a login flow before users access the main dashboard
+    -->
+    
     <Application.Resources>
-        <local:VehicleTypeCollections x:Key="VehicleTypeCollectionsKey" />
+        <!-- Vehicle Type Collections - Used for ComboBox dropdowns in Courier management -->
+        <local:VehicleTypeCollections x:Key="VehicleTypeCollectionsKey"/>
+
+        <!-- ===================================
+             COLOR DEFINITIONS
+             Define all application colors in one place for easy theming
+             =================================== -->
+        
+        <!-- Neon Cyan - Primary accent color used for highlights, labels, and borders -->
+        <Color x:Key="ColorNeonCyan">#00d4ff</Color>
+        
+        <!-- Neon Purple - Secondary accent color for gradients and hover effects -->
+        <Color x:Key="ColorNeonPurple">#7c3aed</Color>
+        
+        <!-- Dark Background - Main application background color (very dark gray/black) -->
+        <Color x:Key="ColorDarkBg">#0f0f0f</Color>
+        
+        <!-- Card Background - Slightly lighter than main bg, used for cards, panels, and containers -->
+        <Color x:Key="ColorCardBg">#1a2a2e</Color>
+
+        <!-- ===================================
+             SOLID COLOR BRUSHES
+             Convert Color definitions into Brushes for use in XAML elements
+             =================================== -->
+        
+        <!-- Cyan brush for text labels and UI accents -->
+        <SolidColorBrush x:Key="NeonCyanBrush" Color="{StaticResource ColorNeonCyan}"/>
+        
+        <!-- Purple brush for secondary accents and effects -->
+        <SolidColorBrush x:Key="NeonPurpleBrush" Color="{StaticResource ColorNeonPurple}"/>
+        
+        <!-- Card/Container background brush -->
+        <SolidColorBrush x:Key="CardBackgroundBrush" Color="{StaticResource ColorCardBg}"/>
+        
+        <!-- Primary text color (white) -->
+        <SolidColorBrush x:Key="TextMainBrush" Color="White"/>
+        <SolidColorBrush x:Key="AltMainBrush" Color="Black"/>
+        
+        <!-- Secondary text color (gray) for subtitles and descriptions -->
+        <SolidColorBrush x:Key="TextSubBrush" Color="#888888"/>
+
+        <!-- ===================================
+             GRADIENT BRUSHES
+             Create visual depth with multi-color gradients
+             =================================== -->
+        
+        <!-- Main Background Gradient
+             Starts dark at top-left, transitions to slightly lighter at bottom-right
+             Creates depth and visual hierarchy -->
+        <LinearGradientBrush x:Key="MainBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#0f0f0f" Offset="0"/>
+            <GradientStop Color="#1a1a2e" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- Button Gradient Brush
+             Transitions from cyan on left to purple on right
+             Creates modern, eye-catching button appearance -->
+        <LinearGradientBrush x:Key="ButtonGradientBrush" StartPoint="0,0" EndPoint="1,0">
+            <GradientStop Color="#00d4ff" Offset="0"/>
+            <GradientStop Color="#7c3aed" Offset="1"/>
+        </LinearGradientBrush>
+
+        <!-- ===================================
+             GLOBAL TEXTBLOCK STYLE
+             Applied to all TextBlocks in the application unless overridden
+             =================================== -->
+        <Style TargetType="TextBlock">
+            <!-- White text for good contrast on dark background -->
+            <Setter Property="Foreground" Value="{StaticResource TextMainBrush}"/>
+            <!-- Default font size for body text -->
+            <Setter Property="FontSize" Value="14"/>
+            <!-- Vertically center text within its container -->
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <!-- ===================================
+             GLOBAL LABEL STYLE
+             Applied to all Labels for consistency
+             Used mainly for input labels and field titles
+             =================================== -->
+        <Style TargetType="Label">
+            <!-- Neon cyan color to highlight field labels -->
+            <Setter Property="Foreground" Value="{StaticResource NeonCyanBrush}"/>
+            <!-- Bold weight to make labels stand out -->
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <!-- Slightly larger than body text -->
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <!-- ===================================
+             GLOBAL TEXTBOX STYLE
+             Custom dark-themed text input styling
+             Applied to all TextBox elements
+             =================================== -->
+        <Style TargetType="TextBox">
+            <!-- Dark purplish background for input fields -->
+            <Setter Property="Background" Value="#262641"/>
+            <!-- White text for visibility -->
+            <Setter Property="Foreground" Value="White"/>
+            <!-- Cyan cursor for visual consistency with theme -->
+            <Setter Property="CaretBrush" Value="{StaticResource NeonCyanBrush}"/>
+            <!-- Cyan border to highlight input fields -->
+            <Setter Property="BorderBrush" Value="{StaticResource NeonCyanBrush}"/>
+            <!-- 1px border for subtle definition -->
+            <Setter Property="BorderThickness" Value="1"/>
+            <!-- Internal spacing for text -->
+            <Setter Property="Padding" Value="10,8"/>
+            <!-- Font size for readability -->
+            <Setter Property="FontSize" Value="13"/>
+            <!-- Center text vertically in the input field -->
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <!-- Custom control template for rounded corners and smooth appearance -->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <!-- Rounded border container -->
+                        <Border Background="{TemplateBinding Background}" 
+                            BorderBrush="{TemplateBinding BorderBrush}" 
+                            BorderThickness="{TemplateBinding BorderThickness}" 
+                            CornerRadius="4">
+                            <!-- ScrollViewer for text overflow handling -->
+                            <ScrollViewer x:Name="PART_ContentHost" Background="Transparent"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <!-- Minimum height to ensure readable input fields -->
+            <Setter Property="MinHeight" Value="35"/>
+        </Style>
+
+        <!-- ===================================
+             GLOBAL BUTTON STYLE
+             Modern gradient button with glow effects
+             Applied to all Buttons for consistency
+             =================================== -->
+        <Style TargetType="Button">
+            <!-- White text on gradient background -->
+            <Setter Property="Foreground" Value="White"/>
+            <!-- Bold text for emphasis -->
+            <Setter Property="FontWeight" Value="Bold"/>
+            <!-- Hand cursor to indicate clickability -->
+            <Setter Property="Cursor" Value="Hand"/>
+            <!-- Internal padding for comfortable click target -->
+            <Setter Property="Padding" Value="15,8"/>
+            <!-- No default button border -->
+            <Setter Property="BorderThickness" Value="0"/>
+            <!-- Custom button template with gradient and effects -->
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <!-- Main button container with rounded corners -->
+                        <Border x:Name="border" CornerRadius="4" Background="{StaticResource ButtonGradientBrush}">
+                            <!-- Subtle cyan glow shadow effect -->
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" ShadowDepth="0" Opacity="0.3" Color="#00d4ff"/>
+                            </Border.Effect>
+                            <!-- Center the button content -->
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <!-- Visual feedback triggers -->
+                        <ControlTemplate.Triggers>
+                            <!-- Enhance glow when user hovers over button -->
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Effect">
+                                    <Setter.Value>
+                                        <!-- Brighter, more intense glow on hover -->
+                                        <DropShadowEffect BlurRadius="15" ShadowDepth="0" Opacity="0.8" Color="#00d4ff"/>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <!-- Slight fade when button is pressed -->
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                            <!-- Gray out disabled buttons -->
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#444"/>
+                                <Setter Property="Foreground" Value="#888"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- ===================================
+             CARD STYLE
+             Reusable style for container/card elements
+             Used for panels, sections, and content containers
+             =================================== -->
+        <Style x:Key="CardStyle" TargetType="Border">
+            <!-- Dark card background slightly lighter than main background -->
+            <Setter Property="Background" Value="{StaticResource CardBackgroundBrush}"/>
+            <!-- Rounded corners for modern look -->
+            <Setter Property="CornerRadius" Value="10"/>
+            <!-- Internal padding for content spacing -->
+            <Setter Property="Padding" Value="20"/>
+            <!-- Subtle shadow for depth and elevation effect -->
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="20" ShadowDepth="5" Opacity="0.5" Color="Black"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Application.Resources>
 </Application>
