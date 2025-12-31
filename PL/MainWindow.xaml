@@ -28,10 +28,10 @@
             <Label Grid.Column="0" Content="{Binding CurrentTime}" FontWeight="Bold" FontSize="20" VerticalAlignment="Center" />
 
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Content="+Minute" Click="btnAddOneSec_Click" MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
-                <Button Content="+Hour"   Click="btnAddOneMin_Click" MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
-                <Button Content="+Day"    Click="btnAddOneHr_Click"  MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
-                <Button Content="+Month"  Click="btnAddOneDay_Click" MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
+                <Button Content="+Minute" Click="btnAddOneMin_Click" MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
+                <Button Content="+Hour"   Click="btnAddOneHr_Click" MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
+                <Button Content="+Day"    Click="btnAddOneDay_Click"  MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
+                <Button Content="+Month"  Click="btnAddOneMon_Click" MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
                 <Button Content="+Year"   Click="btnAddOneYr_Click"  MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
             </StackPanel>
         </Grid>

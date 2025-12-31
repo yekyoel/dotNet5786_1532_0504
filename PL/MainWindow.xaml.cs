@@ -285,11 +285,11 @@ public partial class MainWindow : Window
 
 
     #region buttons for clock manipulation
-    private void btnAddOneSec_Click(object sender, RoutedEventArgs e)
+    private void btnAddOneMon_Click(object sender, RoutedEventArgs e)
     {
         try
         {
-            s_bl.Admin.ForwardClock(BO.Time.Second);
+            s_bl.Admin.ForwardClock(BO.Time.Month);
             CurrentTime = s_bl.Admin.GetClock();
         }
         catch (Exception ex)
