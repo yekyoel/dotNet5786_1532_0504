@@ -2,7 +2,10 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:PL"
+            
              StartupUri="LoginWindow.xaml">
+    <!-- StartupUri="DeliveyListWindow.xaml">-->
+             
     <!-- 
     ===================================
     APPLICATION CONFIGURATION
@@ -14,6 +17,7 @@
     <Application.Resources>
         <!-- Vehicle Type Collections - Used for ComboBox dropdowns in Courier management -->
         <local:VehicleTypeCollections x:Key="VehicleTypeCollectionsKey"/>
+        <!-- <local:OrderStatusCollection x:Key="OrderStatusCollectionKey"/> -->
 
         <!-- ===================================
              COLOR DEFINITIONS

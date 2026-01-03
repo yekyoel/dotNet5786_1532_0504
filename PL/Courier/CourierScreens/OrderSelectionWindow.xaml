@@ -1,0 +1,54 @@
+<Window x:Class="PL.Courier.CourierScreens.OrderSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PL.Courier.CourierScreens"
+        mc:Ignorable="d"
+        Title="Select Order" Height="500" Width="800"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        Background="{StaticResource MainBackgroundBrush}">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/> <!-- Map Placeholder -->
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Available Orders" FontSize="24" FontWeight="Bold" 
+                   Foreground="{StaticResource NeonCyanBrush}" HorizontalAlignment="Center" Margin="0,0,0,10"/>
+
+        <DataGrid Grid.Row="1" ItemsSource="{Binding OpenOrders}" SelectedItem="{Binding SelectedOrder}"
+                  AutoGenerateColumns="False" IsReadOnly="True" Background="#1a2a2e"
+                  SelectionChanged="DataGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding OrderId}" Header="ID" Width="50"/>
+                <DataGridTextColumn Binding="{Binding DeliveryAddress}" Header="Address" Width="*"/>
+                <DataGridTextColumn Binding="{Binding ArealDistance, StringFormat=N2}" Header="Distance (km)" Width="100"/>
+                <DataGridTextColumn Binding="{Binding TypeOrder}" Header="Type" Width="80"/>
+                
+                <DataGridTemplateColumn Header="Action" Width="100">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Pick Up" Click="btnPickUp_Click" Tag="{Binding OrderId}"
+                                    Background="{StaticResource NeonCyanBrush}" Foreground="Black" FontWeight="Bold"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Map Placeholder (Requirement: Show map on selection) -->
+        <Border Grid.Row="2" Height="150" Margin="0,10" Background="#222" BorderBrush="Gray" BorderThickness="1">
+            <Grid>
+                <TextBlock Text="[Map View Placeholder]" Foreground="Gray" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding SelectedOrder.DeliveryAddress, StringFormat='Route to: {0}'}" 
+                           Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="10"/>
+            </Grid>
+        </Border>
+
+        <Button Grid.Row="3" Content="Close" Click="btnClose_Click" Width="100" Height="30" Margin="0,10,0,0"/>
+    </Grid>
+</Window>
