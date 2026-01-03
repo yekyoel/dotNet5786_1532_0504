@@ -19,7 +19,7 @@ namespace PL.Order
     /// </summary>
     public partial class OrderWindow : Window
     {
-        public OrderWindow()
+        public OrderWindow( int id =0)
         {
             InitializeComponent();
         }

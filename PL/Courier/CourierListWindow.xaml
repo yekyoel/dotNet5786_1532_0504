@@ -28,27 +28,37 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
-            <!-- Filter by Shipping Method ComboBox
-                 - Binds to VehicleTypeCollectionsKey resource for available shipping methods
-                 - SelectedValue binds to FilterShippingMethods property in code-behind
-                 - SelectionChanged event triggers list filtering
-                 - Custom style to change background color -->
-            <ComboBox Grid.Column="0"
-                      ItemsSource="{Binding Source={StaticResource VehicleTypeCollectionsKey}}"
-                      VerticalAlignment="Center"
-                      SelectedValue="{Binding FilterShippingMethods, Mode=TwoWay}" 
-                      SelectionChanged="ComboBox_SelectionChanged">
-            </ComboBox>
+            <!-- Filter Section -->
+            <Grid Grid.Column="0" Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                
+                <Label Grid.Column="0" Content="Filter by Shipping Method:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                
+                <!-- Filter by Shipping Method ComboBox
+                     - Binds to VehicleTypeCollectionsKey resource for available shipping methods
+                     - SelectedValue binds to FilterShippingMethods property in code-behind
+                     - SelectionChanged event triggers list filtering
+                     - Custom style to change background color -->
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding Source={StaticResource VehicleTypeCollectionsKey}}"
+                          VerticalAlignment="Center"
+                          SelectedValue="{Binding FilterShippingMethods, Mode=TwoWay}" 
+                          SelectionChanged="ComboBox_SelectionChanged">
+                </ComboBox>
+            </Grid>
             
             <!-- Add New Courier Button
                  - Opens CourierWindow in "Add" mode (new courier) -->
             <Button Grid.Column="1"
-                    Content="Add"
+                    Content="Add Courier"
                     Margin="5,0,0,0"
                     Padding="15,5"
                     HorizontalAlignment="Right"
                     Click="btnAdd_Click" 
-                    MinWidth="40"/>
+                    MinWidth="100"/>
         </Grid>
         
         <!-- Couriers DataGrid
@@ -66,25 +76,16 @@
                   AutoGenerateColumns="False"
                   EnableRowVirtualization="True" 
                   RowDetailsVisibilityMode="VisibleWhenSelected"
-                  Background="{StaticResource CardBackgroundBrush}" SelectionChanged="DataGrid_SelectionChanged">
-            
-            <!-- DataGrid Column Headers Style - Blue background with white text -->
-            <DataGrid.ColumnHeaderStyle>
-                <Style TargetType="DataGridColumnHeader">
-                    <!-- Blue background for headers -->
-                    <Setter Property="Background" Value="{StaticResource ButtonGradientBrush}"/>
-                    <!-- Padding for spacing -->
-                    <Setter Property="Padding" Value="6,6"/>
-                </Style>
-            </DataGrid.ColumnHeaderStyle>
+                  Background="{StaticResource CardBackgroundBrush}" 
+                  SelectionChanged="DataGrid_SelectionChanged">
             
             <!-- DataGrid Columns Definition -->
             <DataGrid.Columns>
                 <!-- Courier ID Column - Auto-sized based on content -->
-                <DataGridTextColumn Binding="{Binding CourierId}" Header="Courier ID" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding CourierId}" Header="Courier ID" Width="*"/>
                 
                 <!-- Full Name Column - Takes remaining horizontal space -->
-                <DataGridTextColumn Binding="{Binding FullName}" Header="Full Name" Width="*"/>
+                <DataGridTextColumn Binding="{Binding FullName}" Header="Full Name" Width="1.5*"/>
                 
                 <!-- Is Active Status Column
                      - Uses CheckBox template (read-only)
@@ -99,20 +100,20 @@
                 </DataGridTemplateColumn>
                 
                 <!-- Shipping Method Column - Shows preferred delivery method (Car, Motorcycle, Bike, OnFoot) -->
-                <DataGridTextColumn Binding="{Binding ShippingMethod}" Header="Shipping Method" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding ShippingMethod}" Header="Shipping Method" Width="*"/>
                 
                 <!-- Employment Date Column - Formatted as DD/MM/YYYY -->
                 <DataGridTextColumn Binding="{Binding EmploymentStartDate, StringFormat='{}{0:dd/MM/yyyy}'}" 
-                                    Header="Employment Date" Width="Auto"/>
+                                    Header="Employment Date" Width="*"/>
                 
                 <!-- On-Time Deliveries Column - Displays count of successful on-time deliveries -->
                 <DataGridTextColumn Binding="{Binding TotalDelSuppliedOnTime}" 
-                                    Header="On Time Deliveries" Width="Auto"/>
+                                    Header="On Time Deliveries" Width="*"/>
                 
                 <!-- Late Deliveries Column
                      - Uses custom template with red text to highlight performance issues
                      - Bold font makes it stand out -->
-                <DataGridTemplateColumn Header="Late Deliveries" Width="Auto">
+                <DataGridTemplateColumn Header="Late Deliveries" Width="*">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding TotalLateDelSupplied}" 
@@ -124,7 +125,7 @@
                 </DataGridTemplateColumn>
                 
                 <!-- Current Order ID Column - Shows the order currently being handled by this courier -->
-                <DataGridTextColumn Binding="{Binding OrderId}" Header="Current Order ID" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding OrderId}" Header="Current Order ID" Width="*"/>
                 
                 <!-- Actions Column - Delete Button
                      - Each row has a "Delete" button

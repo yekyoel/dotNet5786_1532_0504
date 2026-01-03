@@ -19,7 +19,7 @@ public enum OrderType
     Pizza,
     Hamburger,
     Fries,
-    IceCream
+    IceCream,
 }
 
 /// <summary>
@@ -31,7 +31,7 @@ public enum CompletionType
     Refused, // the courier reached the destination and the client refused the order (Order goes back)
     Delivered, // the order has been delivered and closed
     Cancelled, // the order was cancelled before delivery
-    Failed // the delivery failed for a miscalculation of the distance
+    Failed ,// the delivery failed for a miscalculation of the distance
 }
 
 public enum OrderStatus
@@ -40,7 +40,8 @@ public enum OrderStatus
     InProgress, // Assigned to a courier
     Completed, // Delivered
     Rejected, // Closed delivery
-    Cancelled // Cancelled before delivery
+    Cancelled, // Cancelled before delivery
+    None
 }
 
 /// <summary>
@@ -52,7 +53,7 @@ public enum ScheduleStatus
 {
     OnTime, // The scheduled item is on track to meet its planned schedule.
     InRisk, // The scheduled item is at risk of being late.
-    Late // The scheduled item is already
+    Late ,// The scheduled item is already
 }
 
 /// <summary>

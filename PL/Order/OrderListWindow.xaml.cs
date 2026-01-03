@@ -1,5 +1,8 @@
-﻿using System;
+﻿using BO;
+using PL.Courier;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,16 +15,208 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
-namespace PL.Order
+namespace PL.Order;
+
+/// <summary>
+/// Represents a window that displays and manages a list of orders, providing functionality to filter, view, add, and
+/// cancel orders within the application's user interface.
+/// </summary>
+/// <remarks>OrderListWindow enables users to interact with order data through various controls, including
+/// filtering by status, viewing order details, and performing actions such as adding or cancelling orders. The window
+/// subscribes to updates from the business logic layer to keep the displayed order list current and ensures proper
+/// resource management by unsubscribing from notifications when closed. Error handling is provided throughout to inform
+/// users of any issues encountered during operations.</remarks>
+public partial class OrderListWindow : Window
 {
-    /// <summary>
-    /// Interaction logic for OrderListWindow.xaml
-    /// </summary>
-    public partial class OrderListWindow : Window
+    public OrderListWindow()
     {
-        public OrderListWindow()
+        InitializeComponent();
+        _userId = s_bl.Admin.GetConfig().AdminId; // Default to admin for this context
+    }
+
+    // BL Layer instance
+    private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    private readonly int _userId;
+
+    public BO.OrderStatus FilterStatus { get; set; } = BO.OrderStatus.None;
+
+    public BO.OrderInList? SelectedOrders { get; set; } 
+
+    /// <summary>
+    /// Gets or sets the collection of orders to be displayed in the list.
+    /// </summary>
+    /// <remarks>The collection represents the current set of orders shown in the user interface.
+    /// Assigning a new collection updates the displayed orders. The property should be set to a non-null
+    /// enumerable; assigning null may result in no orders being shown.</remarks>
+    public IEnumerable<BO.OrderInList> OrderInList
+    {
+        get { return (IEnumerable<BO.OrderInList>)GetValue(OrderListProperty); }
+        set { SetValue(OrderListProperty, value); }
+    }
+
+    // DependencyProperty for OrderInList
+    public static readonly DependencyProperty OrderListProperty =
+        DependencyProperty.Register("OrderInList", typeof(IEnumerable<BO.OrderInList>), typeof(OrderListWindow), new PropertyMetadata(null));
+
+    /// <summary>
+    /// Handles the SelectionChanged event of the ComboBox control and updates the order list based on the new
+    /// selection.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the ComboBox whose selection has changed.</param>
+    /// <param name="e">An object that contains event data for the selection change, including information about the items that were
+    /// added or removed.</param>
+    private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        LoadOrderList();
+    }
+
+    /// <summary>
+    /// Loads the list of orders for the current user and applies the selected status filter, if any.
+    /// </summary>
+    /// <remarks>This method retrieves all orders associated with the current user and updates the
+    /// order list to reflect the applied status filter. If an error occurs during loading, an error message is
+    /// displayed to the user. This method is intended for internal use within the class and does not return a
+    /// value.</remarks>
+    private void LoadOrderList()
+    {
+        try
         {
-            InitializeComponent();
+            // Get all orders (deliveries)
+            var Orders = s_bl.Order.GetListOfOrders(_userId, null, null, null)!; // check userid probably sync with login 
+
+            // Apply filter if selected
+            OrderInList = (FilterStatus == BO.OrderStatus.None) ?
+                Orders :
+                Orders.Where(c => c.OrderStatus == FilterStatus);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error loading deliveries: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+    
+    /// <summary>
+    /// Attempts to refresh the order list and displays an error message if the update fails.
+    /// </summary>
+    /// <remarks>This method handles exceptions that occur during the order list update by showing an
+    /// error dialog to the user. It is intended to be used in contexts where user feedback is required upon
+    /// failure.</remarks>
+    private void OrderListObserver()
+    {
+        try
+        {
+            LoadOrderList();
+        }
+        catch (Exception ex)
+        {
+            Dispatcher.Invoke(() =>
+                MessageBox.Show($"Error updating Order list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
+        }
+    }
+
+    /// <summary>
+    /// Handles the Loaded event of the window to initialize the courier observer and load the order list.
+    /// </summary>
+    /// <remarks>This method sets up necessary observers and loads initial data when the window is
+    /// displayed. If initialization fails, an error message is shown to the user.</remarks>
+    /// <param name="sender">The source of the event, typically the window that has finished loading.</param>
+    /// <param name="e">The event data associated with the Loaded event.</param>
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            s_bl?.Order.AddObserver(OrderListObserver);
+            LoadOrderList();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error initializing Order list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    /// <summary>
+    /// Handles the window's Closed event by unsubscribing from order list updates.
+    /// </summary>
+    /// <remarks>This method ensures that the observer for order list updates is removed when the
+    /// window is closed, preventing further notifications. If an error occurs during unsubscription, an error
+    /// message is displayed to the user.</remarks>
+    /// <param name="sender">The source of the event, typically the window that was closed.</param>
+    /// <param name="e">An <see cref="EventArgs"/> instance containing event data.</param>
+    private void Window_Closed(object sender, EventArgs e)
+    {
+        try
+        {
+            s_bl?.Courier.RemoveObserver(OrderListObserver);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error while unsubscribing from updates: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    /// <summary>
+    /// Handles the Click event of the Add button by opening a new order window.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the Add button control.</param>
+    /// <param name="e">The event data associated with the button click.</param>
+    private void btnAdd_Click(object sender, RoutedEventArgs e)
+    {
+        new OrderWindow().Show();
+    }
+
+    /// <summary>
+    /// Handles the click event of the Cancel button to prompt the user for confirmation and, if confirmed, cancels
+    /// the associated delivery order.
+    /// </summary>
+    /// <remarks>If the user confirms cancellation, the method attempts to cancel the delivery order
+    /// and updates the order list. Displays a success or error message based on the outcome. This event handler is
+    /// typically wired to a Cancel button in a delivery management interface.</remarks>
+    /// <param name="sender">The source of the event, expected to be a Button with its Tag property containing the order ID to cancel.</param>
+    /// <param name="e">The event data associated with the button click.</param>
+    private void btnCancel_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is Button btn && btn.Tag is int orderId)
+        {
+            if (MessageBox.Show("Are you sure you want to cancel this delivery?", "Confirm Cancellation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    s_bl.Order.CancelOrder(_userId, orderId);
+                    LoadOrderList();
+                    MessageBox.Show("Delivery cancelled successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error cancelling delivery: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// Handles the double-click event on the data grid to open the details window for the selected order.
+    /// </summary>
+    /// <remarks>If no order is selected, no window will be opened. Any errors encountered while
+    /// opening the order details window are displayed to the user in a message box.</remarks>
+    /// <param name="sender">The source of the event, typically the data grid control that was double-clicked.</param>
+    /// <param name="e">The event data associated with the mouse double-click action.</param>
+    private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        try
+        {
+            if (SelectedOrders != null)
+                new OrderWindow(SelectedOrders.OrderId).Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error opening Order details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        // Optional: Handle selection logic if needed
+    }
+
 }
+

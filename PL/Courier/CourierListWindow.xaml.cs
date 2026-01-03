@@ -27,6 +27,8 @@ public partial class CourierListWindow : Window
 
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
 
+    public BO.CourierInList? SelectedCouriers { get; set; }
+
     public IEnumerable<BO.CourierInList> CourierList
     {
         get { return (IEnumerable<BO.CourierInList>)GetValue(CourierListProperty); }
@@ -104,8 +106,6 @@ public partial class CourierListWindow : Window
             MessageBox.Show($"Error while unsubscribing from updates: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
-
-    public BO.CourierInList? SelectedCouriers { get; set; }
 
     private void lsvCouriersList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
