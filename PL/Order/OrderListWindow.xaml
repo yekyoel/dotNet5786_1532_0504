@@ -77,7 +77,8 @@
                                     Click="btnCancel_Click"
                                     Tag="{Binding OrderId}"
                                     FontSize="11"
-                                    Padding="5,2"/>
+                                    Padding="5,2"
+                                    IsEnabled="{Binding CanCancelOrder}"/>
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
@@ -86,3 +87,6 @@
     </Grid>
 
 </Window>
+
+
+    

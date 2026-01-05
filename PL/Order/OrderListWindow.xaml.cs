@@ -1,8 +1,9 @@
 ﻿using BO;
-using PL.Courier;
+using PL.Order;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,16 +32,15 @@ public partial class OrderListWindow : Window
     public OrderListWindow()
     {
         InitializeComponent();
-        _userId = s_bl.Admin.GetConfig().AdminId; // Default to admin for this context
     }
 
-    // BL Layer instance
     private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-    private readonly int _userId;
+    private readonly int _userId = s_bl.Admin.GetConfig().AdminId;
+    private BO.CompletionType _orderCompletionType;
 
     public BO.OrderStatus FilterStatus { get; set; } = BO.OrderStatus.None;
 
-    public BO.OrderInList? SelectedOrders { get; set; } 
+    public  BO.OrderInList? SelectedOrders { get; set; } 
 
     /// <summary>
     /// Gets or sets the collection of orders to be displayed in the list.
@@ -94,7 +94,7 @@ public partial class OrderListWindow : Window
             MessageBox.Show($"Error loading deliveries: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
-    
+
     /// <summary>
     /// Attempts to refresh the order list and displays an error message if the update fails.
     /// </summary>
@@ -115,7 +115,7 @@ public partial class OrderListWindow : Window
     }
 
     /// <summary>
-    /// Handles the Loaded event of the window to initialize the courier observer and load the order list.
+    /// Handles the Loaded event of the window to initialize the order observer and load the order list.
     /// </summary>
     /// <remarks>This method sets up necessary observers and loads initial data when the window is
     /// displayed. If initialization fails, an error message is shown to the user.</remarks>
@@ -146,11 +146,12 @@ public partial class OrderListWindow : Window
     {
         try
         {
-            s_bl?.Courier.RemoveObserver(OrderListObserver);
+            s_bl?.Order?.RemoveObserver(OrderListObserver);
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error while unsubscribing from updates: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            // Log exception but don't crash on window close
+            System.Diagnostics.Debug.WriteLine($"Error while unsubscribing from order updates: {ex.Message}");
         }
     }
 
@@ -161,7 +162,7 @@ public partial class OrderListWindow : Window
     /// <param name="e">The event data associated with the button click.</param>
     private void btnAdd_Click(object sender, RoutedEventArgs e)
     {
-        new OrderWindow().Show();
+        new AddOrderWindow().Show();
     }
 
     /// <summary>
@@ -217,6 +218,4 @@ public partial class OrderListWindow : Window
     {
         // Optional: Handle selection logic if needed
     }
-
 }
-
