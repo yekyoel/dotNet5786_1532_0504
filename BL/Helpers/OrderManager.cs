@@ -246,6 +246,10 @@ internal static class OrderManager
         };
 
         s_dal.Order.Create(doOrder);
+
+        // Notify couriers by email (best effort) and observers about list change
+        EmailService.SendNewOrderNotification(doOrder);
+        Observers.NotifyListUpdated();
     }
 
     /// <summary>
