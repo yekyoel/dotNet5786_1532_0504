@@ -18,8 +18,11 @@
         <!-- Vehicle Type Collections - Used for ComboBox dropdowns in Courier management -->
         <local:VehicleTypeCollections x:Key="VehicleTypeCollectionsKey"/>
         <!-- <local:OrderStatusCollection x:Key="OrderStatusCollectionKey"/> -->
-        <local:OrderStatusCollection x:Key="OrderStatusCollectionsKey"/>
-       
+        <local:OrderStatusCollections  x:Key="OrderStatusCollectionsKey"/>
+
+        <local:OrderTypeCollections x:Key="OrderTypeCollectionsKey"/>
+        
+
         <!-- ===================================
              COLOR DEFINITIONS
              Define all application colors in one place for easy theming

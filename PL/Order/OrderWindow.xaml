@@ -5,11 +5,244 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL.Order"
         mc:Ignorable="d"
-        Title="OrderWindow" Height="450" Width="800"
-        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}">
-    
-    <Grid>
-        
-        
+        Title="OrderWindow" Height="655" Width="900"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed"
+        Background="{StaticResource MainBackgroundBrush}">
+
+    <Window.Resources>
+        <!-- Style for consistent label formatting -->
+        <Style x:Key="LabelStyle" TargetType="Label">
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <!-- Style for consistent textbox formatting -->
+        <Style x:Key="TextBoxStyle" TargetType="TextBox">
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+
+        <!-- Style for description textbox (multi-line) -->
+        <Style x:Key="DescriptionTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Width" Value="850"/>
+            <Setter Property="Height" Value="120"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="AcceptsReturn" Value="True"/>
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto"/>
+        </Style>
+
+        <!-- Style for consistent combobox formatting -->
+        <Style x:Key="ComboBoxStyle" TargetType="ComboBox">
+            <Setter Property="Width" Value="200"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,0,12"/>
+        </Style>
+
+        <!-- Style for label with bottom margin -->
+        <Style x:Key="LabelWithMarginStyle" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+            <Setter Property="Margin" Value="0,0,0,0"/>
+        </Style>
+
+        <!-- Main Section Border Style -->
+        <Style x:Key="MainSectionBorderStyle" TargetType="Border">
+            <Setter Property="Background" Value="#262641"/>
+            <Setter Property="BorderBrush" Value="{StaticResource NeonCyanBrush}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="20"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="12" ShadowDepth="3" Opacity="0.4" Color="Black"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource MainBackgroundBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title Section with Border -->
+        <Border Grid.Row="0" Style="{StaticResource MainSectionBorderStyle}" Margin="15,15,15,10">
+            <TextBlock Text="Order Details" FontSize="28" FontWeight="Bold" Foreground="{StaticResource NeonCyanBrush}"/>
+        </Border>
+
+        <!-- Main Content Section with Border and ScrollViewer -->
+        <Border Grid.Row="1" Style="{StaticResource MainSectionBorderStyle}" Margin="15,0,15,10">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="0">
+                <StackPanel Margin="0">
+                    <!-- Left and Right Columns Grid -->
+                    <Grid Margin="0,0,0,30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- LEFT COLUMN GRID -->
+                        <Grid Grid.Column="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Order ID (Read-only) -->
+                            <Label Grid.Row="0" Grid.Column="0" Content="Order ID:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                  Text="{Binding CurrentOrder.Id, Mode=OneWay}"/>
+
+                            <!-- Customer Name -->
+                            <Label Grid.Row="1" Grid.Column="0" Content="Customer Name:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource TextBoxStyle}" 
+                                  Text="{Binding CurrentOrder.CustomerName, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+
+                            <!-- Customer Phone -->
+                            <Label Grid.Row="2" Grid.Column="0" Content="Customer Phone:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource TextBoxStyle}" 
+                                  Text="{Binding CurrentOrder.CustomerPhone, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+
+                            <!-- Order Address -->
+                            <Label Grid.Row="3" Grid.Column="0" Content="Order Address:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource TextBoxStyle}" 
+                                  Text="{Binding CurrentOrder.OrderAddress, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+
+                            <!-- Weight -->
+                            <Label Grid.Row="4" Grid.Column="0" Content="Weight (kg):" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource TextBoxStyle}" 
+                                  Text="{Binding CurrentOrder.Weight, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+
+                            <!-- Order Placed Time (Read-only) -->
+                            <Label Grid.Row="5" Grid.Column="0" Content="Order Placed Time:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                  Text="{Binding CurrentOrder.OrderPlacedTime, Mode=OneWay, StringFormat=g}"/>
+
+                            <!-- Order Status (Read-only) -->
+                            <Label Grid.Row="6" Grid.Column="0" Content="Order Status:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                  Text="{Binding CurrentOrder.OrderStatus, Mode=OneWay}"/>
+                        </Grid>
+
+                        <!-- RIGHT COLUMN GRID -->
+                        <Grid Grid.Column="2">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="200"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <!-- Order Type -->
+                            <Label Grid.Row="0" Grid.Column="0" Content="Order Type:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <ComboBox Grid.Row="0" Grid.Column="1" 
+                                   ItemsSource="{Binding Source={StaticResource OrderTypeCollectionsKey}}"
+                                   SelectedValue="{Binding CurrentOrder.OrderTyype, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+
+                            <!-- Aerial Distance (Read-only) -->
+                            <Label Grid.Row="1" Grid.Column="0" Content="Aerial Distance (km):" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                  Text="{Binding CurrentOrder.AerialDistance, Mode=OneWay, StringFormat=N2}"/>
+
+                            <!-- Expected Delivery Time (Read-only) -->
+                            <Label Grid.Row="2" Grid.Column="0" Content="Expected Delivery:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                  Text="{Binding CurrentOrder.ExpectedDeliveryTime, Mode=OneWay, StringFormat=g}"/>
+
+                            <!-- Max Delivered Time (Read-only) -->
+                            <Label Grid.Row="3" Grid.Column="0" Content="Max Delivery Time:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                  Text="{Binding CurrentOrder.MaxDeliveredTime, Mode=OneWay, StringFormat=g}"/>
+
+                            <!-- Total Time Left (Read-only) -->
+                            <Label Grid.Row="4" Grid.Column="0" Content="Total Time Left:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                  Text="{Binding CurrentOrder.TotalTimeLeft, Mode=OneWay}"/>
+
+                            <!-- Schedule Status (Read-only) -->
+                            <Label Grid.Row="5" Grid.Column="0" Content="Schedule Status:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                  Text="{Binding CurrentOrder.ScheduleStatus, Mode=OneWay}"/>
+
+                            <!-- Description (Read-only) -->
+                            <Label Grid.Row="6" Grid.Column="0" Content="Description:" Style="{StaticResource LabelWithMarginStyle}"/>
+                            <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource TextBoxStyle}" 
+                                  Text="{Binding CurrentOrder.Description, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                        </Grid>
+                    </Grid>
+
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- Deliveries List Section -->
+        <Border Grid.Row="2" Style="{StaticResource MainSectionBorderStyle}" Margin="15,0,15,10">
+            <Expander Header="📦 Deliveries" FontSize="16" FontWeight="Bold" Foreground="{StaticResource NeonCyanBrush}" IsExpanded="False">
+                <DataGrid ItemsSource="{Binding CurrentOrder.DeliveriesList}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          Height="Auto"
+                          Margin="0,10,0,0">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Binding="{Binding DeliveryId}" Header="ID" Width="*"/>
+                        <DataGridTextColumn Binding="{Binding CourierId}" Header="Courier ID" Width="*"/>
+                        <DataGridTextColumn Binding="{Binding CourierName}" Header="Courier" Width="*"/>
+                        <DataGridTextColumn Binding="{Binding TypeOrder}" Header="Type" Width="*"/>
+                        <DataGridTextColumn Binding="{Binding OrderStart, StringFormat=g}" Header="Started" Width="*"/>
+                        <DataGridTextColumn Binding="{Binding CompType}" Header="Status" Width="*"/>
+                        <DataGridTextColumn Binding="{Binding DeliveryEndTime, StringFormat=g}" Header="Completed" Width="*"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Expander>
+        </Border>
+
+        <!-- Buttons Section with Border - Centered -->
+        <Border Grid.Row="3" Style="{StaticResource MainSectionBorderStyle}" Margin="15,0,15,15">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Update" Width="130" Height="45" Click="btnAddUpdate_Click" Margin="0,0,15,0"/>
+                <Button Content="Close" Width="130" Height="45" Click="btnClose_Click"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Window>
