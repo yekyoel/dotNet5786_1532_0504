@@ -142,7 +142,7 @@ internal static class OrderManager
     {
         Delivery? delivery;
         var dalOrder = s_dal.Order.Read(orderId); // read order from DAL
-        if (dalOrder == null)
+        if (dalOrder is null)
             throw new KeyNotFoundException($"Order with ID {orderId} not found");
         else if (Tools.FindOrderStatusType(dalOrder) == BO.OrderStatus.Open ) // its open
         {
@@ -159,7 +159,7 @@ internal static class OrderManager
         else if (Tools.FindOrderStatusType(dalOrder) == BO.OrderStatus.InProgress)  // being handeled
         {
             delivery = DeliveryManager.GetDeliveryByOrderId(orderId);
-            if (delivery == null)
+            if (delivery is null)
                 throw new InvalidOperationException($"Order with ID {orderId} is in progress but has no associated delivery.");
             var dalDelivery = new DO.Delivery
             {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DO;
+using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
@@ -55,9 +56,10 @@ public class CanCancelOrderConverter : IValueConverter
                 ?.CompType;
 
             // Only allow cancel if not already Cancelled or Delivered
-            return type != BO.CompletionType.Cancelled
+            return type != BO.CompletionType.Refused
                    && type != BO.CompletionType.Delivered
-                   && type != BO.CompletionType.Failed; 
+                   && type != BO.CompletionType.Failed
+                   && type != BO.CompletionType.Cancelled;
         }
         catch
         {
