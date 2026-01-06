@@ -67,7 +67,7 @@ public partial class CourierListWindow : Window
     }
 
     /// <summary>
-    /// Private observer method - called by BL when the courier list is updated
+    /// Observer method to update the courier list when notified
     /// </summary>
     private void courierListObserver()
     {
@@ -82,6 +82,11 @@ public partial class CourierListWindow : Window
         }
     }
 
+    /// <summary>
+    /// Handles the window loaded event to initialize the courier list and subscribe to updates.
+    /// </summary>
+    /// <param name="sender">name of the sender</param>
+    /// <param name="e">event arguments</param>
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         try
@@ -95,6 +100,11 @@ public partial class CourierListWindow : Window
         }
     }
 
+    /// <summary>
+    /// Handles the window closed event to unsubscribe from courier list updates.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void Window_Closed(object sender, EventArgs e)
     {
         try
@@ -120,6 +130,7 @@ public partial class CourierListWindow : Window
         }
     }
 
+    
     private void btnAdd_Click(object sender, RoutedEventArgs e)
     {
         new CourierWindow().Show();

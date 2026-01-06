@@ -1,0 +1,29 @@
+﻿<Window x:Class="PL.Courier.CourierScreens.CourierMainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PL.Courier.CourierScreens"
+        mc:Ignorable="d"
+        Title="CourierMainWindow" Height="640" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40*"/>
+            <RowDefinition Height="500*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!--Internal, Upper Grid-->
+        <Grid HorizontalAlignment="Stretch" Height="auto" Grid.Row="0" VerticalAlignment="Stretch" Width="auto">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox HorizontalAlignment="Stretch" Grid.Column="1" VerticalAlignment="Stretch"/>
+            <Label Grid.Column="0" Content="Label" HorizontalAlignment="Left" Margin="64,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="-0.183,0.532"/>
+        </Grid>
+        <DataGrid Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}"/>
+        <!-- update button -->
+        <Button Content="Update" Grid.Row="2" HorizontalAlignment="Center" Height="50" Width="100"/>
+
+    </Grid>
+</Window>
