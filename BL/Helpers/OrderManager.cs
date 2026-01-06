@@ -144,7 +144,7 @@ internal static class OrderManager
         var dalOrder = s_dal.Order.Read(orderId); // read order from DAL
         if (dalOrder == null)
             throw new KeyNotFoundException($"Order with ID {orderId} not found");
-        else if (Tools.FindOrderStatusType(dalOrder) == BO.OrderStatus.Open) // its open
+        else if (Tools.FindOrderStatusType(dalOrder) == BO.OrderStatus.Open ) // its open
         {
             var del = new DO.Delivery
             {

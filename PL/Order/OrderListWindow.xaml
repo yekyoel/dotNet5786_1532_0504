@@ -74,12 +74,12 @@
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <Button Content="Cancel"
-                                Command="{Binding DataContext.CancelCommand, RelativeSource={RelativeSource AncestorType=Window}}"
-                                CommandParameter="{Binding OrderId}">
-
+                                Click="btnCancel_Click"
+                                Tag="{Binding OrderId}"
+                                IsEnabled="{Binding OrderId,
+                                Converter={StaticResource CanCancelOrderConverter}}">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
-
                                         <Style.Triggers>
                                             <Trigger Property="IsEnabled" Value="False">
                                                 <Setter Property="Background" Value="Gray"/>

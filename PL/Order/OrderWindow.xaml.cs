@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PL.Courier;
+using System;
 using System.Windows;
 
 namespace PL.Order;
@@ -23,29 +24,50 @@ public partial class OrderWindow : Window
     public static readonly DependencyProperty CurrentOrderProperty =
         DependencyProperty.Register("CurrentOrder", typeof(BO.Order), typeof(OrderWindow), new PropertyMetadata(null));
 
+    
+    public static readonly DependencyProperty ButtonTextProperty =
+        DependencyProperty.Register("ButtonText", typeof(string), typeof(OrderWindow));
+
+    /// <summary>
+    /// Gets or sets the text displayed on the action button (Add/Update).
+    /// </summary>
+    public string ButtonText
+    {
+        get { return (string)GetValue(ButtonTextProperty); }
+        set { SetValue(ButtonTextProperty, value); }
+    }
+
+    public bool IsUpdateMode
+    {
+        get { return (bool)GetValue(IsUpdateModeProperty); }
+        set { SetValue(IsUpdateModeProperty, value); }
+    }
+
+    public static readonly DependencyProperty IsUpdateModeProperty =
+        DependencyProperty.Register("IsUpdateMode", typeof(bool), typeof(OrderWindow), new PropertyMetadata(false));
+
+
     /// <summary>
     /// Initializes a new instance of the OrderWindow class in update mode.
     /// </summary>
     /// <param name="id">The existing order ID to edit. Value must be greater than zero.</param>
     public OrderWindow(int id = 0)
     {
+        ButtonText = id == 0 ? "Add" : "Update";
+        IsUpdateMode = id != 0;
         InitializeComponent();
 
-        if (id <= 0)
+        if (id != 0)
         {
-            MessageBox.Show("Error. Select an existing order to continue.", "Update Only", MessageBoxButton.OK, MessageBoxImage.Information);
-            Close();
-            return;
-        }
-
-        try
-        {
-            CurrentOrder = s_bl.Order.GetOrderDetails(123456789, id)!;
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Error loading order: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            Close();
+            try
+            {
+                CurrentOrder = s_bl.Order.GetOrderDetails(123456789, id)!;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading order: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                Close();
+            }
         }
     }
 
@@ -115,9 +137,6 @@ public partial class OrderWindow : Window
         }
     }
 
-    /// <summary>
-    /// Handles updating order information.
-    /// </summary>
     private void btnAddUpdate_Click(object sender, RoutedEventArgs e)
     {
         try
@@ -125,9 +144,18 @@ public partial class OrderWindow : Window
             // Validate order before sending to BL
             ValidateOrderOrThrow(CurrentOrder!);
 
-            s_bl.Order.UpdateOrderDetails(123456789, CurrentOrder!);
-            MessageBox.Show("Order updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            Close();
+            if (ButtonText == "Add")
+            {
+                s_bl.Order.AddOrder(123456789, CurrentOrder!);
+                MessageBox.Show("Order added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                Close();
+            }
+            else
+            {
+                s_bl.Order.UpdateOrderDetails(123456789, CurrentOrder!);
+                MessageBox.Show("Order updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                Close();
+            }
         }
         catch (Exception ex)
         {
@@ -143,8 +171,19 @@ public partial class OrderWindow : Window
     /// <exception cref="ArgumentException">Thrown when order properties are invalid.</exception>
     private static void ValidateOrderOrThrow(BO.Order order)
     {
-        if (order is null)
-            throw new ArgumentNullException(nameof(order), "Order cannot be null.");
+        // id is given in dal 
+
+        // Description
+        if (string.IsNullOrWhiteSpace(order.Description))
+            throw new ArgumentException("Description is required.", nameof(order.Description));
+
+        // Order Address
+        if (string.IsNullOrWhiteSpace(order.OrderAddress))
+            throw new ArgumentException("Order Address is required.", nameof(order.OrderAddress));
+
+        // Arial Distance
+        //if (order.AerialDistance < 0)
+        //   throw new ArgumentException("Arial Distance cannot be negative.", nameof(order.AerialDistance));
 
         // Customer Name
         if (string.IsNullOrWhiteSpace(order.CustomerName))
@@ -154,32 +193,20 @@ public partial class OrderWindow : Window
         if (string.IsNullOrWhiteSpace(order.CustomerPhone))
             throw new ArgumentException("Customer Phone is required.", nameof(order.CustomerPhone));
 
-        // Order Address
-        if (string.IsNullOrWhiteSpace(order.OrderAddress))
-            throw new ArgumentException("Order Address is required.", nameof(order.OrderAddress));
-
         // Weight
         if (order.Weight <= 0)
             throw new ArgumentException("Weight must be a positive number.", nameof(order.Weight));
 
-        // Latitude
-        if (order.Latitude < -90.0 || order.Latitude > 90.0)
-            throw new ArgumentException("Latitude must be between -90 and 90.", nameof(order.Latitude));
+        // orderTime 
+        // maxDeliveryTime
+        // timeleft 
 
-        // Longitude
-        if (order.Longitude < -180.0 || order.Longitude > 180.0)
-            throw new ArgumentException("Longitude must be between -180 and 180.", nameof(order.Longitude));
 
-        // Order Type
-        if (order.OrderTyype is null)
-            throw new ArgumentException("Order Type is required.", nameof(order.OrderTyype));
     }
 
     /// <summary>
     /// Closes the order window.
     /// </summary>
-    private void btnClose_Click(object sender, RoutedEventArgs e)
-    {
-        Close();
-    }
+    private void btnClose_Click(object sender, RoutedEventArgs e) => Close();
+
 }

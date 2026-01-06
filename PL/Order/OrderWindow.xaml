@@ -176,7 +176,7 @@
 
                             <!-- Order Type -->
                             <Label Grid.Row="0" Grid.Column="0" Content="Order Type:" Style="{StaticResource LabelWithMarginStyle}"/>
-                            <ComboBox Grid.Row="0" Grid.Column="1" 
+                            <ComboBox Grid.Row="0" Grid.Column="1"  
                                    ItemsSource="{Binding Source={StaticResource OrderTypeCollectionsKey}}"
                                    SelectedValue="{Binding CurrentOrder.OrderTyype, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
 
@@ -217,7 +217,7 @@
         </Border>
 
         <!-- Deliveries List Section -->
-        <Border Grid.Row="2" Style="{StaticResource MainSectionBorderStyle}" Margin="15,0,15,10">
+        <Border Grid.Row="2" Style="{StaticResource MainSectionBorderStyle}" Visibility="{Binding IsUpdateMode, Converter={StaticResource BoolToVisibilityConverter}}"  Margin="15,0,15,10">
             <Expander Header="📦 Deliveries" FontSize="16" FontWeight="Bold" Foreground="{StaticResource NeonCyanBrush}" IsExpanded="False">
                 <DataGrid ItemsSource="{Binding CurrentOrder.DeliveriesList}"
                           AutoGenerateColumns="False"
@@ -240,7 +240,7 @@
         <!-- Buttons Section with Border - Centered -->
         <Border Grid.Row="3" Style="{StaticResource MainSectionBorderStyle}" Margin="15,0,15,15">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Content="Update" Width="130" Height="45" Click="btnAddUpdate_Click" Margin="0,0,15,0"/>
+                <Button Content="{Binding ButtonText}" Width="130" Height="45" Click="btnAddUpdate_Click" Margin="0,0,15,0"/>
                 <Button Content="Close" Width="130" Height="45" Click="btnClose_Click"/>
             </StackPanel>
         </Border>
