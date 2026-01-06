@@ -1,11 +1,9 @@
 using System;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 
-namespace PL.Courier.CourierScreens
+namespace PL.Order
 {
     /// <summary>
     /// Interaction logic for OrderSelectionWindow.xaml
@@ -48,11 +46,8 @@ namespace PL.Courier.CourierScreens
                 try
                 {
                     s_bl.Order.ChooseOrder(_courierId, _courierId, orderId);
-                    
-                    // Requirement: "Send email with details"
                     MessageBox.Show("Order assigned successfully! Email with details sent.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    
-                    Close(); // Close selection window after picking
+                    Close();
                 }
                 catch (Exception ex)
                 {
@@ -63,14 +58,7 @@ namespace PL.Courier.CourierScreens
 
         private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (SelectedOrder != null)
-            {
-                // Requirement: Show map with locations and lines
-                // Simulation: Update a text block or placeholder map control
-                // In a real WPF app, we'd use a MapControl (e.g., GMap.NET or Bing Maps)
-                // For now, we'll just acknowledge the selection.
-                // MapPlaceholder.Text = $"Map: Courier -> Order {SelectedOrder.OrderId} ({SelectedOrder.ArealDistance:N2} km)";
-            }
+            // Placeholder for map update logic if needed
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)

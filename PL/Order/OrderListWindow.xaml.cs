@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -32,11 +33,11 @@ public partial class OrderListWindow : Window
     public OrderListWindow()
     {
         InitializeComponent();
+        CancelCommand = new RelayCommand(ExecuteCancel, CanCancel);
     }
 
     private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
     private readonly int _userId = s_bl.Admin.GetConfig().AdminId;
-    private BO.CompletionType _orderCompletionType;
 
     public BO.OrderStatus FilterStatus { get; set; } = BO.OrderStatus.None;
 
@@ -218,4 +219,59 @@ public partial class OrderListWindow : Window
     {
         // Optional: Handle selection logic if needed
     }
+
+    public ICommand CancelCommand { get; private set;}
+
+    // The Logic to run when the button is clicked
+    private void ExecuteCancel(object parameter)
+    {
+        if (parameter is int orderId)
+        {
+            try
+            {
+                s_bl.Order.CancelOrder(_userId, orderId); // Call BL
+                MessageBox.Show("Order cancelled successfully.");
+                LoadOrderList(); // Refresh list to update UI and gray out button
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}");
+            }
+        }
+    }
+
+    // The Logic to decide if the button is Red (True) or Gray (False)
+    private bool CanCancel(object parameter)
+    {
+        if (parameter is int orderId)
+        {
+            BO.CompletionType? type = GetCompletionTypeForOrder(orderId);
+
+            // Return TRUE (Clickable) only if it is NOT already cancelled or finished.
+            // Adjust this list based on what you consider "Cancellable"
+            return type != BO.CompletionType.Cancelled
+                && type != BO.CompletionType.Delivered;
+        }
+        return false;
+    }
+
+    private BO.CompletionType? GetCompletionTypeForOrder(int orderId)
+    {
+        try
+        {
+            var order = s_bl.Order.GetOrderDetails(_userId, orderId);
+            // assuming DeliveriesList[0] is the current/last delivery
+            return order.DeliveriesList?
+                .OrderByDescending(d => d.DeliveryId)
+                .FirstOrDefault()
+                ?.CompType;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
 }
+
+  
