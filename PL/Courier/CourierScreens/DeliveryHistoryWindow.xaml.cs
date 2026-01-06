@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace PL.Courier.CourierScreens;
 
@@ -19,7 +20,7 @@ public partial class DeliveryHistoryWindow : Window
     public IEnumerable<BO.CompletionType> CompletionTypes { get; } =
         Enum.GetValues<BO.CompletionType>();
 
-    public BO.CompletionType? SelectedCompletionTypeFilter { get; set; }
+    public BO.CompletionType? SelectedCompletionTypeFilter { get; set; } = BO.CompletionType.None;
 
     public IReadOnlyList<string> SortOptions { get; } = new[]
     {
@@ -39,8 +40,8 @@ public partial class DeliveryHistoryWindow : Window
         _courierId = courierId;
         _historyObserver = HistoryObserver;
 
-        LoadHistory();
         DataContext = this;
+        LoadHistory();
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -83,7 +84,7 @@ public partial class DeliveryHistoryWindow : Window
         }
     }
 
-    private void FilterSort_Changed(object sender, EventArgs e)
+    private void FilterSort_Changed(object sender, SelectionChangedEventArgs e)
     {
         LoadHistory();
     }
@@ -96,11 +97,10 @@ public partial class DeliveryHistoryWindow : Window
 
             IEnumerable<BO.ClosedDeliveryInList> query = history;
 
-            // Filter (optional)
-            if (SelectedCompletionTypeFilter.HasValue)
-                query = query.Where(x => x.CompletionType == SelectedCompletionTypeFilter.Value);
+            // "None" means no filter -> show all
+            if (SelectedCompletionTypeFilter is BO.CompletionType filter && filter != BO.CompletionType.None)
+                query = query.Where(x => x.CompletionType == filter);
 
-            // Sort
             query = SelectedSortOption switch
             {
                 "Order ID" => query.OrderBy(x => x.OrderId),
@@ -113,10 +113,6 @@ public partial class DeliveryHistoryWindow : Window
             HistoryList.Clear();
             foreach (var item in query)
                 HistoryList.Add(item);
-
-            // refresh bindings (DataContext=self approach)
-            DataContext = null;
-            DataContext = this;
         }
         catch (Exception ex)
         {

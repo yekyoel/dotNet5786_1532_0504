@@ -79,6 +79,18 @@ public partial class CourierOrderSelectionWindow : Window
         foreach (var o in orders)
             OpenOrders.Add(o);
 
+        if (OpenOrders.Count == 0)
+        {
+            MessageBox.Show(
+                "No available orders found.\n\nCommon reasons:\n" +
+                "- There are no orders in the DB (click Initialize)\n" +
+                "- Your MaxDist is too small (distance filter)\n" +
+                "- All orders already have deliveries that are not Pending/unassigned",
+                "No Orders",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+        }
+
         // Refresh bindings (DataContext=self style)
         DataContext = null;
         DataContext = this;
