@@ -33,7 +33,7 @@ public partial class OrderListWindow : Window
     public OrderListWindow()
     {
         InitializeComponent();
-        CancelCommand = new RelayCommand(ExecuteCancel, CanCancel);
+        //CancelCommand = new RelayCommand(ExecuteCancel, CanCancel);
     }
 
     private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
@@ -163,7 +163,7 @@ public partial class OrderListWindow : Window
     /// <param name="e">The event data associated with the button click.</param>
     private void btnAdd_Click(object sender, RoutedEventArgs e)
     {
-        new AddOrderWindow().Show();
+        new OrderWindow().Show();
     }
 
     /// <summary>
@@ -179,17 +179,26 @@ public partial class OrderListWindow : Window
     {
         if (sender is Button btn && btn.Tag is int orderId)
         {
-            if (MessageBox.Show("Are you sure you want to cancel this delivery?", "Confirm Cancellation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show("Are you sure you want to cancel this delivery?",
+                                "Confirm Cancellation",
+                                MessageBoxButton.YesNo,
+                                MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 try
                 {
                     s_bl.Order.CancelOrder(_userId, orderId);
                     LoadOrderList();
-                    MessageBox.Show("Delivery cancelled successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBox.Show("Delivery cancelled successfully.",
+                                    "Success",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Information);
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Error cancelling delivery: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Error cancelling delivery: {ex.Message}",
+                                    "Error",
+                                    MessageBoxButton.OK,
+                                    MessageBoxImage.Error);
                 }
             }
         }
@@ -220,58 +229,77 @@ public partial class OrderListWindow : Window
         // Optional: Handle selection logic if needed
     }
 
-    public ICommand CancelCommand { get; private set;}
+    /* public ICommand CancelCommand { get; private set;}
 
-    // The Logic to run when the button is clicked
-    private void ExecuteCancel(object parameter)
-    {
-        if (parameter is int orderId)
-        {
-            try
-            {
-                s_bl.Order.CancelOrder(_userId, orderId); // Call BL
-                MessageBox.Show("Order cancelled successfully.");
-                LoadOrderList(); // Refresh list to update UI and gray out button
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error: {ex.Message}");
-            }
-        }
-    }
+     private void btnCancel_Click(object sender, RoutedEventArgs e)
+     {
+         if (sender is Button btn && btn.Tag is int orderId)
+         {
+             if (MessageBox.Show("Are you sure you want to cancel this delivery?", "Confirm Cancellation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+             {
+                 try
+                 {
+                     s_bl.Order.CancelOrder(_userId, orderId);
+                     LoadOrderList();
+                     MessageBox.Show("Delivery cancelled successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                 }
+                 catch (Exception ex)
+                 {
+                     MessageBox.Show($"Error cancelling delivery: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                 }
+             }
+         }
+     }
 
-    // The Logic to decide if the button is Red (True) or Gray (False)
-    private bool CanCancel(object parameter)
-    {
-        if (parameter is int orderId)
-        {
-            BO.CompletionType? type = GetCompletionTypeForOrder(orderId);
+     // The Logic to run when the button is clicked
+     private void ExecuteCancel(object parameter)
+     {
+         if (parameter is int orderId)
+         {
+             try
+             {
+                 s_bl.Order.CancelOrder(_userId, orderId); // Call BL
+                 MessageBox.Show("Order cancelled successfully.");
+                 LoadOrderList(); // Refresh list to update UI and gray out button
+             }
+             catch (Exception ex)
+             {
+                 MessageBox.Show($"Error: {ex.Message}");
+             }
+         }
+     }
 
-            // Return TRUE (Clickable) only if it is NOT already cancelled or finished.
-            // Adjust this list based on what you consider "Cancellable"
-            return type != BO.CompletionType.Cancelled
-                && type != BO.CompletionType.Delivered;
-        }
-        return false;
-    }
+     // The Logic to decide if the button is Red (True) or Gray (False)
+     private bool CanCancel(object parameter)
+     {
+         if (parameter is int orderId)
+         {
+             BO.CompletionType? type = GetCompletionTypeForOrder(orderId);
 
-    private BO.CompletionType? GetCompletionTypeForOrder(int orderId)
-    {
-        try
-        {
-            var order = s_bl.Order.GetOrderDetails(_userId, orderId);
-            // assuming DeliveriesList[0] is the current/last delivery
-            return order.DeliveriesList?
-                .OrderByDescending(d => d.DeliveryId)
-                .FirstOrDefault()
-                ?.CompType;
-        }
-        catch
-        {
-            return null;
-        }
-    }
+             // Return TRUE (Clickable) only if it is NOT already cancelled or finished.
+             // Adjust this list based on what you consider "Cancellable"
+             return type != BO.CompletionType.Cancelled
+                 && type != BO.CompletionType.Delivered;
+         }
+         return false;
+     }
+
+     private BO.CompletionType? GetCompletionTypeForOrder(int orderId)
+     {
+         try
+         {
+             var order = s_bl.Order.GetOrderDetails(_userId, orderId);
+             // assuming DeliveriesList[0] is the current/last delivery
+             return order.DeliveriesList?
+                 .OrderByDescending(d => d.DeliveryId)
+                 .FirstOrDefault()
+                 ?.CompType;
+         }
+         catch
+         {
+             return null;
+         }
+     }*/
 
 }
 
-  

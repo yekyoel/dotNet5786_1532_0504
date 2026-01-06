@@ -15,6 +15,9 @@
     -->
     
     <Application.Resources>
+        <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <local:AddUpdateTextConverter x:Key="AddUpdateTextConverter" />
+        <local:CanCancelOrderConverter x:Key="CanCancelOrderConverter" />
         <!-- Vehicle Type Collections - Used for ComboBox dropdowns in Courier management -->
         <local:VehicleTypeCollections x:Key="VehicleTypeCollectionsKey"/>
         <!-- <local:OrderStatusCollection x:Key="OrderStatusCollectionKey"/> -->
