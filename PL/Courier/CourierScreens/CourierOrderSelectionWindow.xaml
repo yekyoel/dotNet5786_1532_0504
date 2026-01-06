@@ -1,0 +1,93 @@
+﻿<Window x:Class="PL.Courier.CourierScreens.CourierOrderSelectionWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Select Order for Handling"
+        Height="650"
+        Width="950"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed"
+        Background="{StaticResource MainBackgroundBrush}">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="220"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="Select Order for Handling"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Foreground="{StaticResource NeonCyanBrush}"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,10"/>
+
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding OpenOrders}"
+                  SelectedItem="{Binding SelectedOrder}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionChanged="DataGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding OrderId}" Header="ID" Width="70"/>
+                <DataGridTextColumn Binding="{Binding TypeOrder}" Header="Type" Width="110"/>
+                <DataGridTextColumn Binding="{Binding DeliveryAddress}" Header="Address" Width="*"/>
+                <DataGridTextColumn Binding="{Binding Weight, StringFormat=N2}" Header="Weight" Width="90"/>
+                <DataGridTextColumn Binding="{Binding ArealDistance, StringFormat=N2}" Header="Air Dist (km)" Width="120"/>
+                <DataGridTextColumn Binding="{Binding TotalTimeLeft}" Header="Time Left" Width="120"/>
+
+                <DataGridTemplateColumn Header="Action" Width="110">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Collect"
+                                    Click="btnCollect_Click"
+                                    Tag="{Binding OrderId}"
+                                    Width="90"
+                                    Height="28"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Map placeholder -->
+        <Border Grid.Row="2"
+                Margin="0,10,0,0"
+                Background="#1a2a2e"
+                BorderBrush="{StaticResource NeonCyanBrush}"
+                BorderThickness="1"
+                CornerRadius="6"
+                Padding="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0"
+                           Text="Map (placeholder)"
+                           Foreground="{StaticResource NeonCyanBrush}"
+                           FontWeight="Bold"/>
+
+                <StackPanel Grid.Row="1" Margin="0,10,0,0">
+                    <TextBlock Text="{Binding MapStatusText}" Foreground="{StaticResource TextMainBrush}" TextWrapping="Wrap"/>
+                    <TextBlock Text="{Binding MapCoordinatesText}" Foreground="{StaticResource TextSubBrush}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Button Grid.Row="3"
+                Content="Close"
+                Click="btnClose_Click"
+                Width="120"
+                Height="36"
+                HorizontalAlignment="Right"
+                Margin="0,10,0,0"/>
+    </Grid>
+</Window>

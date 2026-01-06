@@ -1,0 +1,70 @@
+﻿<Window x:Class="PL.Courier.CourierScreens.DeliveryHistoryWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Delivery History"
+        Height="520"
+        Width="950"
+        Loaded="Window_Loaded"
+        Closed="Window_Closed"
+        DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
+        Background="{StaticResource MainBackgroundBrush}">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0"
+                   Text="My Delivery History"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   Foreground="{StaticResource NeonCyanBrush}"
+                   HorizontalAlignment="Center"
+                   Margin="0,0,0,10"/>
+
+        <!-- Filter/Sort -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Filter:" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <ComboBox Width="180"
+                      ItemsSource="{Binding CompletionTypes}"
+                      SelectedItem="{Binding SelectedCompletionTypeFilter}"
+                      SelectionChanged="FilterSort_Changed"/>
+
+            <TextBlock Text="Sort:" VerticalAlignment="Center" Margin="20,0,8,0"/>
+            <ComboBox Width="220"
+                      ItemsSource="{Binding SortOptions}"
+                      SelectedItem="{Binding SelectedSortOption}"
+                      SelectionChanged="FilterSort_Changed"/>
+        </StackPanel>
+
+        <DataGrid Grid.Row="2"
+                  ItemsSource="{Binding HistoryList}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Binding="{Binding DeliveryId}" Header="Delivery ID" Width="110"/>
+                <DataGridTextColumn Binding="{Binding OrderId}" Header="Order ID" Width="90"/>
+                <DataGridTextColumn Binding="{Binding OrderType}" Header="Type" Width="90"/>
+                <DataGridTextColumn Binding="{Binding DeliveryType}" Header="Method" Width="110"/>
+                <DataGridTextColumn Binding="{Binding DeliveryAddress}" Header="Address" Width="*"/>
+                <DataGridTextColumn Binding="{Binding ActualDistance, StringFormat=N2}" Header="Km" Width="80"/>
+                <DataGridTextColumn Binding="{Binding TotalCompletionTime}" Header="Duration" Width="120"/>
+                <DataGridTextColumn Binding="{Binding CompletionType}" Header="Status" Width="110"/>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <Button Grid.Row="3"
+                Content="Close"
+                Width="120"
+                Height="36"
+                HorizontalAlignment="Right"
+                Margin="0,10,0,0"
+                Click="btnClose_Click"/>
+    </Grid>
+</Window>

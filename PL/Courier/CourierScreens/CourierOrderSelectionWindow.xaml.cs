@@ -1,0 +1,159 @@
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Windows;
+using System.Windows.Controls;
+
+namespace PL.Courier.CourierScreens;
+
+public partial class CourierOrderSelectionWindow : Window
+{
+    private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+
+    private readonly int _courierId;
+    private bool _isObserverRegistered;
+    private readonly Action _orderListObserver;
+
+    public ObservableCollection<BO.OpenOrderInList> OpenOrders { get; } = new();
+
+    public BO.OpenOrderInList? SelectedOrder { get; set; }
+
+    public string MapStatusText { get; set; } = "Select an order to preview the route.";
+    public string MapCoordinatesText { get; set; } = string.Empty;
+
+    public CourierOrderSelectionWindow(int courierId)
+    {
+        InitializeComponent();
+        _courierId = courierId;
+
+        _orderListObserver = RefreshOrdersFromObserver;
+
+        LoadOpenOrders();
+        DataContext = this;
+    }
+
+    private void Window_Loaded(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            s_bl.Order.AddObserver(_orderListObserver);
+            _isObserverRegistered = true;
+        }
+        catch
+        {
+            _isObserverRegistered = false;
+        }
+    }
+
+    private void Window_Closed(object sender, EventArgs e)
+    {
+        if (!_isObserverRegistered)
+            return;
+
+        try
+        {
+            s_bl.Order.RemoveObserver(_orderListObserver);
+        }
+        catch
+        {
+            // ignore errors on close
+        }
+    }
+
+    private void RefreshOrdersFromObserver()
+    {
+        try
+        {
+            Dispatcher.Invoke(LoadOpenOrders);
+        }
+        catch
+        {
+            // ignore observer exceptions
+        }
+    }
+
+    private void LoadOpenOrders()
+    {
+        var orders = s_bl.Order.GetAvailableOrdersForCourier(_courierId, _courierId, null, null);
+
+        OpenOrders.Clear();
+        foreach (var o in orders)
+            OpenOrders.Add(o);
+
+        // Refresh bindings (DataContext=self style)
+        DataContext = null;
+        DataContext = this;
+    }
+
+    private void btnCollect_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button btn || btn.Tag is not int orderId)
+            return;
+
+        try
+        {
+            s_bl.Order.ChooseOrder(_courierId, _courierId, orderId);
+
+            MessageBox.Show("Order assigned successfully! Email with details sent.",
+                "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            Close();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error assigning order: {ex.Message}",
+                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            LoadOpenOrders();
+        }
+    }
+
+    private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        UpdateMapPreview();
+    }
+
+    private void UpdateMapPreview()
+    {
+        if (SelectedOrder is null)
+        {
+            MapStatusText = "Select an order to preview the route.";
+            MapCoordinatesText = string.Empty;
+            DataContext = null;
+            DataContext = this;
+            return;
+        }
+
+        try
+        {
+            var cfg = s_bl.Admin.GetConfig();
+
+            // OpenOrderInList doesn't contain coordinates, so load full order details
+            var order = s_bl.Order.GetOrderDetails(_courierId, SelectedOrder.OrderId);
+
+            MapStatusText =
+                $"Company → Order #{SelectedOrder.OrderId} ({SelectedOrder.TypeOrder})\n" +
+                $"Delivery method: (based on courier shipping method)";
+
+            MapCoordinatesText =
+                $"Company: lat={cfg.Latitude:0.00000}, lon={cfg.Longitude:0.00000}\n" +
+                $"Order: lat={order.Latitude:0.00000}, lon={order.Longitude:0.00000}\n" +
+                $"Air distance: {SelectedOrder.ArealDistance:0.00} km\n" +
+                $"Route: (placeholder – add map provider for real routes)";
+
+            DataContext = null;
+            DataContext = this;
+        }
+        catch (Exception ex)
+        {
+            MapStatusText = $"Map preview error: {ex.Message}";
+            MapCoordinatesText = string.Empty;
+            DataContext = null;
+            DataContext = this;
+        }
+    }
+
+    private void btnClose_Click(object sender, RoutedEventArgs e)
+    {
+        Close();
+    }
+}

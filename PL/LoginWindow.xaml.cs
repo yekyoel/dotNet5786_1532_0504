@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Input;
-using PL.Courier;
+using PL.Courier.CourierScreens;
 
 namespace PL;
 
@@ -84,13 +84,27 @@ public partial class LoginWindow : Window
             // This will throw an exception if user doesn't exist
             var userType = s_bl.Courier.Login(IdTextBox.Text);
 
-            if(userType == "Admin")
+            if (userType == "Admin")
+            {
                 new MainWindow().Show();
-            else if(userType == "Courier")
-                new CourierListWindow().Show();
+                Close();
+                return;
+            }
 
-            // Close login window
-            this.Close();
+            if (userType == "Courier")
+            {
+                if (!int.TryParse(IdTextBox.Text, out var courierId) || courierId <= 0)
+                {
+                    ErrorMessage.Text = "Courier ID must be a positive integer.";
+                    return;
+                }
+
+                new CourierMainWindow(courierId).Show();
+                Close();
+                return;
+            }
+
+            ErrorMessage.Text = "Unknown user type.";
         }
         catch (Exception ex)
         {

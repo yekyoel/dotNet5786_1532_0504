@@ -440,38 +440,41 @@ internal static class OrderManager
     internal static IEnumerable<BO.ClosedDeliveryInList> GetClosedDeliveries(int courierId, ClosedDeliveryInListFilter? filter, ClosedDeliveryInListFilter? sort)
     {
         var dalDeliveries = DeliveryManager.GetAllDeliveries()
-            .Where(d => d.CourierId == courierId && d.End == DO.CompletionType.Delivered).ToList();
+        .Where(d =>
+            d.CourierId == courierId &&
+            d.DeliveryEndTime.HasValue)
+        .ToList();
 
-        // Apply filtering if specified
-        if (filter.HasValue)
-        {
-            dalDeliveries = ApplyClosedDeliveryFilter(dalDeliveries, filter.Value);
-        }
+    // Apply filtering if specified
+    if (filter.HasValue)
+    {
+        dalDeliveries = ApplyClosedDeliveryFilter(dalDeliveries, filter.Value);
+    }
 
-        // Apply sorting if specified
-        if (sort.HasValue)
-        {
-            dalDeliveries = ApplyClosedDeliverySort(dalDeliveries, sort.Value);
-        }
+    // Apply sorting if specified
+    if (sort.HasValue)
+    {
+        dalDeliveries = ApplyClosedDeliverySort(dalDeliveries, sort.Value);
+    }
 
-        // Map to BO
-        return dalDeliveries.Select(dalDelivery =>
+    // Map to BO
+    return dalDeliveries.Select(dalDelivery =>
+    {
+        var order = s_dal.Order.Read(dalDelivery.OrderId);
+        return new BO.ClosedDeliveryInList
         {
-            var order = s_dal.Order.Read(dalDelivery.OrderId);
-            return new BO.ClosedDeliveryInList
-            {
-                DeliveryId = dalDelivery.Id,
-                OrderId = dalDelivery.OrderId,
-                OrderType = Tools.SwitchOrderTypeTOBO(order) ?? BO.OrderType.Pizza,
-                DeliveryAddress = order?.FullAdd ?? string.Empty,
-                DeliveryType = Tools.SwitchShippingMethodTOBO(dalDelivery.ShippingMethod) ?? BO.ShippingMethod.Car,
-                ActualDistance = dalDelivery.Distance ?? 0,
-                TotalCompletionTime = (dalDelivery.DeliveryEndTime.HasValue && dalDelivery.DeliveryStartTime.HasValue)
-                    ? dalDelivery.DeliveryEndTime.Value - dalDelivery.DeliveryStartTime.Value
-                    : TimeSpan.Zero,
-                CompletionType = Tools.SwitchCompletionTypeTOBO(dalDelivery.End) ?? BO.CompletionType.Delivered
-            };
-        }).ToList();
+            DeliveryId = dalDelivery.Id,
+            OrderId = dalDelivery.OrderId,
+            OrderType = Tools.SwitchOrderTypeTOBO(order) ?? BO.OrderType.Pizza,
+            DeliveryAddress = order?.FullAdd ?? string.Empty,
+            DeliveryType = Tools.SwitchShippingMethodTOBO(dalDelivery.ShippingMethod) ?? BO.ShippingMethod.Car,
+            ActualDistance = dalDelivery.Distance ?? 0,
+            TotalCompletionTime = (dalDelivery.DeliveryEndTime.HasValue && dalDelivery.DeliveryStartTime.HasValue)
+                ? dalDelivery.DeliveryEndTime.Value - dalDelivery.DeliveryStartTime.Value
+                : TimeSpan.Zero,
+            CompletionType = Tools.SwitchCompletionTypeTOBO(dalDelivery.End) ?? BO.CompletionType.Delivered
+        };
+    }).ToList();
     }
 
     /// <summary>
