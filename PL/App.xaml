@@ -18,6 +18,7 @@
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <local:AddUpdateTextConverter x:Key="AddUpdateTextConverter" />
         <local:CanCancelOrderConverter x:Key="CanCancelOrderConverter" />
+        <local:CanDeleteCourierConverter x:Key="CanDeleteCourierConverter" />
         <!-- Vehicle Type Collections - Used for ComboBox dropdowns in Courier management -->
         <local:VehicleTypeCollections x:Key="VehicleTypeCollectionsKey"/>
         <!-- <local:OrderStatusCollection x:Key="OrderStatusCollectionKey"/> -->

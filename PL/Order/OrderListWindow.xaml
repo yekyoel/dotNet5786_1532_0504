@@ -10,7 +10,7 @@
         Loaded="Window_Loaded" Closed="Window_Closed"
         Background="{StaticResource MainBackgroundBrush}">
 
-    <Grid>
+     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -21,7 +21,8 @@
         <Grid Grid.Row="0" Margin="10" Background="{StaticResource CardBackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto" MinWidth="100"/>
+                <ColumnDefinition Width="Auto" MinWidth="130"/>
+                <ColumnDefinition Width="Auto" MinWidth="130"/>
             </Grid.ColumnDefinitions>
 
             <!-- Filter by Status -->
@@ -37,8 +38,15 @@
                           SelectionChanged="ComboBox_SelectionChanged"/>
             </Grid>
 
+            <!-- Group by type toggle -->
+            <CheckBox Grid.Column="1"
+                      Content="Group by type"
+                      Margin="10,0,0,0"
+                      VerticalAlignment="Center"
+                      IsChecked="{Binding IsGrouped, Mode=TwoWay}"/>
+
             <!-- Add New order Button -->
-            <Button Grid.Column="1"
+            <Button Grid.Column="2"
                     Content="Add Order"
                     Margin="10"
                     Click="btnAdd_Click"/>
@@ -47,16 +55,16 @@
         
         <!-- orders DataGrid -->
         <DataGrid Grid.Row="1"
-                  Margin="10"
-                  ItemsSource="{Binding OrderInList}"
-                  SelectedItem="{Binding SelectedOrders}"
-                  MouseDoubleClick="DataGrid_MouseDoubleClick"
-                  IsReadOnly="True"
-                  AutoGenerateColumns="False"
-                  EnableRowVirtualization="True"
-                  RowDetailsVisibilityMode="VisibleWhenSelected"
-                  Background="{StaticResource CardBackgroundBrush}"
-                  SelectionChanged="DataGrid_SelectionChanged">
+                   Margin="10"
+                   ItemsSource="{Binding OrderInList}"
+                   SelectedItem="{Binding SelectedOrders}"
+                   MouseDoubleClick="DataGrid_MouseDoubleClick"
+                   IsReadOnly="True"
+                   AutoGenerateColumns="False"
+                   EnableRowVirtualization="True"
+                   RowDetailsVisibilityMode="VisibleWhenSelected"
+                   Background="{StaticResource CardBackgroundBrush}"
+                   SelectionChanged="DataGrid_SelectionChanged">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding DeliveryId}" Header="Delivery ID" Width="auto"/>
@@ -94,10 +102,17 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
+
+            <DataGrid.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.HeaderTemplate>
+                        <DataTemplate>
+                            <Border BorderBrush="Gray" BorderThickness="0,1,0,1" Margin="0,4,0,4"/>
+                        </DataTemplate>
+                    </GroupStyle.HeaderTemplate>
+                </GroupStyle>
+            </DataGrid.GroupStyle>
         </DataGrid>
     </Grid>
 
 </Window>
-
-
-    

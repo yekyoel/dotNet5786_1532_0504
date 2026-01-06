@@ -139,8 +139,21 @@
                                     Background="{StaticResource ButtonGradientBrush}"
                                     Foreground="White"
                                     Click="btnDelete_Click"
-                                    Tag="{Binding CourierId}"/>
-                        </DataTemplate>
+                                    Tag="{Binding CourierId}"
+                                    IsEnabled="{Binding CourierId, Converter={StaticResource CanDeleteCourierConverter}}">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                        <Style.Triggers>
+                                            <Trigger Property="IsEnabled" Value="False">
+                                                <Setter Property="Background" Value="Gray"/>
+                                                <Setter Property="Foreground" Value="LightGray"/>
+                                                <Setter Property="BorderBrush" Value="Transparent"/>
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
             </DataGrid.Columns>
