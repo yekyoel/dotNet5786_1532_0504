@@ -33,15 +33,28 @@ public partial class OrderListWindow : Window
     public OrderListWindow()
     {
         InitializeComponent();
-        //CancelCommand = new RelayCommand(ExecuteCancel, CanCancel);
     }
 
     private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
     private readonly int _userId = s_bl.Admin.GetConfig().AdminId;
 
     public BO.OrderStatus FilterStatus { get; set; } = BO.OrderStatus.None;
+ 
+    // Toggle from UI: when true, group by OrderType; when false, no grouping
+    private bool _isGrouped;
+    public bool IsGrouped
+    {
+        get => _isGrouped;
+        set
+        {
+            if (_isGrouped == value)
+                return;
+            _isGrouped = value;
+            ApplyGrouping();
+        }
+    }
 
-    public  BO.OrderInList? SelectedOrders { get; set; } 
+    public BO.OrderInList? SelectedOrders { get; set; } 
 
     /// <summary>
     /// Gets or sets the collection of orders to be displayed in the list.
@@ -86,13 +99,29 @@ public partial class OrderListWindow : Window
             var Orders = s_bl.Order.GetListOfOrders(_userId, null, null, null)!; // check userid probably sync with login 
 
             // Apply filter if selected
-            OrderInList = (FilterStatus == BO.OrderStatus.None) ?
-                Orders :
-                Orders.Where(c => c.OrderStatus == FilterStatus);
+            OrderInList = (FilterStatus == BO.OrderStatus.None)
+                ? Orders
+                : Orders.Where(c => c.OrderStatus == FilterStatus);
+            
+            ApplyGrouping();
         }
         catch (Exception ex)
         {
             MessageBox.Show($"Error loading deliveries: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+    
+    private void ApplyGrouping()
+    {
+        var view = CollectionViewSource.GetDefaultView(OrderInList);
+        if (view == null)
+            return;
+
+        view.GroupDescriptions.Clear();
+
+        if (IsGrouped)
+        {
+            view.GroupDescriptions.Add(new PropertyGroupDescription(nameof(BO.OrderInList.OrderType)));
         }
     }
 
@@ -228,78 +257,5 @@ public partial class OrderListWindow : Window
     {
         // Optional: Handle selection logic if needed
     }
-
-    /* public ICommand CancelCommand { get; private set;}
-
-     private void btnCancel_Click(object sender, RoutedEventArgs e)
-     {
-         if (sender is Button btn && btn.Tag is int orderId)
-         {
-             if (MessageBox.Show("Are you sure you want to cancel this delivery?", "Confirm Cancellation", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-             {
-                 try
-                 {
-                     s_bl.Order.CancelOrder(_userId, orderId);
-                     LoadOrderList();
-                     MessageBox.Show("Delivery cancelled successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                 }
-                 catch (Exception ex)
-                 {
-                     MessageBox.Show($"Error cancelling delivery: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                 }
-             }
-         }
-     }
-
-     // The Logic to run when the button is clicked
-     private void ExecuteCancel(object parameter)
-     {
-         if (parameter is int orderId)
-         {
-             try
-             {
-                 s_bl.Order.CancelOrder(_userId, orderId); // Call BL
-                 MessageBox.Show("Order cancelled successfully.");
-                 LoadOrderList(); // Refresh list to update UI and gray out button
-             }
-             catch (Exception ex)
-             {
-                 MessageBox.Show($"Error: {ex.Message}");
-             }
-         }
-     }
-
-     // The Logic to decide if the button is Red (True) or Gray (False)
-     private bool CanCancel(object parameter)
-     {
-         if (parameter is int orderId)
-         {
-             BO.CompletionType? type = GetCompletionTypeForOrder(orderId);
-
-             // Return TRUE (Clickable) only if it is NOT already cancelled or finished.
-             // Adjust this list based on what you consider "Cancellable"
-             return type != BO.CompletionType.Cancelled
-                 && type != BO.CompletionType.Delivered;
-         }
-         return false;
-     }
-
-     private BO.CompletionType? GetCompletionTypeForOrder(int orderId)
-     {
-         try
-         {
-             var order = s_bl.Order.GetOrderDetails(_userId, orderId);
-             // assuming DeliveriesList[0] is the current/last delivery
-             return order.DeliveriesList?
-                 .OrderByDescending(d => d.DeliveryId)
-                 .FirstOrDefault()
-                 ?.CompType;
-         }
-         catch
-         {
-             return null;
-         }
-     }*/
-
 }
 
