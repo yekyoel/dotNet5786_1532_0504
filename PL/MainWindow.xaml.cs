@@ -131,7 +131,7 @@ public partial class MainWindow : Window
         try
         {
             CurrentTime = s_bl.Admin.GetClock();
-            Configuration = s_bl.Admin.GetConfig();
+           // Configuration = s_bl.Admin.GetConfig();
 
             s_bl.Admin.AddClockObserver(ClockObserver);
 

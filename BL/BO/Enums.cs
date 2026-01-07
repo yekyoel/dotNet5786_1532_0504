@@ -51,9 +51,9 @@ public enum OrderStatus
 /// already late. The specific meaning of each value may depend on the context in which it is used.</remarks>
 public enum ScheduleStatus
 {
-    OnTime, // The scheduled item is on track to meet its planned schedule.
-    InRisk, // The scheduled item is at risk of being late.
-    Late ,// The scheduled item is already
+    OnTime, // the order is open/inProgress and the max DelTime- current time >=0  or the del is closed and the delTime <= maxDelTime (&& its smaller than riskRange)
+    InRisk, //the order is open/inProgress and and maxDelTime- currentTime >= riskRange
+    Late,// the order is open/inProgress and the max DelTime- current time <= 0 and completiontype != completed  or the del is closed  and the  maxDelTime delTime < 0
 }
 
 /// <summary>
