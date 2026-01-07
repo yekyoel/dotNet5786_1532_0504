@@ -39,6 +39,9 @@ public partial class OrderListWindow : Window
     private readonly int _userId = s_bl.Admin.GetConfig().AdminId;
 
     public BO.OrderStatus FilterStatus { get; set; } = BO.OrderStatus.None;
+
+    // Optional schedule status filter (null => no schedule filter)
+    public BO.ScheduleStatus? FilterScheduleStatus { get; set; }
  
     // Toggle from UI: when true, group by OrderType; when false, no grouping
     private bool _isGrouped;
@@ -98,10 +101,16 @@ public partial class OrderListWindow : Window
             // Get all orders (deliveries)
             var Orders = s_bl.Order.GetListOfOrders(_userId, null, null, null)!; // check userid probably sync with login 
 
-            // Apply filter if selected
-            OrderInList = (FilterStatus == BO.OrderStatus.None)
-                ? Orders
-                : Orders.Where(c => c.OrderStatus == FilterStatus);
+            // Apply filters
+            IEnumerable<BO.OrderInList> filtered = Orders;
+
+            if (FilterStatus != BO.OrderStatus.None)
+                filtered = filtered.Where(c => c.OrderStatus == FilterStatus);
+
+            if (FilterScheduleStatus != null)
+                filtered = filtered.Where(c => c.ScheduleStatus == FilterScheduleStatus);
+            
+            OrderInList = filtered;
             
             ApplyGrouping();
         }

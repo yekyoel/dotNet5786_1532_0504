@@ -20,29 +20,10 @@ namespace PL;
 public partial class MainWindow : Window
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-    private readonly Action _clockObserver;
-    private readonly Action _configObserver;
 
     public MainWindow()
     {
         InitializeComponent();
-
-        // create observer delegates once so we can remove them on close
-        _clockObserver = OnClockUpdated;
-        _configObserver = OnConfigUpdated;
-
-        // subscribe to BL clock updates so UI refreshes automatically
-        s_bl.Admin.AddClockObserver(_clockObserver);
-        
-        // subscribe to BL config updates
-        s_bl.Admin.AddConfigObserver(_configObserver);
-
-        // ensure we unsubscribe when window closes
-        this.Closed += (_, _) => 
-        {
-            s_bl.Admin.RemoveClockObserver(_clockObserver);
-            s_bl.Admin.RemoveConfigObserver(_configObserver);
-        };
     }
 
     #region Dependency Properties for Config Bindings
@@ -50,6 +31,9 @@ public partial class MainWindow : Window
     public static readonly DependencyProperty ConfigurationProperty =
         DependencyProperty.Register("Configuration", typeof(BO.Config), typeof(MainWindow));
 
+    /// <summary>
+    /// Gets or sets the configuration settings for the control.
+    /// </summary>
     public BO.Config Configuration
     {
         get { return (BO.Config)GetValue(ConfigurationProperty); }
@@ -59,137 +43,143 @@ public partial class MainWindow : Window
     public static readonly DependencyProperty CurrentTimeProperty =
         DependencyProperty.Register("CurrentTime", typeof(DateTime), typeof(MainWindow));
 
+    /// <summary>
+    /// Gets or sets the current time value represented by the control.
+    /// </summary>
     public DateTime CurrentTime
     {
         get { return (DateTime)GetValue(CurrentTimeProperty); }
         set { SetValue(CurrentTimeProperty, value); }
     }
 
-    public static readonly DependencyProperty AdminIdProperty =
-        DependencyProperty.Register("AdminId", typeof(int), typeof(MainWindow));
+    // Order summary text properties (for buttons)
+    public static readonly DependencyProperty OpenOnTimeTextProperty =
+        DependencyProperty.Register("OpenOnTimeText", typeof(string), typeof(MainWindow));
 
-    public int AdminId
+    public string OpenOnTimeText
     {
-        get { return (int)GetValue(AdminIdProperty); }
-        set { SetValue(AdminIdProperty, value); }
+        get => (string)GetValue(OpenOnTimeTextProperty);
+        set => SetValue(OpenOnTimeTextProperty, value);
     }
 
-    public static readonly DependencyProperty CompanyNameProperty =
-        DependencyProperty.Register("CompanyName", typeof(string), typeof(MainWindow));
+    public static readonly DependencyProperty OpenInRiskTextProperty =
+        DependencyProperty.Register("OpenInRiskText", typeof(string), typeof(MainWindow));
 
-    public string CompanyName
+    public string OpenInRiskText
     {
-        get { return (string)GetValue(CompanyNameProperty); }
-        set { SetValue(CompanyNameProperty, value); }
+        get => (string)GetValue(OpenInRiskTextProperty);
+        set => SetValue(OpenInRiskTextProperty, value);
     }
 
-    public static readonly DependencyProperty MaxDistanceProperty =
-        DependencyProperty.Register("MaxDist", typeof(double), typeof(MainWindow));
+    public static readonly DependencyProperty OpenLateTextProperty =
+        DependencyProperty.Register("OpenLateText", typeof(string), typeof(MainWindow));
 
-    public double MaxDist
+    public string OpenLateText
     {
-        get { return (double)GetValue(MaxDistanceProperty); }
-        set { SetValue(MaxDistanceProperty, value); }
+        get => (string)GetValue(OpenLateTextProperty);
+        set => SetValue(OpenLateTextProperty, value);
     }
 
-    public static readonly DependencyProperty AvgCarMPHProperty =
-        DependencyProperty.Register("AvgCarMPH", typeof(double), typeof(MainWindow));
+    public static readonly DependencyProperty CompletedOnTimeTextProperty =
+        DependencyProperty.Register("CompletedOnTimeText", typeof(string), typeof(MainWindow));
 
-    public double AvgCarMPH
+    public string CompletedOnTimeText
     {
-        get { return (double)GetValue(AvgCarMPHProperty); }
-        set { SetValue(AvgCarMPHProperty, value); }
+        get => (string)GetValue(CompletedOnTimeTextProperty);
+        set => SetValue(CompletedOnTimeTextProperty, value);
     }
 
-    public static readonly DependencyProperty AvgMotorcycleMPHProperty =
-        DependencyProperty.Register("AvgMotorcycleMPH", typeof(double), typeof(MainWindow));
+    public static readonly DependencyProperty CompletedLateTextProperty =
+        DependencyProperty.Register("CompletedLateText", typeof(string), typeof(MainWindow));
 
-    public double AvgMotorcycleMPH
+    public string CompletedLateText
     {
-        get { return (double)GetValue(AvgMotorcycleMPHProperty); }
-        set { SetValue(AvgMotorcycleMPHProperty, value); }
-    }
-
-    public static readonly DependencyProperty AvgBicycleMPHProperty =
-        DependencyProperty.Register("AvgBikeMPH", typeof(double), typeof(MainWindow));
-
-    public double AvgBikeMPH
-    {
-        get { return (double)GetValue(AvgBicycleMPHProperty); }
-        set { SetValue(AvgBicycleMPHProperty, value); }
-    }
-
-    public static readonly DependencyProperty AvgWalkMPHProperty =
-        DependencyProperty.Register("AvgWalkMPH", typeof(double), typeof(MainWindow));
-
-    public double AvgWalkMPH
-    {
-        get { return (double)GetValue(AvgWalkMPHProperty); }
-        set { SetValue(AvgWalkMPHProperty, value); }
-    }
-
-    public static readonly DependencyProperty MaxDeliveryTimeProperty =
-        DependencyProperty.Register("MaxDeliveryTime", typeof(TimeSpan), typeof(MainWindow));
-
-    public TimeSpan MaxDeliveryTime
-    {
-        get { return (TimeSpan)GetValue(MaxDeliveryTimeProperty); }
-        set { SetValue(MaxDeliveryTimeProperty, value); }
-    }
-
-    public static readonly DependencyProperty RiskRangeProperty =
-        DependencyProperty.Register("RiskRange", typeof(TimeSpan), typeof(MainWindow));
-
-    public TimeSpan RiskRange
-    {
-        get { return (TimeSpan)GetValue(RiskRangeProperty); }
-        set { SetValue(RiskRangeProperty, value); }
-    }
-
-    public static readonly DependencyProperty DownTimeProperty =
-        DependencyProperty.Register("DownTime", typeof(TimeSpan), typeof(MainWindow));
-
-    public TimeSpan DownTime
-    {
-        get { return (TimeSpan)GetValue(DownTimeProperty); }
-        set { SetValue(DownTimeProperty, value); }
+        get => (string)GetValue(CompletedLateTextProperty);
+        set => SetValue(CompletedLateTextProperty, value);
     }
 
     #endregion
 
-    // update config button handler
-    private void btnUpdateObj_Click(object sender, RoutedEventArgs e)
+
+    #region Observers and Window Events
+
+    /// <summary>
+    /// Updates the current time by retrieving the latest clock value from the administration service.
+    /// </summary>
+    private void ClockObserver()
+    {
+        CurrentTime = s_bl.Admin.GetClock();
+        LoadOrderSummary();
+    }
+
+    /// <summary>
+    /// Initializes or updates the configuration by retrieving the latest settings from the administration service.
+    /// </summary>
+    private void ConfigObserver()
+    {
+       Configuration = s_bl.Admin.GetConfig();
+       LoadOrderSummary();
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         try
         {
-            // Create or update configuration from UI values
-            var config = Configuration ?? new BO.Config();
+            CurrentTime = s_bl.Admin.GetClock();
+            Configuration = s_bl.Admin.GetConfig();
 
-            // Update config with current UI values
-            config.AdminId = AdminId;
-            config.CompanyName = CompanyName;
-            config.MaxDist = MaxDist;
-            config.AvgCarMPH = AvgCarMPH;
-            config.AvgMotorcycleMPH = AvgMotorcycleMPH;
-            config.AvgBicycleMPH = AvgBikeMPH;
-            config.AvgWalkMPH = AvgWalkMPH;
-            config.MaxDelTime = MaxDeliveryTime;
-            config.RiskRange = RiskRange;
-            config.DownTime = DownTime;
+            s_bl.Admin.AddClockObserver(ClockObserver);
 
-            ValidateConfigOrThrow(config);
+            s_bl.Admin.AddConfigObserver(ConfigObserver);
 
-            s_bl.Admin.SetConfig(config);
-            Configuration = config;
-
-            MessageBox.Show("Configuration saved successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+            LoadOrderSummary();
         }
         catch (Exception ex)
         {
-            MessageBox.Show(ex.Message, "Invalid Configuration", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Error initializing Order list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
+    /// <summary>
+    /// Handles the window's Closed event by unsubscribing observers from administrative notifications.
+    /// </summary>
+    /// <remarks>This method ensures that observers are properly unsubscribed when the window is closed to
+    /// prevent memory leaks and unnecessary event handling. Exceptions during unsubscription are caught and logged to
+    /// avoid disrupting the window closing process.</remarks>
+    /// <param name="sender">The source of the event, typically the window being closed.</param>
+    /// <param name="e">An object that contains the event data.</param>
+    private void Window_Closed(object sender, EventArgs e)
+    {
+        try
+        {
+            s_bl.Admin.RemoveClockObserver(ClockObserver);
+            s_bl.Admin.RemoveConfigObserver(ConfigObserver);
+
+        }
+        catch (Exception ex)
+        {
+            // Log exception but don't crash on window close
+            System.Diagnostics.Debug.WriteLine($"Error while unsubscribing from order updates: {ex.Message}");
+        }
+    }
+
+    #endregion
+
+
+
+    /// <summary>
+    /// Validates the specified configuration object and throws an exception if any required property is invalid.
+    /// </summary>
+    /// <param name="config">The configuration object to validate. All required properties must be set to valid values.</param>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if any numeric or time span property of the configuration is outside its valid range. For example, if an
+    /// ID is not positive, a speed is not greater than zero, or a time span is negative.</exception>
+    /// <exception cref="ArgumentException">Thrown if a required string property, such as the company name, is null, empty, or consists only of white-space
+    /// characters.</exception>
     private static void ValidateConfigOrThrow(BO.Config config)
     {
         // AdminId
@@ -199,13 +189,6 @@ public partial class MainWindow : Window
         // CompanyName
         if (string.IsNullOrWhiteSpace(config.CompanyName))
             throw new ArgumentException("Company Name is required.", nameof(config.CompanyName));
-
-        // MaxDist (nullable double in BO)
-        if (config.MaxDist is null)
-            throw new ArgumentException("Max Distance is required.", nameof(config.MaxDist));
-
-        if (config.MaxDist <= 0)
-            throw new ArgumentOutOfRangeException(nameof(config.MaxDist), "Max Distance must be greater than 0.");
 
         // Speeds
         if (config.AvgCarMPH <= 0)
@@ -230,67 +213,63 @@ public partial class MainWindow : Window
         if (config.DownTime < TimeSpan.Zero)
             throw new ArgumentOutOfRangeException(nameof(config.DownTime), "Down Time cannot be negative.");
 
-        // Optional sanity constraints (if you want them strict)
-        if (config.RiskRange > config.MaxDelTime)
-            throw new ArgumentException("Risk Range cannot be greater than Max Delivery Time.", nameof(config.RiskRange));
     }
 
-    private void OnClockUpdated()
-    {
-        // run on UI thread and fetch current clock from BL
-        Dispatcher.Invoke(() => CurrentTime = s_bl.Admin.GetClock());
-    }
 
     /// <summary>
-    /// Called when configuration is updated in the BL layer.
-    /// Refreshes all UI properties to reflect the new configuration.
+    /// Loads order summary counts from BL.StatusTotal and updates summary texts.
     /// </summary>
-    private void OnConfigUpdated()
-    {
-        // run on UI thread and reload config
-        Dispatcher.Invoke(() => LoadConfigFromBL());
-    }
-
-    /// <summary>
-    /// Loads configuration from the Business Logic layer and updates all UI properties.
-    /// Called on window initialization to populate the UI with current BL state.
-    /// </summary>
-    /// needs checking
-    private void LoadConfigFromBL()
+    private void LoadOrderSummary()
     {
         try
         {
-            var config = s_bl.Admin.GetConfig();
-            
-            // Update all properties - this should trigger UI updates through data bindings
-            CurrentTime = s_bl.Admin.GetClock(); // Set initial time from BL
-            Configuration = config; // Update the Configuration object
-            AdminId = config.AdminId;
-            CompanyName = config.CompanyName;
-            MaxDist = config.MaxDist ?? 0.0;
-            AvgCarMPH = config.AvgCarMPH;
-            AvgMotorcycleMPH = config.AvgMotorcycleMPH;
-            AvgBikeMPH = config.AvgBicycleMPH;
-            AvgWalkMPH = config.AvgWalkMPH;
-            MaxDeliveryTime = config.MaxDelTime;
-            RiskRange = config.RiskRange;
-            DownTime = config.DownTime;
+            int adminId = s_bl.Admin.GetConfig().AdminId;
+            int[] totals = s_bl.Order.StatusTotal(adminId);
+
+            int orderStatusCount = Enum.GetValues(typeof(BO.OrderStatus)).Length;
+            int scheduleStatusCount = Enum.GetValues(typeof(BO.ScheduleStatus)).Length;
+
+            int Index(BO.OrderStatus os, BO.ScheduleStatus ss) =>
+                (int)os * scheduleStatusCount + (int)ss;
+
+            int openOnTime = totals[Index(BO.OrderStatus.Open, BO.ScheduleStatus.OnTime)];
+            int openInRisk = totals[Index(BO.OrderStatus.Open, BO.ScheduleStatus.InRisk)];
+            int openLate = totals[Index(BO.OrderStatus.Open, BO.ScheduleStatus.Late)];
+            int completedOnTime = totals[Index(BO.OrderStatus.Completed, BO.ScheduleStatus.OnTime)];
+            int completedLate = totals[Index(BO.OrderStatus.Completed, BO.ScheduleStatus.Late)];
+
+            OpenOnTimeText = $"Open / OnTime: {openOnTime}";
+            OpenInRiskText = $"Open / InRisk: {openInRisk}";
+            OpenLateText = $"Open / Late: {openLate}";
+            CompletedOnTimeText = $"Completed / OnTime: {completedOnTime}";
+            CompletedLateText = $"Completed / Late: {completedLate}";
         }
-        catch (Exception ex)
+        catch
         {
-            MessageBox.Show($"Error loading configuration: {ex.Message}\n\nMake sure to click 'Initialize' button first.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            OpenOnTimeText = "Open / OnTime: -";
+            OpenInRiskText = "Open / InRisk: -";
+            OpenLateText = "Open / Late: -";
+            CompletedOnTimeText = "Completed / OnTime: -";
+            CompletedLateText = "Completed / Late: -";
         }
     }
 
 
 
     #region buttons for clock manipulation
+
+    /// <summary>
+    /// Handles the Click event of the Add One Month button, advancing the application clock by one month.
+    /// </summary>
+    /// <remarks>This method updates the application's current time by forwarding the internal clock by one
+    /// month. If an error occurs during the update, an error message is displayed to the user.</remarks>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
     private void btnAddOneMon_Click(object sender, RoutedEventArgs e)
     {
         try
         {
             s_bl.Admin.ForwardClock(BO.Time.Month);
-            CurrentTime = s_bl.Admin.GetClock();
         }
         catch (Exception ex)
         {
@@ -298,12 +277,18 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>
+    /// Handles the Click event of the Add One Minute button by advancing the application clock by one minute.
+    /// </summary>
+    /// <remarks>If an error occurs while updating the clock, an error message is displayed to the
+    /// user.</remarks>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
     private void btnAddOneMin_Click(object sender, RoutedEventArgs e)
     {
         try
         {
             s_bl.Admin.ForwardClock(BO.Time.Minute);
-            CurrentTime = s_bl.Admin.GetClock();
         }
         catch (Exception ex)
         {
@@ -311,12 +296,18 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>
+    /// Handles the Click event of the Add One Hour button by advancing the application clock by one hour.
+    /// </summary>
+    /// <remarks>If an error occurs while updating the clock, an error message is displayed to the
+    /// user.</remarks>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
     private void btnAddOneHr_Click(object sender, RoutedEventArgs e)
     {
         try
         {
             s_bl.Admin.ForwardClock(BO.Time.Hour);
-            CurrentTime = s_bl.Admin.GetClock();
         }
         catch (Exception ex)
         {
@@ -324,12 +315,18 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>
+    /// Handles the Click event of the Add One day button by advancing the application clock by one hour.
+    /// </summary>
+    /// <remarks>If an error occurs while updating the clock, an error message is displayed to the
+    /// user.</remarks>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
     private void btnAddOneDay_Click(object sender, RoutedEventArgs e)
     {
         try
         {
             s_bl.Admin.ForwardClock(BO.Time.Day);
-            CurrentTime = s_bl.Admin.GetClock();
         }
         catch (Exception ex)
         {
@@ -337,12 +334,18 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>
+    /// Handles the Click event of the Add One year button by advancing the application clock by one hour.
+    /// </summary>
+    /// <remarks>If an error occurs while updating the clock, an error message is displayed to the
+    /// user.</remarks>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
     private void btnAddOneYr_Click(object sender, RoutedEventArgs e)
     {
         try
         {
             s_bl.Admin.ForwardClock(BO.Time.Year);
-            CurrentTime = s_bl.Admin.GetClock();
         }
         catch (Exception ex)
         {
@@ -352,7 +355,32 @@ public partial class MainWindow : Window
     #endregion
 
 
-    #region database buttons handlers
+    #region database buttons
+
+    /// <summary>
+    /// Handles the Click event of the Update button to validate and save the current configuration settings.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the Update button.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
+    private void btnUpdateObj_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if (Configuration is null)
+                Configuration = new BO.Config();
+
+            ValidateConfigOrThrow(Configuration);
+            s_bl.Admin.SetConfig(Configuration);
+
+            MessageBox.Show("Configuration saved successfully!", "Success",
+                MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.Message, "Invalid Configuration",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
 
     /// <summary>
     /// Initializes the database with test data and reloads all UI properties.
@@ -369,9 +397,6 @@ public partial class MainWindow : Window
                 this.Cursor = System.Windows.Input.Cursors.Wait;
 
                 s_bl.Admin.InitializeDB();
-
-                // Refresh the UI after initialization
-                LoadConfigFromBL();
 
                 MessageBox.Show("Database initialized successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -403,9 +428,6 @@ public partial class MainWindow : Window
 
                 s_bl.Admin.ResetDB();
 
-                // Refresh the UI after reset
-                LoadConfigFromBL();
-
                 MessageBox.Show("Database reset successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
@@ -420,11 +442,21 @@ public partial class MainWindow : Window
         }
     }
 
+    /// <summary>
+    /// Handles the Click event of the Courier List button by opening the Courier List window.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
     private void btnCourierListDisplay_Click(object sender, RoutedEventArgs e)
     {
         new CourierListWindow().Show();
     }
 
+    /// <summary>
+    /// Handles the Click event of the Order List button by displaying the Order List window.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the Order List button.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
     private void btnOrderListDisplay_Click(object sender, RoutedEventArgs e)
     {
         new OrderListWindow().Show();
@@ -432,4 +464,64 @@ public partial class MainWindow : Window
 
     #endregion
 
+    #region order summary buttons
+
+    /// <summary>
+    /// Handles the Click event of the Open On Time button by displaying a window with orders that have an open status.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
+    private void BtnOpenOnTime_Click(object sender, RoutedEventArgs e)
+    {
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Open, FilterScheduleStatus = BO.ScheduleStatus.OnTime };
+        w.Show();
+    }
+
+    /// <summary>
+    /// Handles the Click event of the Open in risk button by displaying a window with orders that have an open status.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
+    private void BtnOpenInRisk_Click(object sender, RoutedEventArgs e)
+    {
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Open, FilterScheduleStatus = BO.ScheduleStatus.InRisk };
+        w.Show();
+    }
+
+    /// <summary>
+    /// Handles the Click event of the button to display a window listing orders with the status set to Open.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
+    private void BtnOpenLate_Click(object sender, RoutedEventArgs e)
+    {
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Open, FilterScheduleStatus = BO.ScheduleStatus.Late };
+        w.Show();
+    }
+
+    /// <summary>
+    /// Handles the Click event for the Completed On Time button, displaying a window with orders filtered by completed
+    /// status.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
+    private void BtnCompletedOnTime_Click(object sender, RoutedEventArgs e)
+    {
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Completed, FilterScheduleStatus = BO.ScheduleStatus.OnTime };
+        w.Show();
+    }
+
+    /// <summary>
+    /// Handles the Click event for the Completed Late button, displaying a window with orders filtered by completed
+    /// status.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
+    private void BtnCompletedLate_Click(object sender, RoutedEventArgs e)
+    {
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Completed, FilterScheduleStatus = BO.ScheduleStatus.Late };
+        w.Show();
+    }
+
+    #endregion
 }
