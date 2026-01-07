@@ -329,6 +329,7 @@ public static  class Initialization
         List<DO.Courier> couriers = s_dal!.Courier.ReadAll().ToList();
         List<DO.Delivery> existingDeliveries = s_dal!.Delivery.ReadAll().ToList();
 
+
         // store location
         double storeLat = s_dal!.Config.Latitude ?? 0.0;
         double storeLon = s_dal!.Config.Longitude ?? 0.0;
@@ -346,6 +347,7 @@ public static  class Initialization
                 return ; // no courier can serve this order Error
 
             var courier = eligible[s_rand.Next(eligible.Count)]; // pick a random eligible courier
+
 
             // compute courier available-from based on existing deliveries (avoid overlapping assignments)
             DateTime courierAvailableFrom = s_dal!.Config.Clock;
@@ -433,7 +435,8 @@ public static  class Initialization
             // create delivery and remove order so it won't be reused
             s_dal!.Delivery.Create(delivery);
             orders.Remove(order); // remove from local list
-        } while (orders.Count() != 0);  // continue until no orders left
+            couriers.Remove(courier);
+        } while (couriers.Count() != 0);  // continue until no orders left
     }
 
 
