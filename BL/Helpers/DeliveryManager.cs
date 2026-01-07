@@ -17,8 +17,13 @@ internal static class DeliveryManager
     /// if no delivery is found.</returns>
     internal static DO.Delivery? GetDeliveryByOrderId(int orderId)
     {
-        // Return the first delivery that references the given order id (or null)
-        return s_dal.Delivery.ReadAll().FirstOrDefault(d => d.OrderId == orderId);
+        // Return the newest delivery for this order (by Id).
+        // This prevents "random" older records being returned when multiple deliveries exist.
+        return s_dal.Delivery
+            .ReadAll()
+            .Where(d => d.OrderId == orderId)
+            .OrderByDescending(d => d.Id)
+            .FirstOrDefault();
     }
 
     /// <summary>

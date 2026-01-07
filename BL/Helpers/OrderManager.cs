@@ -261,22 +261,25 @@ internal static class OrderManager
     /// <exception cref="InvalidOperationException">Thrown if the order is not pending assignment or already has a delivery.</exception>
   
     internal static void AssignOrderToCourier(int orderId, int courierId)
-    { 
+    {
         var delivery = DeliveryManager.GetDeliveryByOrderId(orderId); // read delivery from DAL
-        if (delivery != null && delivery.End == DO.CompletionType.Pending) 
+        if (delivery != null && delivery.End == DO.CompletionType.Pending)
         {
-            var updatedDelivery = delivery with // create a new delivery with updated courier and start time
+            var updatedDelivery = delivery with // update the existing delivery (keep same Id)
             {
                 CourierId = courierId,
                 DeliveryStartTime = AdminManager.GetConfig()?.Clock ?? DateTime.Now,
                 DeliveryEndTime = null,
                 ShippingMethod = null
             };
-            s_dal.Delivery.Create(updatedDelivery);
 
+            // Update instead of Create, so we don't duplicate deliveries for the same order
+            s_dal.Delivery.Update(updatedDelivery);
         }
         else
+        {
             throw new InvalidOperationException($"Order with ID {orderId} is not pending assignment or already has a delivery.");
+        }
 
     }
 
@@ -407,8 +410,8 @@ internal static class OrderManager
                         Id = 0,
                         OrderId = order.Id,
                         CourierId = chosen.Id,
-                        ShippingMethod = method,
-                        DeliveryStartTime = newClock,
+                        ShippingMethod = null,  // ← Don't set until courier manually picks it up
+                        DeliveryStartTime = null,  // ← Also don't set start time yet
                         Distance = distanceKm,
                         End = DO.CompletionType.Pending,
                         DeliveryEndTime = null
@@ -461,6 +464,15 @@ internal static class OrderManager
     return dalDeliveries.Select(dalDelivery =>
     {
         var order = s_dal.Order.Read(dalDelivery.OrderId);
+
+        TimeSpan totalCompletionTime = TimeSpan.Zero; // calculate total completion time
+        if (dalDelivery.DeliveryEndTime.HasValue && dalDelivery.DeliveryStartTime.HasValue) // if both times are available
+        {
+            var raw = dalDelivery.DeliveryEndTime.Value - dalDelivery.DeliveryStartTime.Value; // subtract start from end in order to get duration
+            totalCompletionTime = raw > TimeSpan.Zero ? raw : TimeSpan.Zero; // ensure non-negative by checking if raw is positive. If it is not, set to zero
+        }
+
+        // map DO.Delivery to BO.ClosedDeliveryInList
         return new BO.ClosedDeliveryInList
         {
             DeliveryId = dalDelivery.Id,
@@ -469,9 +481,7 @@ internal static class OrderManager
             DeliveryAddress = order?.FullAdd ?? string.Empty,
             DeliveryType = Tools.SwitchShippingMethodTOBO(dalDelivery.ShippingMethod) ?? BO.ShippingMethod.Car,
             ActualDistance = dalDelivery.Distance ?? 0,
-            TotalCompletionTime = (dalDelivery.DeliveryEndTime.HasValue && dalDelivery.DeliveryStartTime.HasValue)
-                ? dalDelivery.DeliveryEndTime.Value - dalDelivery.DeliveryStartTime.Value
-                : TimeSpan.Zero,
+            TotalCompletionTime = totalCompletionTime,
             CompletionType = Tools.SwitchCompletionTypeTOBO(dalDelivery.End) ?? BO.CompletionType.Delivered
         };
     }).ToList();
@@ -544,7 +554,6 @@ internal static class OrderManager
     {
         var dalOrders = s_dal.Order.ReadAll().ToList();
 
-        // Get courier's max distance capability
         var courier = s_dal.Courier.Read(courierId);
         double courierMaxDist = courier?.MaxDist ?? double.MaxValue;
 
@@ -552,28 +561,36 @@ internal static class OrderManager
         double storeLat = cfg?.Latitude ?? 0.0;
         double storeLon = cfg?.Longitude ?? 0.0;
 
-        // Filter for open orders only (orders without a delivery, or with pending delivery)
-        // AND that are within the courier's max distance from the store
+        // FIX: "Available" = no delivery at all, OR delivery exists but not yet picked up by anyone
+        // (End == Pending and ShippingMethod is null means auto-assigned but no courier started it yet)
         var openOrders = dalOrders.Where(order =>
         {
             var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
-            bool isOpen = delivery == null || delivery.End == null;
             
-            if (!isOpen)
-                return false;
+            // Case 1: No delivery at all = truly open
+            if (delivery == null)
+            {
+                double distance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
+                return distance <= courierMaxDist;
+            }
 
-            // Check if order is within courier's max distance
-            double distance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
-            return distance <= courierMaxDist;
+            // Case 2: Delivery exists but hasn't been started yet (Pending + no ShippingMethod = not picked up)
+            // This happens when PeriodicAutoAssignPendingOrders creates a placeholder delivery
+            if (delivery.End == DO.CompletionType.Pending && delivery.ShippingMethod == null)
+            {
+                double distance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
+                return distance <= courierMaxDist;
+            }
+
+            // Case 3: Delivery already in progress or finished = not available
+            return false;
         }).ToList();
 
-        // Apply filtering if specified
         if (filter.HasValue)
         {
             openOrders = ApplyOpenOrderFilter(openOrders, filter.Value);
         }
 
-        // Apply sorting if specified
         if (sort.HasValue)
         {
             openOrders = ApplyOpenOrderSort(openOrders, sort.Value);
@@ -588,13 +605,13 @@ internal static class OrderManager
             var maxDeliveryTime = orderPlacedTime.Add(maxDelTime);
             var expectedDeliveryTime = Tools.CalculateExpectedDeliveryTime(order, delivery);
             var timeSpanToDelivery = expectedDeliveryTime != null 
-                ? (expectedDeliveryTime.Value - DateTime.Now)
+                ? (expectedDeliveryTime.Value - cfg.Clock)
                 : (TimeSpan?)null;
             var totalTimeLeft = Tools.CalculateTotalTimeLeft(order, delivery);
 
             return new BO.OpenOrderInList
             {
-                CourierId = delivery?.CourierId,
+                CourierId = delivery?.CourierId != 0 ? delivery?.CourierId : null, // show courier if assigned
                 OrderId = order.Id,
                 TypeOrder = Tools.SwitchOrderTypeTOBO(order) ?? BO.OrderType.Pizza,
                 Weight = order.Weight,
@@ -668,4 +685,105 @@ internal static class OrderManager
         };
     }
 
+
+
+    /* /// <summary>
+    /// Assigns an Open order to a courier by creating a new delivery record.
+    /// Calculates and stores the actual road distance based on courier's shipping type.
+    /// </summary>
+    /// <param name="requesterId">The ID of the requester.</param>
+    /// <param name="courierId">The ID of the courier who is taking the order.</param>
+    /// <param name="orderId">The ID of the order to be processed.</param>
+    /// <exception cref="BO.BlDoesNotExistException">Thrown if the courier or order does not exist.</exception>
+    /// <exception cref="BO.BlInvalidDataException">Thrown if the order is not in an Open status.</exception>
+    /// <exception cref="BO.BlProcessingException">Thrown for unexpected errors.</exception>
+    internal static void SelectOrderForProcessing(int requesterId, int courierId, int orderId)
+    {
+        try
+        {
+            // 1. Read courier data: needed to get the courier's ShippingType
+            var courier = s_dal.Courier.Read(courierId)
+                ?? throw new BO.BlDoesNotExistException($"Courier {courierId} does not exist.");
+
+            // 2. Read order data
+            var order = s_dal.Order.Read(orderId)
+                ?? throw new BO.BlDoesNotExistException($"Order {orderId} does not exist.");
+
+            // 3. Check courier is active
+            if (!courier.IsActive)
+                throw new BO.BlInvalidDataException($"Cannot select order {orderId}. Courier {courierId} is not active.");
+
+            // 4. Check order status is Open (not delivered, not in progress)
+            BO.OrderStatus status = GetOrderStatus(orderId);
+            if (status != BO.OrderStatus.Open)
+                throw new BO.BlInvalidDataException($"Cannot select order {orderId}. Current status is: {status}. Only Open orders can be selected.");
+
+            // 5. Check air distance is within courier's max range
+            double compLat = s_dal.Config.Latitude ?? 0.0;
+            double compLon = s_dal.Config.Longitude ?? 0.0;
+            double airDistance = Tools.AirDistanceKm(compLat, compLon, order.Latitude, order.Longitude);
+
+            if (airDistance > (courier.MaxDistance ?? double.MaxValue))
+                throw new BO.BlInvalidDataException($"Cannot select order {orderId}. Distance {airDistance:F2} km exceeds courier's max distance {courier.MaxDistance} km.");
+
+            // 6. Calculate actual road distance based on courier's shipping type
+            double? actualDistance = null;
+            try
+            {
+                actualDistance = Tools.GetActualRoadDistanceKm(
+                    order.Latitude,
+                    order.Longitude,
+                    courier.ShippingType);
+            }
+            catch
+            {
+                // If geo-service fails, keep actualDistance as null
+                // The delivery can still proceed with air distance as fallback
+                actualDistance = null;
+            }
+
+            // 7. Create new delivery record with actual distance
+            var newDelivery = new DO.Delivery
+            {
+                OrderId = orderId,
+                CourierId = courierId,
+                ShippingType = courier.ShippingType,
+                DeliveryStartTime = AdminManager.Now,  // Current system time
+                ActualDistance = actualDistance,        // Calculated road distance
+                DeliveryEndTime = null,                 // Not finished yet
+                CompletionStatus = null                 // Not completed yet
+            };
+
+            // 8. Add the new delivery to DAL
+            s_dal.Delivery.Create(newDelivery);
+
+            // 8.1 Read the order again to modify it
+            var orderToUpdate = s_dal.Order.Read(orderId);
+            if (orderToUpdate != null)
+            {
+                // orderToUpdate.Status
+                s_dal.Order.Update(orderToUpdate);
+            }
+        }
+        catch (DO.DalDoesNotExistException ex)
+        {
+            throw new BO.BlDoesNotExistException($"Error selecting order {orderId} for processing. {ex.Message}");
+        }
+        catch (BO.BlDoesNotExistException)
+        {
+            throw;
+        }
+        catch (BO.BlInvalidDataException)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            throw new BO.BlProcessingException($"Error selecting order {orderId} for processing. {ex.Message}");
+        }
+    }
+     
+     
+     
+     */
 }

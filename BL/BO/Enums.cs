@@ -19,7 +19,7 @@ public enum OrderType
     Pizza,
     Hamburger,
     Fries,
-    IceCream,
+    IceCream
 }
 
 /// <summary>
@@ -31,7 +31,8 @@ public enum CompletionType
     Refused, // the courier reached the destination and the client refused the order (Order goes back)
     Delivered, // the order has been delivered and closed
     Cancelled, // the order was cancelled before delivery
-    Failed ,// the delivery failed for a miscalculation of the distance
+    Failed, // the delivery failed for a miscalculation of the distance
+    None
 }
 
 public enum OrderStatus
