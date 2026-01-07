@@ -159,92 +159,100 @@
 
         <!-- Current order (view only) -->
         <Border Grid.Row="2" Style="{StaticResource MainSectionBorderStyle}" Margin="10,5,10,5">
-            <StackPanel Margin="10">
-                <TextBlock Text="Current Order In Progress"
-                           FontSize="18"
-                           FontWeight="Bold"
-                           Foreground="{StaticResource NeonCyanBrush}"
-                           Margin="0,0,0,10"/>
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Margin="10">
+                    <TextBlock Text="Current Order In Progress"
+                               FontSize="18"
+                               FontWeight="Bold"
+                               Foreground="{StaticResource NeonCyanBrush}"
+                               Margin="0,0,0,10"/>
 
-                <Grid Visibility="{Binding HasOrderInProgress, Converter={StaticResource BoolToVis}}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                    <Grid Visibility="{Binding HasOrderInProgress, Converter={StaticResource BoolToVis}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Left column -->
-                    <StackPanel Grid.Column="0">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Order ID:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding CurrentCourier.OrderInProg.OrderId, Mode=OneWay}"/>
+                        <!-- Left column -->
+                        <StackPanel Grid.Column="0">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Order ID:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                         Text="{Binding CurrentCourier.OrderInProg.OrderId, Mode=OneWay}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Customer:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                         Text="{Binding CurrentCourier.OrderInProg.CustomerName, Mode=OneWay}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Customer Phone:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                         Text="{Binding CurrentCourier.OrderInProg.CustomerNumber, Mode=OneWay}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Address:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}"
+                                         IsReadOnly="True"
+                                         TextWrapping="Wrap"
+                                         AcceptsReturn="True"
+                                         VerticalScrollBarVisibility="Auto"
+                                         Height="70"
+                                         Text="{Binding CurrentCourier.OrderInProg.DeliveryAddress, Mode=OneWay}"/>
+                            </StackPanel>
+
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Air Distance (km):" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                         Text="{Binding CurrentCourier.OrderInProg.ArealDistance, Mode=OneWay, StringFormat=N2}"/>
+                            </StackPanel>
                         </StackPanel>
 
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Customer:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding CurrentCourier.OrderInProg.CustomerName, Mode=OneWay}"/>
-                        </StackPanel>
+                        <!-- Right column -->
+                        <StackPanel Grid.Column="2">
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Time Left:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                         Text="{Binding CurrentCourier.OrderInProg.TotalTimeLeft, Mode=OneWay}"/>
+                            </StackPanel>
 
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Customer Phone:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding CurrentCourier.OrderInProg.CustomerNumber, Mode=OneWay}"/>
-                        </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Order Status:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                         Text="{Binding CurrentCourier.OrderInProg.OrderStats, Mode=OneWay}"/>
+                            </StackPanel>
 
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Address:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding CurrentCourier.OrderInProg.DeliveryAddress, Mode=OneWay}"/>
-                        </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Schedule Status:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                         Text="{Binding CurrentCourier.OrderInProg.ScheduleStat, Mode=OneWay}"/>
+                            </StackPanel>
 
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Air Distance (km):" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding CurrentCourier.OrderInProg.ArealDistance, Mode=OneWay, StringFormat=N2}"/>
-                        </StackPanel>
-                    </StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Last Completion:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                         Text="{Binding LastCompletionTypeText, Mode=OneWay}"/>
+                            </StackPanel>
 
-                    <!-- Right column -->
-                    <StackPanel Grid.Column="2">
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Time Left:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding CurrentCourier.OrderInProg.TotalTimeLeft, Mode=OneWay}"/>
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Completion Type:" Style="{StaticResource LabelStyle}"/>
+                                <ComboBox MinWidth="150"
+                                          ItemsSource="{Binding CompletionTypes}"
+                                          SelectedItem="{Binding SelectedCompletionType, Mode=TwoWay}"/>
+                            </StackPanel>
                         </StackPanel>
+                    </Grid>
 
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Order Status:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding CurrentCourier.OrderInProg.OrderStats, Mode=OneWay}"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Schedule Status:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding CurrentCourier.OrderInProg.ScheduleStat, Mode=OneWay}"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Last Completion:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding LastCompletionTypeText, Mode=OneWay}"/>
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Completion Type:" Style="{StaticResource LabelStyle}"/>
-                            <ComboBox MinWidth="150"
-                                      ItemsSource="{Binding CompletionTypes}"
-                                      SelectedItem="{Binding SelectedCompletionType, Mode=TwoWay}"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-
-                <TextBlock Visibility="{Binding HasNoOrderInProgress, Converter={StaticResource BoolToVis}}"
-                           Text="No order is currently being handled."
-                           Foreground="{StaticResource TextSubBrush}"/>
-            </StackPanel>
+                    <TextBlock Visibility="{Binding HasNoOrderInProgress, Converter={StaticResource BoolToVis}}"
+                               Text="No order is currently being handled."
+                               Foreground="{StaticResource TextSubBrush}"/>
+                </StackPanel>
+            </ScrollViewer>
         </Border>
 
         <Border Grid.Row="3" Style="{StaticResource MainSectionBorderStyle}" Margin="10,5,10,10">
