@@ -5,19 +5,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
+        
         Title="MainWindow"
-        Loaded="Window_Loaded" Closed="Window_Closed"
         WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
-        Background="{StaticResource MainBackgroundBrush}">
+        Loaded="Window_Loaded" Closed="Window_Closed"
+        Background="{StaticResource MainBackgroundBrush}"
         
+        d:DesignHeight="1080"
+        d:DesignWidth="1920">
+    
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80*"/>
-            <RowDefinition Height="120*"/>
-            <RowDefinition Height="250*"/>
-            <RowDefinition Height="40*"/>
+            <RowDefinition Height="170*"/>
+            <RowDefinition Height="350*"/>
+            <RowDefinition Height="60*"/>
         </Grid.RowDefinitions>
 
         <!--the clock section-->
@@ -29,14 +33,16 @@
             </Grid.ColumnDefinitions>
 
             <!-- Time -->
-            <Label Grid.Column="0" Content="{Binding CurrentTime}" FontWeight="Bold" FontSize="100" VerticalAlignment="Center"  HorizontalAlignment="Center" Margin="20,0"/>
-
-            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                <Button Content="+Minute" Click="btnAddOneMin_Click" MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
-                <Button Content="+Hour"   Click="btnAddOneHr_Click" MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
-                <Button Content="+Day"    Click="btnAddOneDay_Click"  MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
-                <Button Content="+Month"  Click="btnAddOneMon_Click" MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
-                <Button Content="+Year"   Click="btnAddOneYr_Click"  MinWidth="80" Height="34" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
+            <Viewbox Grid.Column="0" Margin="20,0">
+                <Label Content="{Binding CurrentTime}" FontFamily="Segoe UI"  FontWeight="ExtraBlack"  VerticalAlignment="Center"  HorizontalAlignment="Center"/>
+            </Viewbox>
+            
+            <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,30,0">
+                <Button Content="+Minute" Click="btnAddOneMin_Click" MinWidth="90" Height="45" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
+                <Button Content="+Hour"   Click="btnAddOneHr_Click" MinWidth="90" Height="45" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
+                <Button Content="+Day"    Click="btnAddOneDay_Click"  MinWidth="90" Height="45" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
+                <Button Content="+Month"  Click="btnAddOneMon_Click" MinWidth="90" Height="45" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
+                <Button Content="+Year"   Click="btnAddOneYr_Click"  MinWidth="90" Height="45" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
             </StackPanel>
         </Grid>
         
@@ -44,14 +50,14 @@
         <Grid Grid.Row="1" Margin="20">
             <Border Style="{StaticResource CardStyle}">
                 <StackPanel>
-                    <TextBlock Text="Order Summary" FontSize="15" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <TextBlock Text="Order Summary" FontSize="15" FontWeight="Bold" Margin="0,0,0,8"/>
 
                     <UniformGrid Columns="4" Rows="2" Margin="0,10,0,0">
-                        <Button Content="{Binding OpenOnTimeText}" Margin="5" Click="BtnOpenOnTime_Click"/>
-                        <Button Content="{Binding OpenInRiskText}" Margin="5" Click="BtnOpenInRisk_Click"/>
-                        <Button Content="{Binding OpenLateText}" Margin="5" Click="BtnOpenLate_Click"/>
-                        <Button Content="{Binding CompletedOnTimeText}" Margin="5" Click="BtnCompletedOnTime_Click"/>
-                        <Button Content="{Binding CompletedLateText}" Margin="5" Click="BtnCompletedLate_Click"/>
+                        <Button Content="{Binding OpenOnTimeText}" Margin="10" Click="BtnOpenOnTime_Click" FontSize="14" Height="20"/>
+                        <Button Content="{Binding OpenInRiskText}" Margin="10" Click="BtnOpenInRisk_Click" FontSize="14" Height="20"/>
+                        <Button Content="{Binding OpenLateText}" Margin="10" Click="BtnOpenLate_Click" FontSize="14" Height="20"/>
+                        <Button Content="{Binding CompletedOnTimeText}" Margin="10" Click="BtnCompletedOnTime_Click" FontSize="14" Height="20"/>
+                        <Button Content="{Binding CompletedLateText}" Margin="10" Click="BtnCompletedLate_Click" FontSize="14" Height="20"/>
                     </UniformGrid>
                 </StackPanel>
             </Border>
@@ -63,19 +69,24 @@
 
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" MaxWidth="120" />
-                        <ColumnDefinition Width="*" MaxWidth="250"/>
-                        <ColumnDefinition Width="Auto" MaxWidth="120"/>
-                        <ColumnDefinition Width="*" MaxWidth="250"/>
-                        <ColumnDefinition Width="Auto" MaxWidth="250"/>
-                        <ColumnDefinition Width="*" MaxWidth="400"/>
+                        <ColumnDefinition Width="Auto" MinWidth="120"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*" MinWidth="200"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="Auto" MinWidth="120"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*" MinWidth="200"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="Auto" MinWidth="120"/>
+                        <ColumnDefinition Width="30"/>
+                        <ColumnDefinition Width="*" MinWidth="200"/>
                     </Grid.ColumnDefinitions>
 
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="*" MaxHeight="100"/>
-                        <RowDefinition Height="*" MaxHeight="100"/>
-                        <RowDefinition Height="*" MaxHeight="100"/>
-                        <RowDefinition Height="*" MaxHeight="100"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
                     <Grid.Resources>
@@ -84,7 +95,7 @@
                             <Setter Property="HorizontalAlignment" Value="Left"/>
                             <Setter Property="Margin" Value="0,0,10,0"/>
                             <Setter Property="FontWeight" Value="Bold"/>
-                            <Setter Property="FontSize" Value="12"/>
+                            <Setter Property="FontSize" Value="14"/>
                             <Setter Property="Foreground" Value="White"/>
                         </Style>
                
@@ -92,50 +103,50 @@
 
                     <!-- Row 0: Admin ID, Company Name, Car Speed -->
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Admin ID:"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Configuration.AdminId, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                             MinHeight="30" MinWidth="100" VerticalAlignment="Stretch" Margin="0,10,10,10" TextWrapping="Wrap" />
+                    <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding Configuration.AdminId, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                             MinHeight="40" VerticalAlignment="Center" Margin="0,10,10,10" FontSize="14" />
 
-                    <TextBlock Grid.Row="0" Grid.Column="2" Text="Company Name:"/>
-                    <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding Configuration.CompanyName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                             MinHeight="30" MinWidth="100" VerticalAlignment="Stretch" Margin="0,10,10,10" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Company Name:"/>
+                    <TextBox Grid.Row="0" Grid.Column="6" Text="{Binding Configuration.CompanyName, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                             MinHeight="40" VerticalAlignment="Center" Margin="0,10,10,10" FontSize="14" />
 
-                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Avg Car MPH:"/>
-                    <TextBox Grid.Row="0" Grid.Column="5" Text="{Binding Configuration.AvgCarMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                             MinHeight="30" MinWidth="100" VerticalAlignment="Stretch" Margin="0,10,10,10" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="0" Grid.Column="8" Text="Avg Car MPH:"/>
+                    <TextBox Grid.Row="0" Grid.Column="10" Text="{Binding Configuration.AvgCarMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                             MinHeight="40" VerticalAlignment="Center" Margin="0,10,10,10" FontSize="14" />
 
                     <!-- Row 1: Max Distance, Motorcycle Speed, Bicycle Speed -->
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Max Distance:"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Configuration.MaxDist, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                MinHeight="30" MinWidth="100" VerticalAlignment="Stretch" Margin="0,10,10,10" TextWrapping="Wrap" />
+                    <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Configuration.MaxDist, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                MinHeight="40" VerticalAlignment="Center" Margin="0,10,10,10" FontSize="14" />
 
-                    <TextBlock Grid.Row="1" Grid.Column="2" Text="Avg Motorcycle MPH:" />
-                    <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding Configuration.AvgMotorcycleMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                MinHeight="30" MinWidth="100" VerticalAlignment="Stretch" Margin="0,10,10,10" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="1" Grid.Column="4" Text="Avg Motorcycle MPH:" />
+                    <TextBox Grid.Row="1" Grid.Column="6" Text="{Binding Configuration.AvgMotorcycleMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                MinHeight="40" VerticalAlignment="Center" Margin="0,10,10,10" FontSize="14" />
 
-                    <TextBlock Grid.Row="1" Grid.Column="4" Text="Avg Bicycle MPH:"/>
-                    <TextBox Grid.Row="1" Grid.Column="5" Text="{Binding Configuration.AvgBicycleMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                MinHeight="30" MinWidth="100" VerticalAlignment="Stretch" Margin="0,10,10,10" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="1" Grid.Column="8" Text="Avg Bicycle MPH:"/>
+                    <TextBox Grid.Row="1" Grid.Column="10" Text="{Binding Configuration.AvgBicycleMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                MinHeight="40" VerticalAlignment="Center" Margin="0,10,10,10" FontSize="14" />
 
                     <!-- Row 2: Walk Speed, Down Time, Max Del Time, Risk Range -->
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Avg Walk MPH:"/>
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Configuration.AvgWalkMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                MinHeight="30" MinWidth="100" VerticalAlignment="Stretch" Margin="0,10,10,10" TextWrapping="Wrap" />
+                    <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Configuration.AvgWalkMPH, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                MinHeight="40" VerticalAlignment="Center" Margin="0,10,10,10" FontSize="14" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="2" Text="Down Time:"/>
-                    <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding Configuration.DownTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                MinHeight="30" MinWidth="100" VerticalAlignment="Stretch" Margin="0,10,10,10" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="2" Grid.Column="4" Text="Down Time:"/>
+                    <TextBox Grid.Row="2" Grid.Column="6" Text="{Binding Configuration.DownTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                MinHeight="40" VerticalAlignment="Center" Margin="0,10,10,10" FontSize="14" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="4" Text="Max Del Time:"/>
-                    <TextBox Grid.Row="2" Grid.Column="5" Text="{Binding Configuration.MaxDelTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                                MinHeight="30" MinWidth="100" VerticalAlignment="Stretch" Margin="0,10,10,10" TextWrapping="Wrap" />
+                    <TextBlock Grid.Row="2" Grid.Column="8" Text="Max Del Time:"/>
+                    <TextBox Grid.Row="2" Grid.Column="10" Text="{Binding Configuration.MaxDelTime, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                                MinHeight="40" VerticalAlignment="Center" Margin="0,10,10,10" FontSize="14" />
 
 
                     <TextBlock Grid.Row="3"  Grid.Column="0" Text="Risk Range:"/>
-                    <TextBox  Grid.Row="3" Grid.Column="1" Text="{Binding Configuration.RiskRange, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
-                               MinHeight="30" MinWidth="100" VerticalAlignment="Stretch" Margin="0,10,10,10" TextWrapping="Wrap" />
+                    <TextBox  Grid.Row="3" Grid.Column="2" Text="{Binding Configuration.RiskRange, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}"
+                               MinHeight="40" VerticalAlignment="Center" Margin="0,10,10,10" FontSize="14" />
 
-                    <Button Grid.Row="3" Grid.Column="4" Content="Set Config Values"   HorizontalAlignment="Right" Click="btnUpdateObj_Click" Height="50" Margin="0,5,10,10"
-                             MinHeight="30" MinWidth="120" />
+                    <Button Grid.Row="3" Grid.Column="8" Content="Set Config Values"   HorizontalAlignment="Right" Click="btnUpdateObj_Click" 
+                            Height="50" Margin="0,5,10,10" MinWidth="150" FontSize="14" FontWeight="Bold"/>
 
                 </Grid>
             </Border>
@@ -155,17 +166,18 @@
             </Grid.RowDefinitions>
 
             <Button Content="Initialize" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnInitialize_Click"
-                    MinWidth="100" Height="34" Margin="10,6,10,0" Padding="12,4"/>
+                    MinWidth="140" Height="45" FontSize="16" Margin="10,6,10,0" Padding="12,4"/>
             
             <Button Content="Reset DB"   Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnResetDB_Click"
-                    MinWidth="100" Height="34" Margin="10,6,10,0" Padding="12,4"/>
+                    MinWidth="140" Height="45" FontSize="16" Margin="10,6,10,0" Padding="12,4"/>
 
             <Button Content="View CourierLists" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnCourierListDisplay_Click"
-                    MinWidth="130" Height="34" Margin="10,6,10,0" Padding="12,4"/>
+                    MinWidth="160" Height="45" FontSize="16" Margin="10,6,10,0" Padding="12,4"/>
             
             <Button Content="View OrderLists"   Grid.Column="3" HorizontalAlignment="Center" VerticalAlignment="Center"  Click="btnOrderListDisplay_Click"
-                    MinWidth="120" Height="34" Margin="10,6,10,0" Padding="12,4"/>
+                    MinWidth="160" Height="45" FontSize="16" Margin="10,6,10,0" Padding="12,4"/>
         </Grid>
 
     </Grid>
 </Window>
+

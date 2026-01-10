@@ -55,7 +55,8 @@ public class CanCancelOrderConverter : IValueConverter
                 return true;
 
             return type != BO.CompletionType.Cancelled
-                   && type != BO.CompletionType.Delivered;
+                   && type != BO.CompletionType.Delivered
+                   && type != BO.CompletionType.Refused;
         }
         catch
         {

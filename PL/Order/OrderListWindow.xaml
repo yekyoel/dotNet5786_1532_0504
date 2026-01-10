@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL.Order"
         mc:Ignorable="d"
-        Title="OrderListWindow" Height="450" Width="1000"
+        WindowState="Maximized"
+        WindowStartupLocation="CenterScreen"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
         Loaded="Window_Loaded" Closed="Window_Closed"
         Background="{StaticResource MainBackgroundBrush}">
