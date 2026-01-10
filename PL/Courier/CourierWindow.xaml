@@ -5,7 +5,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:PL.Courier"
     mc:Ignorable="d"
-    Title="Courier Details" Height="500" Width="800"
+    Title="Courier Details" Height="500" Width="900"
     DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"
     Loaded="Window_Loaded"
     Closed="Window_Closed">
@@ -44,7 +44,7 @@
 
         <!-- Style for consistent datepicker formatting -->
         <Style x:Key="DatePickerStyle" TargetType="DatePicker">
-            <Setter Property="Width" Value="200"/>
+            <Setter Property="Width" Value="180"/>
             <Setter Property="Height" Value="30"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
@@ -76,7 +76,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -85,97 +85,99 @@
             <TextBlock Text="Courier Details" FontSize="24" FontWeight="Bold" Foreground="{StaticResource NeonCyanBrush}"/>
         </Border>
 
-        <!-- Main Content Section with Border (No ScrollViewer) -->
-        <Border Grid.Row="1" Style="{StaticResource MainSectionBorderStyle}" Margin="10,5,10,5">
-            <StackPanel Margin="20">
-                <!-- Left and Right Columns -->
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+        <!-- Main Content Section with ScrollViewer -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0,5">
+            <Border Style="{StaticResource MainSectionBorderStyle}" Margin="10,5,10,5">
+                <StackPanel Margin="20">
+                    <!-- Left and Right Columns -->
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                    <!-- Left Column -->
-                    <StackPanel Grid.Column="0">
-                        <!-- ID -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Courier ID:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" 
-                                     IsReadOnly="{Binding IsUpdateMode}"
-                                     Text="{Binding CurrentCourier.Id, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                        <!-- Left Column -->
+                        <StackPanel Grid.Column="0">
+                            <!-- ID -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Courier ID:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" 
+                                         IsReadOnly="{Binding IsUpdateMode}"
+                                         Text="{Binding CurrentCourier.Id, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            </StackPanel>
+
+                            <!-- Full Name -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Full Name:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" 
+                                         Text="{Binding CurrentCourier.FullName, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            </StackPanel>
+
+                            <!-- Phone Number -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Phone Number:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" 
+                                         Text="{Binding CurrentCourier.PhoneNumber, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            </StackPanel>
+
+                            <!-- Email -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Email:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" 
+                                         Text="{Binding CurrentCourier.Email, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            </StackPanel>
+
+                            <!-- Is Active -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Is Active:" Style="{StaticResource LabelStyle}"/>
+                                <CheckBox Style="{StaticResource CheckBoxStyle}" 
+                                          IsChecked="{Binding CurrentCourier.IsActive, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            </StackPanel>
+
+                            <!-- Max Distance -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Max Distance (km):" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" 
+                                         Text="{Binding CurrentCourier.MaxDist, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            </StackPanel>
                         </StackPanel>
 
-                        <!-- Full Name -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Full Name:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" 
-                                     Text="{Binding CurrentCourier.FullName, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
-                        </StackPanel>
+                        <!-- Right Column -->
+                        <StackPanel Grid.Column="2">
+                            <!-- Shipping Method -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Shipping Method:" Style="{StaticResource LabelStyle}"/>
+                                <ComboBox MinWidth="150"
+                                          ItemsSource="{Binding Source={StaticResource VehicleTypeCollectionsKey}}"
+                                          SelectedValue="{Binding CurrentCourier.ShippingMethod, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            </StackPanel>
 
-                        <!-- Phone Number -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Phone Number:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" 
-                                     Text="{Binding CurrentCourier.PhoneNumber, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
-                        </StackPanel>
+                            <!-- Employment Start Date -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Employment Date:" Style="{StaticResource LabelStyle}"/>
+                                <DatePicker Style="{StaticResource DatePickerStyle}" 
+                                            SelectedDate="{Binding CurrentCourier.EmploymentStartDate, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            </StackPanel>
 
-                        <!-- Email -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Email:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" 
-                                     Text="{Binding CurrentCourier.Email, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
-                        </StackPanel>
+                            <!-- Total On Time Deliveries (Read-only) -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="On-Time Deliveries:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                         Text="{Binding CurrentCourier.TotalDelSuppliedOnTime, Mode=OneWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            </StackPanel>
 
-                        <!-- Is Active -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Is Active:" Style="{StaticResource LabelStyle}"/>
-                            <CheckBox Style="{StaticResource CheckBoxStyle}" 
-                                      IsChecked="{Binding CurrentCourier.IsActive, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            <!-- Total Late Deliveries (Read-only) -->
+                            <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                                <Label Content="Late Deliveries:" Style="{StaticResource LabelStyle}"/>
+                                <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
+                                         Text="{Binding CurrentCourier.TotalDelSuppliedLate, Mode=OneWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
+                            </StackPanel>
                         </StackPanel>
-
-                        <!-- Max Distance -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Max Distance (km):" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" 
-                                     Text="{Binding CurrentCourier.MaxDist, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
-                        </StackPanel>
-                    </StackPanel>
-
-                    <!-- Right Column -->
-                    <StackPanel Grid.Column="2">
-                        <!-- Shipping Method -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Shipping Method:" Style="{StaticResource LabelStyle}"/>
-                            <ComboBox MinWidth="150"
-                                      ItemsSource="{Binding Source={StaticResource VehicleTypeCollectionsKey}}"
-                                      SelectedValue="{Binding CurrentCourier.ShippingMethod, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
-                        </StackPanel>
-
-                        <!-- Employment Start Date -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Employment Date:" Style="{StaticResource LabelStyle}"/>
-                            <DatePicker Style="{StaticResource DatePickerStyle}" 
-                                        SelectedDate="{Binding CurrentCourier.EmploymentStartDate, Mode=TwoWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
-                        </StackPanel>
-
-                        <!-- Total On Time Deliveries (Read-only) -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="On-Time Deliveries:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding CurrentCourier.TotalDelSuppliedOnTime, Mode=OneWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
-                        </StackPanel>
-
-                        <!-- Total Late Deliveries (Read-only) -->
-                        <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                            <Label Content="Late Deliveries:" Style="{StaticResource LabelStyle}"/>
-                            <TextBox Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                     Text="{Binding CurrentCourier.TotalDelSuppliedLate, Mode=OneWay, NotifyOnValidationError=true, ValidatesOnExceptions=true}"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Grid>
-            </StackPanel>
-        </Border>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </ScrollViewer>
 
         <!-- Buttons Section with Border - Centered -->
         <Border Grid.Row="2" Style="{StaticResource MainSectionBorderStyle}" Margin="10,5,10,10">

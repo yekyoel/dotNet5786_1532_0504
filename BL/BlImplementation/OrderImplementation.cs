@@ -73,6 +73,9 @@ internal class OrderImplementation : IOrder
             BO.OrderInListFilter.OrderType => o => o.OrderType,
             BO.OrderInListFilter.ScheduleStatus => o => o.ScheduleStatus,
             BO.OrderInListFilter.AerialDistance => o => o.AerialDistance,
+            BO.OrderInListFilter.TotalTimeLeft => o => o.TotalTimeLeft,
+            BO.OrderInListFilter.TotalCompletionTime => o => o.TotalCompletionTime,
+            BO.OrderInListFilter.TotalDeliveries => o => o.TotalDeliveries,
 
             _ => _ => null
         };

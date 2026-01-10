@@ -87,7 +87,7 @@ public partial class LoginWindow : Window
             if (userType == "Admin")
             {
                 new MainWindow().Show();
-                Close();
+                IdTextBox.Clear();
                 return;
             }
 
@@ -100,7 +100,7 @@ public partial class LoginWindow : Window
                 }
 
                 new CourierMainWindow(courierId).Show();
-                Close();
+                IdTextBox.Clear();
                 return;
             }
 
