@@ -285,14 +285,10 @@ internal static class OrderManager
 
 
     /// <summary>
-    /// Periodic updates specific to orders/deliveries. Called after clock changes.
-    /// Policy (non-destructive / conservative):
-    /// - If a delivery is in-progress (has ShippingMethod but no End/DeliveryEndTime)
-    ///   and has exceeded the configured maximum delivery time plus risk window,
-    ///   mark the delivery as Failed and set DeliveryEndTime to the new clock.
-    /// - Method is lightweight and resilient: exceptions are swallowed so clock update will not fail.
+    /// Periodically checks all in-progress orders and marks those that have exceeded the maximum delivery time plus risk range as failed.
     /// </summary>
-  
+    /// <param name="oldClock">Old clock value before the update.</param>
+    /// <param name="newClock">New clock value after the update.</param>
     internal static void PeriodicOrdersUpdates(DateTime oldClock, DateTime newClock)
     {
         try
@@ -352,13 +348,11 @@ internal static class OrderManager
     }
 
     /// <summary>
-    /// Conservative auto-assignment of pending/open orders to available couriers.
-    /// Policy:
-    /// - Only assigns when there is exactly one clearly eligible and currently free courier.
-    /// - Creates a DO.Delivery with End=Pending and DeliveryStartTime set to the new clock.
-    /// - Lightweight and resilient: exceptions are swallowed per-order.
+    /// Periodically attempts to auto-assign pending orders to eligible couriers based on distance and availability.
     /// </summary>
-   
+    /// <param name="oldClock">Old clock value before the update.</param>
+    /// <param name="newClock">New clock value after the update.</param>
+
     internal static void PeriodicAutoAssignPendingOrders(DateTime oldClock, DateTime newClock)
     {
         try
