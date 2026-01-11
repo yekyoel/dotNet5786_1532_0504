@@ -3,6 +3,7 @@
 using DalApi;
 using DO;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Provides an implementation of the Delivery interface for managing delivery entities.
@@ -13,6 +14,7 @@ internal class DeliveryImplementation : IDelivery
     /// Creates a new delivery entity.
     /// </summary>
     /// <param name="item"></param>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Delivery item)
     {
         int id1 = Config.NextOrderId;
@@ -26,6 +28,7 @@ internal class DeliveryImplementation : IDelivery
     /// </summary>
     /// <param name="id"></param>
     /// <exception cref="DalDoesNotExistException"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         if (Read(id) == null)
@@ -36,6 +39,7 @@ internal class DeliveryImplementation : IDelivery
     /// <summary>
     /// Deletes all delivery entities.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
             DataSource.Deliveries.Clear();
@@ -46,6 +50,7 @@ internal class DeliveryImplementation : IDelivery
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Delivery? Read(int id)
     {
         return DataSource.Deliveries.FirstOrDefault(item => item.Id == id); //stage 2
@@ -56,6 +61,7 @@ internal class DeliveryImplementation : IDelivery
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Delivery> ReadAll(Func<Delivery, bool>? filter = null) //stage 2
        => filter == null
            ? DataSource.Deliveries.Select(item => item) : DataSource.Deliveries.Where(filter);
@@ -65,6 +71,7 @@ internal class DeliveryImplementation : IDelivery
     /// </summary>
     /// <param name="item"></param>
     /// <exception cref="DalAlreadyExistExceptions"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Delivery item)
     {
         if (Read(item.Id) == null)
@@ -78,6 +85,7 @@ internal class DeliveryImplementation : IDelivery
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Delivery? Read(Func<Delivery, bool> filter)
     {
         // if no delivery matches the filter, FirstOrDefault returns null

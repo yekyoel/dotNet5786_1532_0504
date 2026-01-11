@@ -37,16 +37,19 @@ internal static class AdminManager //stage 4
         // - (students become not active after 5 years etc.)
 
         //TO_DO: //stage 4
-        CourierManager.PeriodicCouriersUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
-        DeliveryManager.PeriodicDeliveriesUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
-        OrderManager.PeriodicOrdersUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
-        OrderManager.PeriodicAutoAssignPendingOrders(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
+       // CourierManager.PeriodicCouriersUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
+       // DeliveryManager.PeriodicDeliveriesUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
+        //OrderManager.PeriodicOrdersUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
+        //OrderManager.PeriodicAutoAssignPendingOrders(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
         //...
 
         //TO_DO: //stage 7
         //if (_periodicTask is null || _periodicTask.IsCompleted) //stage 7
-        //    _periodicTask = Task.Run(() => StudentManager.PeriodicStudentsUpdates(oldClock, newClock));
-        //...
+           Task.Run(() => CourierManager.PeriodicCouriersUpdates(oldClock, newClock));
+           Task.Run(() => DeliveryManager.PeriodicDeliveriesUpdates(oldClock, newClock));
+           Task.Run(() => OrderManager.PeriodicOrdersUpdates(oldClock, newClock));
+           Task.Run(() => OrderManager.PeriodicAutoAssignPendingOrders(oldClock, newClock));
+
 
         //Calling all the observers of clock update
         ClockUpdatedObservers?.Invoke(); //prepared for stage 5
@@ -229,7 +232,7 @@ internal static class AdminManager //stage 4
 
     private static Task? _simulateTask = null;
 
-    /*private static void clockRunner()
+    private static void clockRunner()
     {
         while (!s_stop)
         {
@@ -249,7 +252,7 @@ internal static class AdminManager //stage 4
             }
             catch (ThreadInterruptedException) { }
         }
-    } */
+    } 
 
     #endregion Stage 7 base
 }

@@ -320,24 +320,11 @@ internal static class Tools
         return timeLeft > TimeSpan.Zero ? timeLeft : TimeSpan.Zero;
     }
 
-    internal static char AccessToData(int userId, object data)
+    internal static async Task<> GetLocationOfAddressAsync(string address)
     {
-        var adminId = AdminManager.GetConfig().AdminId;
-
-        // Check if data is a Courier and assign to variable
-        if (data is BO.Courier courier)
-        {
-            return userId == courier.Id ? 'C' : 'N';
-        }
-        
-        // Check if data is an Order and assign to variable
-        if (data is BO.Order order)
-        {
-            // For orders, maybe check if user placed the order?
-            return userId == order.Id ? 'O' : 'N';
-        }
-
-        // Default case for other data types
-        return userId == adminId ? 'A' : 'N'; // Admin has full access
+        //...
+        HttpResponseMessage response = await client.GetAsync(requestUrl);
+        //...
     }
+
 }

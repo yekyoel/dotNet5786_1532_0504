@@ -1,6 +1,7 @@
 ﻿namespace Dal;
 using DalApi;
 using DO;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// class Order Implementation that implements the IOrder interface for managing Order data in XML format.
@@ -8,6 +9,7 @@ using DO;
 internal class OrderImplementation : IOrder
 {
     // Create a new Order and save it to the XML file.
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Order item)
     {
         List<Order> orders = XMLTools.LoadListFromXMLSerializer<Order>(Config.s_orders_xml);
@@ -18,6 +20,7 @@ internal class OrderImplementation : IOrder
     }
 
     // Delete an Order by its ID from the XML file.
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         List<Order> orders = XMLTools.LoadListFromXMLSerializer<Order>(Config.s_orders_xml);
@@ -27,12 +30,14 @@ internal class OrderImplementation : IOrder
     }
 
     // Delete all Orders from the XML file.
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLSerializer(new List<Order>(), Config.s_orders_xml); // delete all orders by saving empty list
     }
 
     // Read an Order by its ID from the XML file.
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Order? Read(int id)
     {
         List<Order> orders = XMLTools.LoadListFromXMLSerializer<Order>(Config.s_orders_xml);
@@ -40,6 +45,7 @@ internal class OrderImplementation : IOrder
     }
 
     // Read an Order that matches the given filter from the XML file.
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Order? Read(Func<Order, bool> filter)
     {
         if (filter is null) return null;
@@ -48,6 +54,7 @@ internal class OrderImplementation : IOrder
     }
 
     // Read all Orders, optionally filtered by the given predicate, from the XML file.
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Order> ReadAll(Func<Order, bool>? filter = null)
     {
         List<Order> orders = XMLTools.LoadListFromXMLSerializer<Order>(Config.s_orders_xml);
@@ -55,6 +62,7 @@ internal class OrderImplementation : IOrder
     }
 
     // Update an existing Order in the XML file.
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Order item)
     {
         List<Order> orders = XMLTools.LoadListFromXMLSerializer<Order>(Config.s_orders_xml);

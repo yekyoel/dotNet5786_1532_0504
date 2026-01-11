@@ -3,6 +3,7 @@
 using DalApi;
 using DO;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Provides an implementation of the Courier interface for managing courier entities.
@@ -18,6 +19,8 @@ internal class CourierImplementation : ICourier
     /// </summary>
     /// <param name="item"></param>
     /// <exception cref="DalAlreadyExistExceptions"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Create(Courier item)
     {
         if(Read(item.Id) != null)
@@ -30,6 +33,8 @@ internal class CourierImplementation : ICourier
     /// </summary>
     /// <param name="id"></param>
     /// <exception cref="DalDoesNotExistException"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void Delete(int id)
     {
         if (Read(id) == null)
@@ -40,6 +45,8 @@ internal class CourierImplementation : ICourier
     /// <summary>
     /// Deletes all courier items from the data source.
     /// </summary>
+    [MethodImpl(MethodImplOptions.Synchronized)]
+
     public void DeleteAll()
     {
         foreach (Courier itr in DataSource.Couriers.ToArray()) // to avoid modifying collection during iteration
@@ -53,6 +60,7 @@ internal class CourierImplementation : ICourier
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Courier? Read(int id)
     {
         return DataSource.Couriers.FirstOrDefault(item => item.Id == id); 
@@ -63,6 +71,7 @@ internal class CourierImplementation : ICourier
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Courier> ReadAll(Func<Courier, bool>? filter = null) 
         => filter == null
             ? DataSource.Couriers.Select(item => item) : DataSource.Couriers.Where(filter);
@@ -72,6 +81,7 @@ internal class CourierImplementation : ICourier
     /// </summary>
     /// <param name="item"></param>
     /// <exception cref="DalDoesNotExistException"></exception>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Courier item)
     {
         if (Read(item.Id) == null)
@@ -85,6 +95,7 @@ internal class CourierImplementation : ICourier
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Courier? Read(Func<Courier, bool> filter)
     {
         // if no courier matches the filter, FirstOrDefault returns null

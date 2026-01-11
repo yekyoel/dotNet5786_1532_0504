@@ -2,6 +2,7 @@
 using DalApi;
 using DO;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Xml.Linq;
 
 /// <summary>
@@ -10,6 +11,7 @@ using System.Xml.Linq;
 internal class DeliveryImplementation : IDelivery
 {
     // Converts an XElement to a Delivery object
+    [MethodImpl(MethodImplOptions.Synchronized)]
     static Delivery getDelivery(XElement d)
     {
         return new DO.Delivery()
@@ -26,6 +28,7 @@ internal class DeliveryImplementation : IDelivery
     }
 
     // Creates a new Delivery entry in the XML data store
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Create(Delivery item)
     {
         XElement deliveriesRootElem = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml);
@@ -36,6 +39,7 @@ internal class DeliveryImplementation : IDelivery
     }
 
     // Deletes a Delivery entry by its ID
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Delete(int id)
     {
         XElement deliveriesRootElem = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml);
@@ -47,12 +51,14 @@ internal class DeliveryImplementation : IDelivery
     }
 
     // Deletes all Delivery entries
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void DeleteAll()
     {
         XMLTools.SaveListToXMLElement(new XElement(Config.s_deliveries_xml), Config.s_deliveries_xml);
     }
 
     // Reads a Delivery entry by its ID
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Delivery? Read(int id)
     {
         XElement? deliveryElem =
@@ -61,12 +67,14 @@ internal class DeliveryImplementation : IDelivery
     }
 
     // Reads a Delivery entry that matches a given filter
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public Delivery? Read(Func<Delivery, bool> filter)
     {
         return XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml).Elements().Select(s => getDelivery(s)).FirstOrDefault(filter);
     }
 
     // Reads all Delivery entries, optionally filtered by a given predicate
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public IEnumerable<Delivery> ReadAll(Func<Delivery, bool>? filter = null)
     {
         var items = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml).Elements().Select(s => getDelivery(s));
@@ -74,6 +82,7 @@ internal class DeliveryImplementation : IDelivery
     }
 
     // Updates an existing Delivery entry
+    [MethodImpl(MethodImplOptions.Synchronized)]
     public void Update(Delivery item)
     {
         XElement deliveriesRootElem = XMLTools.LoadListFromXMLElement(Config.s_deliveries_xml);
@@ -88,6 +97,7 @@ internal class DeliveryImplementation : IDelivery
     }
 
     // Helper method to create an XElement from a Delivery object
+    [MethodImpl(MethodImplOptions.Synchronized)]
     private XElement createDeliveryElement(Delivery item)
     {
         return new XElement("Delivery",
