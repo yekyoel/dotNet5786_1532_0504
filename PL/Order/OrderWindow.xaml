@@ -189,7 +189,7 @@
                                 <!-- Expected Delivery Time (Read-only) -->
                                 <Label Grid.Row="2" Grid.Column="0" Content="Expected Delivery:" Style="{StaticResource LabelWithMarginStyle}"/>
                                 <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                      Text="{Binding CurrentOrder.ExpectedDeliveryTime, Mode=OneWay, StringFormat=g}"/>
+                                      Text="{Binding CurrentOrder.ExpectedDeliveryTime, Mode=OneWay, StringFormat=g, TargetNullValue='Processing...'}"/>
 
                                 <!-- Max Delivered Time (Read-only) -->
                                 <Label Grid.Row="3" Grid.Column="0" Content="Max Delivery Time:" Style="{StaticResource LabelWithMarginStyle}"/>
@@ -204,7 +204,7 @@
                                 <!-- Schedule Status (Read-only) -->
                                 <Label Grid.Row="5" Grid.Column="0" Content="Schedule Status:" Style="{StaticResource LabelWithMarginStyle}"/>
                                 <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource TextBoxStyle}" IsReadOnly="True"
-                                      Text="{Binding CurrentOrder.ScheduleStatus, Mode=OneWay}"/>
+                                      Text="{Binding CurrentOrder.ScheduleStatus, Mode=OneWay, TargetNullValue='Pending'}"/>
 
                                 <!-- Description (Read-only) -->
                                 <Label Grid.Row="6" Grid.Column="0" Content="Description:" Style="{StaticResource LabelWithMarginStyle}"/>

@@ -25,11 +25,9 @@ internal class OrderImplementation : IOrder
     /// (int)ScheduleStatus</c>, where <c>N</c> is the number of schedule status values.</returns>
     public int[] StatusTotal(int userId)
     {
-        // check this  again
         var adminId = AdminManager.GetConfig().AdminId;
         if (userId != adminId )
             throw new UnauthorizedAccessException("Only admin can access status totals.");
-        // up to here
 
         var orders = Helpers.OrderManager.GetAllOrders();
 

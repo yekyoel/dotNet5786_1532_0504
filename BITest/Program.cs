@@ -212,6 +212,7 @@ class Program
             Console.WriteLine("\n--- ORDER MENU ---");
             Console.WriteLine("1 - View All Orders");
             Console.WriteLine("2 - Get Order Details");
+            Console.WriteLine("3 - View Status Totals");
             Console.WriteLine("0 - Back");
 
             Console.Write("Choose option: ");
@@ -237,6 +238,25 @@ class Program
                         {
                             var order = s_bl.Order.GetOrderDetails(s_userId, orderId);
                             Console.WriteLine($"Order: {order.Id}, Customer: {order.CustomerName}, Address: {order.OrderAddress}");
+                        }
+                        break;
+
+                    case 3:
+                        Console.WriteLine("Status Totals:");
+                        var totals = s_bl.Order.StatusTotal(s_userId);
+                        var scheduleStatuses = Enum.GetValues<BO.ScheduleStatus>();
+                        int schedCount = scheduleStatuses.Length;
+
+                        foreach (var os in Enum.GetValues<BO.OrderStatus>())
+                        {
+                            foreach (var ss in scheduleStatuses)
+                            {
+                                int index = (int)os * schedCount + (int)ss;
+                                if (index < totals.Length && totals[index] > 0)
+                                {
+                                    Console.WriteLine($"  {os} - {ss}: {totals[index]}");
+                                }
+                            }
                         }
                         break;
 

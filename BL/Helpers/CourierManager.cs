@@ -106,6 +106,27 @@ internal static class CourierManager
         var order = delivery is null ? null : dal.Order.Read(delivery.OrderId);
 
         // Calculate delivery statistics
+        int totalOnTime = 0;
+        int totalLate = 0;
+
+        // Iterate over all completed deliveries for this courier to calculate totals
+        var completedDeliveries = dal.Delivery.ReadAll()
+            .Where(d => d.CourierId == doCourier.Id && d.DeliveryEndTime != null);
+
+        foreach (var d in completedDeliveries)
+        {
+            var ord = dal.Order.Read(d.OrderId);
+            if (ord != null)
+            {
+                var status = Tools.FindScheduleStatusType(ord);
+                if (status == BO.ScheduleStatus.Late)
+                    totalLate++;
+                else if (status == BO.ScheduleStatus.OnTime)
+                    totalOnTime++;
+            }
+        }
+
+        // Calculate active order in progress
         BO.OrderInProgress orderInProg;
 
         // If there's an active delivery and order, populate OrderInProgress
@@ -177,8 +198,8 @@ internal static class CourierManager
             MaxDist = doCourier.MaxDist,
             ShippingMethod = FindType(doCourier),
             EmploymentStartDate = doCourier.DayStarted,
-            TotalDelSuppliedOnTime = 0,
-            TotalDelSuppliedLate = 0,
+            TotalDelSuppliedOnTime = totalOnTime,
+            TotalDelSuppliedLate = totalLate,
             OrderInProg = orderInProg
         };
     }
