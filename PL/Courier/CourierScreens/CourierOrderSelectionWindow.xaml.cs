@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -25,9 +26,29 @@ public partial class CourierOrderSelectionWindow : Window
         InitializeComponent();
         _courierId = courierId;
 
+        // Suppress script error popups from the legacy WebBrowser control
+        try
+        {
+            dynamic activeX = MapBrowser.GetType().InvokeMember(
+                "ActiveXInstance",
+                System.Reflection.BindingFlags.GetProperty |
+                System.Reflection.BindingFlags.Instance |
+                System.Reflection.BindingFlags.NonPublic,
+                null,
+                MapBrowser,
+                new object[] { });
+
+            if (activeX is not null)
+                activeX.Silent = true;
+        }
+        catch
+        {
+            // best-effort; ignore failures here
+        }
+
         _orderListObserver = RefreshOrdersFromObserver;
 
-        LoadOpenOrders();
+        _ = LoadOpenOrdersAsync();
         DataContext = this;
     }
 
@@ -63,7 +84,7 @@ public partial class CourierOrderSelectionWindow : Window
     {
         try
         {
-            Dispatcher.Invoke(LoadOpenOrders);
+            Dispatcher.Invoke(async () => await LoadOpenOrdersAsync());
         }
         catch
         {
@@ -71,29 +92,36 @@ public partial class CourierOrderSelectionWindow : Window
         }
     }
 
-    private void LoadOpenOrders()
+    private async Task LoadOpenOrdersAsync()
     {
-        var orders = s_bl.Order.GetAvailableOrdersForCourier(_courierId, _courierId, null, null);
-
-        OpenOrders.Clear();
-        foreach (var o in orders)
-            OpenOrders.Add(o);
-
-        if (OpenOrders.Count == 0)
+        try
         {
-            MessageBox.Show(
-                "No available orders found.\n\nCommon reasons:\n" +
-                "- There are no orders in the DB (click Initialize)\n" +
-                "- Your MaxDist is too small (distance filter)\n" +
-                "- All orders already have deliveries that are not Pending/unassigned",
-                "No Orders",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
-        }
+            var orders = await s_bl.Order.GetAvailableOrdersForCourierAsync(_courierId, _courierId, null, null);
 
-        // Refresh bindings (DataContext=self style)
-        DataContext = null;
-        DataContext = this;
+            OpenOrders.Clear();
+            foreach (var o in orders)
+                OpenOrders.Add(o);
+
+            if (OpenOrders.Count == 0)
+            {
+                MessageBox.Show(
+                    "No available orders found.\n\nCommon reasons:\n" +
+                    "- There are no orders in the DB (click Initialize)\n" +
+                    "- Your MaxDist is too small (distance filter)\n" +
+                    "- All orders already have deliveries that are not Pending/unassigned",
+                    "No Orders",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+
+            DataContext = null;
+            DataContext = this;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error loading available orders: {ex.Message}",
+                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
     }
 
     private void btnCollect_Click(object sender, RoutedEventArgs e)
@@ -115,7 +143,7 @@ public partial class CourierOrderSelectionWindow : Window
             MessageBox.Show($"Error assigning order: {ex.Message}",
                 "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
-            LoadOpenOrders();
+            _ = LoadOpenOrdersAsync();
         }
     }
 
@@ -130,6 +158,10 @@ public partial class CourierOrderSelectionWindow : Window
         {
             MapStatusText = "Select an order to preview the route.";
             MapCoordinatesText = string.Empty;
+
+            // clear map
+            MapBrowser.Navigate("about:blank");
+
             DataContext = null;
             DataContext = this;
             return;
@@ -139,7 +171,6 @@ public partial class CourierOrderSelectionWindow : Window
         {
             var cfg = s_bl.Admin.GetConfig();
 
-            // OpenOrderInList doesn't contain coordinates, so load full order details
             var order = s_bl.Order.GetOrderDetails(_courierId, SelectedOrder.OrderId);
 
             MapStatusText =
@@ -150,7 +181,18 @@ public partial class CourierOrderSelectionWindow : Window
                 $"Company: lat={cfg.Latitude:0.00000}, lon={cfg.Longitude:0.00000}\n" +
                 $"Order: lat={order.Latitude:0.00000}, lon={order.Longitude:0.00000}\n" +
                 $"Air distance: {SelectedOrder.ArealDistance:0.00} km\n" +
-                $"Route: (placeholder – add map provider for real routes)";
+                $"Route distance: {SelectedOrder.ActualDistance:0.00} km";
+
+            // Simple OpenStreetMap directions URL
+            if (cfg.Latitude.HasValue && cfg.Longitude.HasValue)
+            {
+                string url =
+                    $"https://www.openstreetmap.org/directions?engine=fossgis_osrm_car&route=" +
+                    $"{cfg.Latitude.Value:0.00000}%2C{cfg.Longitude.Value:0.00000}%3B" +
+                    $"{order.Latitude:0.00000}%2C{order.Longitude:0.00000}";
+
+                MapBrowser.Navigate(url);
+            }
 
             DataContext = null;
             DataContext = this;
@@ -159,6 +201,7 @@ public partial class CourierOrderSelectionWindow : Window
         {
             MapStatusText = $"Map preview error: {ex.Message}";
             MapCoordinatesText = string.Empty;
+            MapBrowser.Navigate("about:blank");
             DataContext = null;
             DataContext = this;
         }

@@ -9,7 +9,7 @@ namespace DO;
 /// <param name="CourierId">ID of the courier assigned to the delivery</param>
 /// <param name="ShippingMethod">Method of shipping used for the delivery</param>
 /// <param name="DeliveryStartTime">Time when the delivery started</param>
-/// <param name="Distance">Distance covered during the delivery</param>
+/// <param name="Distance">the actual Distance during the delivery</param>
 /// <param name="End">Status of the delivery</param>
 /// <param name="DeliveryEndTime">Time when the delivery ended</param>
 public record Delivery
@@ -19,7 +19,7 @@ public record Delivery
     int CourierId,
     ShippingMethod? ShippingMethod = null, 
     DateTime? DeliveryStartTime = null,  
-    double? Distance = null,
+    double? Distance = null, 
     CompletionType? End = null, 
     DateTime? DeliveryEndTime = null  
 )

@@ -1,6 +1,10 @@
 ﻿using BO;
 using DalApi;
 using DO;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace Helpers;
 
 internal static class OrderManager
@@ -89,18 +93,30 @@ internal static class OrderManager
         double storeLat = cfg?.Latitude ?? 0.0;
         double storeLon = cfg?.Longitude ?? 0.0;
 
-        // map each DO.Order to BO.OrderInList with calculated fields
+        // read all deliveries once to avoid repeated DAL calls
+        var allDeliveries = DeliveryManager.GetAllDeliveries().ToList();
+
         return dalOrders.Select(dalOrder =>
         {
-            var delivery = DeliveryManager.GetDeliveryByOrderId(dalOrder.Id);
-            var totalTimeLeft = Tools.CalculateTotalTimeLeft(dalOrder, delivery);
-            var completionTime = (delivery?.DeliveryEndTime.HasValue ?? false) && (delivery?.DeliveryStartTime.HasValue ?? false)
-                ? delivery.DeliveryEndTime.Value - delivery.DeliveryStartTime.Value
+            var deliveriesForOrder = allDeliveries
+                .Where(d => d.OrderId == dalOrder.Id)
+                .ToList();
+
+            var latestDelivery = deliveriesForOrder
+                .OrderByDescending(d => d.DeliveryStartTime ?? DateTime.MinValue)
+                .FirstOrDefault();
+
+            var totalTimeLeft = Tools.CalculateTotalTimeLeft(dalOrder, latestDelivery);
+            var completionTime = (latestDelivery?.DeliveryEndTime.HasValue ?? false) &&
+                                 (latestDelivery?.DeliveryStartTime.HasValue ?? false)
+                ? latestDelivery.DeliveryEndTime.Value - latestDelivery.DeliveryStartTime.Value
                 : TimeSpan.Zero;
+
+            int totalDeliveriesForOrder = deliveriesForOrder.Count;
 
             return new BO.OrderInList
             {
-                DeliveryId = delivery?.Id,
+                DeliveryId = latestDelivery?.Id,
                 OrderId = dalOrder.Id,
                 OrderType = Tools.SwitchOrderTypeTOBO(dalOrder) ?? BO.OrderType.Pizza,
                 AerialDistance = Tools.GetAerialDistanceKm(storeLat, storeLon, dalOrder.Latitude, dalOrder.Longitude),
@@ -108,7 +124,7 @@ internal static class OrderManager
                 ScheduleStatus = Tools.FindScheduleStatusType(dalOrder) ?? BO.ScheduleStatus.OnTime,
                 TotalTimeLeft = totalTimeLeft,
                 TotalCompletionTime = completionTime,
-                TotalDeliveries = delivery != null ? 1 : 0
+                TotalDeliveries = totalDeliveriesForOrder
             };
         }).ToList();
     }
@@ -126,6 +142,7 @@ internal static class OrderManager
         var dalOrder = s_dal.Order.Read(order.Id);
 
         s_dal.Order.Update(dalOrder);
+
     }
 
     /// <summary>
@@ -158,6 +175,7 @@ internal static class OrderManager
         }
         else if (Tools.FindOrderStatusType(dalOrder) == BO.OrderStatus.InProgress)  // being handeled
         {
+            var actualDist = Tools.GetTotalDistance(dalOrder).GetAwaiter().GetResult();
             delivery = DeliveryManager.GetDeliveryByOrderId(orderId);
             if (delivery is null)
                 throw new InvalidOperationException($"Order with ID {orderId} is in progress but has no associated delivery.");
@@ -168,7 +186,7 @@ internal static class OrderManager
                 CourierId = delivery.CourierId,
                 ShippingMethod = delivery.ShippingMethod,
                 DeliveryStartTime = delivery.DeliveryStartTime,
-                Distance = delivery.Distance,
+                Distance = delivery.Distance, 
                 End = DO.CompletionType.Cancelled,
                 DeliveryEndTime = AdminManager.GetConfig()?.Clock ?? DateTime.Now
             };
@@ -203,7 +221,7 @@ internal static class OrderManager
     /// <exception cref="BO.BLInvalidOrderException">Thrown if the order is null or contains invalid or incomplete information, such as missing customer details,
     /// address, non-positive weight, or out-of-range latitude/longitude.</exception>
   
-    internal static void AddOrder(BO.Order order)
+    internal static async Task AddOrder(BO.Order order)
     {
         if (order is null)
             throw new BO.BLInvalidOrderException("Order cannot be null.");
@@ -248,7 +266,7 @@ internal static class OrderManager
         s_dal.Order.Create(doOrder);
 
         // Notify couriers by email (best effort) and observers about list change
-        EmailService.SendNewOrderNotification(doOrder);
+        await EmailService.SendNewOrderNotificationAsync(doOrder).ConfigureAwait(false);
         Observers.NotifyListUpdated();
     }
 
@@ -273,7 +291,7 @@ internal static class OrderManager
             var cfg = AdminManager.GetConfig();
             double storeLat = cfg?.Latitude ?? 0.0;
             double storeLon = cfg?.Longitude ?? 0.0;
-            double distanceKm = Tools.GetAerialDistanceKm(storeLat, storeLon, dalOrder.Latitude, dalOrder.Longitude);
+            double distanceKm = Tools.GetTotalDistance(dalOrder).GetAwaiter().GetResult();
 
             var newDelivery = new DO.Delivery
             {
@@ -587,21 +605,16 @@ internal static class OrderManager
         double storeLat = cfg?.Latitude ?? 0.0;
         double storeLon = cfg?.Longitude ?? 0.0;
 
-        // FIX: "Available" = no delivery at all, OR delivery exists but not yet picked up by anyone
-        // (End == Pending and ShippingMethod is null means auto-assigned but no courier started it yet)
         var openOrders = dalOrders.Where(order =>
         {
             var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
-            
-            // Case 1: No delivery at all = truly open
+
             if (delivery == null)
             {
                 double distance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
                 return distance <= courierMaxDist;
             }
 
-            // Case 2: Delivery exists but hasn't been started yet (Pending + no ShippingMethod = not picked up)
-            // This happens when PeriodicAutoAssignPendingOrders creates a placeholder delivery
             if (delivery.End == DO.CompletionType.Pending && delivery.CourierId == 0)
             {
                 double distance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
@@ -630,14 +643,14 @@ internal static class OrderManager
             var maxDelTime = cfg?.MaxDelTime ?? TimeSpan.FromHours(24);
             var maxDeliveryTime = orderPlacedTime.Add(maxDelTime);
             var expectedDeliveryTime = Tools.CalculateExpectedDeliveryTime(order, delivery);
-            var timeSpanToDelivery = expectedDeliveryTime != null 
+            var timeSpanToDelivery = expectedDeliveryTime != null
                 ? (expectedDeliveryTime.Value - cfg.Clock)
                 : (TimeSpan?)null;
             var totalTimeLeft = Tools.CalculateTotalTimeLeft(order, delivery);
 
             return new BO.OpenOrderInList
             {
-                CourierId = delivery?.CourierId != 0 ? delivery?.CourierId : null, // show courier if assigned
+                CourierId = delivery?.CourierId != 0 ? delivery?.CourierId : null,
                 OrderId = order.Id,
                 TypeOrder = Tools.SwitchOrderTypeTOBO(order) ?? BO.OrderType.Pizza,
                 Weight = order.Weight,
@@ -709,5 +722,93 @@ internal static class OrderManager
             OpenOrderInListFilter.MaxDeliveryTime => orders.OrderBy(o => o.StartTimeForOrdering).ToList(),
             _ => orders
         };
+    }
+
+    internal static async Task<IEnumerable<BO.OpenOrderInList>> GetOpenOrdersAsync(int courierId, OpenOrderInListFilter? filter, OpenOrderInListFilter? sort)
+    {
+        var dalOrders = s_dal.Order.ReadAll().ToList();
+
+        var courier = s_dal.Courier.Read(courierId);
+        double courierMaxDist = courier?.MaxDist ?? double.MaxValue;
+
+        var cfg = AdminManager.GetConfig();
+        double storeLat = cfg?.Latitude ?? 0.0;
+        double storeLon = cfg?.Longitude ?? 0.0;
+
+        var openOrders = dalOrders.Where(order =>
+        {
+            var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
+
+            if (delivery == null)
+            {
+                double distance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
+                return distance <= courierMaxDist;
+            }
+
+            if (delivery.End == DO.CompletionType.Pending && delivery.CourierId == 0)
+            {
+                double distance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
+                return distance <= courierMaxDist;
+            }
+
+            return false;
+        }).ToList();
+
+        if (filter.HasValue)
+            openOrders = ApplyOpenOrderFilter(openOrders, filter.Value);
+
+        if (sort.HasValue)
+            openOrders = ApplyOpenOrderSort(openOrders, sort.Value);
+
+        var tasks = openOrders.Select(async order =>
+        {
+            var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
+
+            double airDistance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
+            double routeDistance;
+            try
+            {
+                // if we already have Distance on delivery use it, otherwise compute using Tools.GetTotalDistance
+                if (delivery?.Distance is double d)
+                {
+                    routeDistance = d;
+                }
+                else
+                {
+                    routeDistance = await Tools.GetTotalDistance(order).ConfigureAwait(false);
+                }
+            }
+            catch
+            {
+                routeDistance = airDistance;
+            }
+
+            var orderPlacedTime = order.StartTimeForOrdering ?? DateTime.Now;
+            var maxDelTime = cfg?.MaxDelTime ?? TimeSpan.FromHours(24);
+            var maxDeliveryTime = orderPlacedTime.Add(maxDelTime);
+            var expectedDeliveryTime = Tools.CalculateExpectedDeliveryTime(order, delivery);
+            var timeSpanToDelivery = expectedDeliveryTime != null
+                ? (expectedDeliveryTime.Value - cfg.Clock)
+                : (TimeSpan?)null;
+            var totalTimeLeft = Tools.CalculateTotalTimeLeft(order, delivery);
+
+            return new BO.OpenOrderInList
+            {
+                CourierId = delivery?.CourierId != 0 ? delivery?.CourierId : null,
+                OrderId = order.Id,
+                TypeOrder = Tools.SwitchOrderTypeTOBO(order) ?? BO.OrderType.Pizza,
+                Weight = order.Weight,
+                DeliveryAddress = order.FullAdd ?? string.Empty,
+                ArealDistance = airDistance,
+                ActualDistance = routeDistance,
+                ExpectedActualDeliveryTime = timeSpanToDelivery,
+                Status = Tools.FindScheduleStatusType(order) ?? BO.ScheduleStatus.OnTime,
+                TotalTimeLeft = totalTimeLeft,
+                MaxDeliveryTime = maxDeliveryTime
+            };
+        });
+
+        var results = await Task.WhenAll(tasks).ConfigureAwait(false);
+        return results;
     }
 }
