@@ -242,8 +242,11 @@
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                 <Label Content="Completion Type:" Style="{StaticResource LabelStyle}"/>
                                 <ComboBox MinWidth="150"
+                                          Foreground="White"
+                                          Background="#262641"
                                           ItemsSource="{Binding CompletionTypes}"
-                                          SelectedItem="{Binding SelectedCompletionType, Mode=TwoWay}"/>
+                                          SelectedItem="{Binding SelectedCompletionType, Mode=TwoWay}"
+                                          SelectionChanged="CompletionType_SelectionChanged"/>
                             </StackPanel>
                         </StackPanel>
                     </Grid>

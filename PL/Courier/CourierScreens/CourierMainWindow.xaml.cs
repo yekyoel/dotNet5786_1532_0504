@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using PL.Order;
 
 namespace PL.Courier.CourierScreens;
 
@@ -21,7 +20,7 @@ public partial class CourierMainWindow : Window
     public IEnumerable<BO.CompletionType> CompletionTypes { get; } =
         Enum.GetValues<BO.CompletionType>();
 
-    public BO.CompletionType SelectedCompletionType { get; set; } = BO.CompletionType.Delivered;
+    public BO.CompletionType SelectedCompletionType { get; set; } = BO.CompletionType.None;
 
     public bool HasOrderInProgress => (CurrentCourier?.OrderInProg?.OrderId ?? 0) != 0;
 
@@ -29,7 +28,9 @@ public partial class CourierMainWindow : Window
 
     public bool CanSelectOrder => CurrentCourier is not null && CurrentCourier.IsActive && !HasOrderInProgress;
 
-    public bool CanFinishHandling => CurrentCourier is not null && HasOrderInProgress;
+    public bool CanFinishHandling => CurrentCourier is not null
+                                     && HasOrderInProgress
+                                     && SelectedCompletionType != BO.CompletionType.None;
 
     public string LastCompletionTypeText { get; set; } = "N/A";
 
@@ -39,6 +40,13 @@ public partial class CourierMainWindow : Window
         _courierId = courierId;
 
         LoadCourierDetails();
+        DataContext = this;
+    }
+
+    private void CompletionType_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+    {
+        // Force refresh since the window doesn't implement INotifyPropertyChanged
+        DataContext = null;
         DataContext = this;
     }
 
@@ -85,6 +93,10 @@ public partial class CourierMainWindow : Window
     private void LoadCourierDetails()
     {
         CurrentCourier = s_bl.Courier.GetCourierDetails(_courierId, _courierId);
+
+        // Reset completion choice when there is no order in progress (so button stays disabled).
+        if (!HasOrderInProgress)
+            SelectedCompletionType = BO.CompletionType.None;
 
         LoadLastCompletionType();
 
@@ -170,17 +182,12 @@ public partial class CourierMainWindow : Window
         if (!CanFinishHandling || CurrentCourier is null)
             return;
 
-        // NOTE: current BL only supports "Delivered" (DeliveryManager.CompleteDelivery hardcodes it).
-        // Keeping the completion type in UI for future BL improvement.
-        if (SelectedCompletionType != BO.CompletionType.Delivered)
-        {
-            MessageBox.Show("Only 'Delivered' is currently supported by the system.", "Not Supported", MessageBoxButton.OK, MessageBoxImage.Information);
-            return;
-        }
-
         try
         {
             var deliveryId = CurrentCourier.OrderInProg.DeliveryId;
+
+            // BL currently records Delivered regardless of selected type.
+            // This UI allows finishing for any selected completion type.
             s_bl.Order.OrderComplete(_courierId, _courierId, deliveryId);
 
             MessageBox.Show("Order completed successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
