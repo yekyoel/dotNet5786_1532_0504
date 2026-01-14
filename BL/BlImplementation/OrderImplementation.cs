@@ -232,6 +232,8 @@ internal class OrderImplementation : IOrder
         {
             throw new InvalidOperationException("User is not authorized to complete this delivery.");
         }
+        DeliveryManager.Observers.NotifyItemUpdated(deliveryId);
+        OrderManager.Observers.NotifyListUpdated();
     }
 
     /// <summary>
@@ -269,9 +271,9 @@ internal class OrderImplementation : IOrder
     /// <returns>An enumerable collection of <see cref="BO.ClosedDeliveryInList"/> objects representing the completed deliveries
     /// for the specified courier. The collection is empty if no completed deliveries are found.</returns>
    
-    public IEnumerable<BO.ClosedDeliveryInList> GetCompletedCourierDeliveries(int userId, int courierId, BO.ClosedDeliveryInListFilter? filter, BO.ClosedDeliveryInListFilter? sort)
+    public async Task<IEnumerable<BO.ClosedDeliveryInList>> GetCompletedCourierDeliveriesAsync(int userId, int courierId, BO.ClosedDeliveryInListFilter? filter, BO.ClosedDeliveryInListFilter? sort)
     {
-        return Helpers.OrderManager.GetClosedDeliveries(courierId, filter, sort);
+        return await Helpers.OrderManager.GetClosedDeliveriesAsync(courierId, filter, sort).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -287,10 +289,7 @@ internal class OrderImplementation : IOrder
     /// langword="null"/>, the default sort order is used.</param>
     /// <returns>An enumerable collection of <see cref="BO.OpenOrderInList"/> objects representing the open orders available to
     /// the specified courier. The collection is empty if no matching orders are found.</returns>
-    public IEnumerable<BO.OpenOrderInList> GetAvailableOrdersForCourier(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort)
-    {
-        return Helpers.OrderManager.GetOpenOrders(courierId, filter, sort);
-    }
+    // Removed sync variant to keep only async path per user request
 
     public async Task<IEnumerable<BO.OpenOrderInList>> GetAvailableOrdersForCourierAsync(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort)
     {

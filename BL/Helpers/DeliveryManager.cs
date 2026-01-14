@@ -82,6 +82,14 @@ internal static class DeliveryManager
                             DeliveryEndTime = newClock
                         };
                         s_dal.Delivery.Update(updated);
+
+                        // notify observers: delivery, related order, and courier
+                        Observers.NotifyItemUpdated(updated.Id);
+                        Observers.NotifyListUpdated();
+                        OrderManager.Observers.NotifyItemUpdated(updated.OrderId);
+                        OrderManager.Observers.NotifyListUpdated();
+                        if (updated.CourierId > 0)
+                            CourierManager.Observers.NotifyItemUpdated(updated.CourierId);
                     }
                 }
                 catch
@@ -113,6 +121,14 @@ internal static class DeliveryManager
             DeliveryEndTime = DateTime.Now
         };
         s_dal.Delivery.Update(updated);
+
+        // notify observers: delivery, related order, and courier
+        Observers.NotifyItemUpdated(updated.Id);
+        Observers.NotifyListUpdated();
+        OrderManager.Observers.NotifyItemUpdated(updated.OrderId);
+        OrderManager.Observers.NotifyListUpdated();
+        if (updated.CourierId > 0)
+            CourierManager.Observers.NotifyItemUpdated(updated.CourierId);
     }
 
 }

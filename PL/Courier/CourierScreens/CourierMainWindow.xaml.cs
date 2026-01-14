@@ -216,7 +216,10 @@ public partial class CourierMainWindow : Window
     {
         try
         {
-            var history = s_bl.Order.GetCompletedCourierDeliveries(_courierId, _courierId, null, null);
+            var history = s_bl.Order.GetCompletedCourierDeliveriesAsync(_courierId, _courierId, null, null)
+                                  .ConfigureAwait(false)
+                                  .GetAwaiter()
+                                  .GetResult();
 
             // Take latest by DeliveryId (your DAL uses increasing IDs)
             var last = history

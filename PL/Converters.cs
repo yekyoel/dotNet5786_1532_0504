@@ -82,7 +82,10 @@ public class CanDeleteCourierConverter : IValueConverter
         {
             int userId = s_bl.Admin.GetConfig().AdminId;
             // If courier has any closed deliveries, do not allow delete
-            var deliveries = s_bl.Order.GetCompletedCourierDeliveries(userId, courierId, null, null);
+            var deliveries = s_bl.Order.GetCompletedCourierDeliveriesAsync(userId, courierId, null, null)
+                                     .ConfigureAwait(false)
+                                     .GetAwaiter()
+                                     .GetResult();
             bool hasAny = deliveries != null && deliveries.Any();
             return !hasAny;
         }

@@ -93,7 +93,10 @@ public partial class DeliveryHistoryWindow : Window
     {
         try
         {
-            var history = s_bl.Order.GetCompletedCourierDeliveries(_courierId, _courierId, null, null);
+            var history = s_bl.Order.GetCompletedCourierDeliveriesAsync(_courierId, _courierId, null, null)
+                                  .ConfigureAwait(false)
+                                  .GetAwaiter()
+                                  .GetResult();
 
             IEnumerable<BO.ClosedDeliveryInList> query = history;
 

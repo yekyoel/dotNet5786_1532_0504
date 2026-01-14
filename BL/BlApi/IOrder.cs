@@ -20,9 +20,9 @@ public interface IOrder : IObservable
 
     public void ChooseOrder(int userId , int courierId, int orderId);
 
-    public IEnumerable<BO.ClosedDeliveryInList> GetCompletedCourierDeliveries(int userId, int courierId, BO.ClosedDeliveryInListFilter? filter, BO.ClosedDeliveryInListFilter? sort);
-
-    public IEnumerable<BO.OpenOrderInList> GetAvailableOrdersForCourier(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort);
-
+    // Removed sync variant to keep only async path
+    
     public Task<IEnumerable<BO.OpenOrderInList>> GetAvailableOrdersForCourierAsync(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort);
+
+    public Task<IEnumerable<BO.ClosedDeliveryInList>> GetCompletedCourierDeliveriesAsync(int userId, int courierId, BO.ClosedDeliveryInListFilter? filter, BO.ClosedDeliveryInListFilter? sort);
 }

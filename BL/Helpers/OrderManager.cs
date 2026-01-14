@@ -142,7 +142,8 @@ internal static class OrderManager
         var dalOrder = s_dal.Order.Read(order.Id);
 
         s_dal.Order.Update(dalOrder);
-
+        Observers.NotifyItemUpdated(dalOrder.Id);
+        Observers.NotifyListUpdated();
     }
 
     /// <summary>
@@ -194,6 +195,10 @@ internal static class OrderManager
         }
         else  // completed or cancelled
             throw new InvalidOperationException($"Order with ID {orderId} cannot be cancelled as it is already completed or cancelled.");
+
+        // notify observers about list change after cancellation
+        Observers.NotifyItemUpdated(orderId);
+        Observers.NotifyListUpdated();
     }
 
     /// <summary>
@@ -201,7 +206,7 @@ internal static class OrderManager
     /// </summary>
     /// <param name="orderId">The unique identifier of the order to delete.</param>
     /// <exception cref="KeyNotFoundException">Thrown if an order with the specified orderId does not exist.</exception>
-    
+
     internal static void TryToDeleteOrder(int orderId)
     {
         var dalOrder = s_dal.Order.Read(orderId);
@@ -210,6 +215,11 @@ internal static class OrderManager
         else
         {
             s_dal.Order.Delete(orderId);
+
+            // notify observers about list change after deletion
+            Observers.NotifyListUpdated();
+            // optional per-item notification (for any open windows bound to the item)
+            Observers.NotifyItemUpdated(orderId);
         }
     }
 
@@ -383,6 +393,12 @@ internal static class OrderManager
                             DeliveryEndTime = newClock
                         };
                         s_dal.Delivery.Update(updated);
+
+                        // notify observers for affected order and courier
+                        Observers.NotifyItemUpdated(updated.OrderId);
+                        Observers.NotifyListUpdated();
+                        if (updated.CourierId > 0)
+                            CourierManager.Observers.NotifyItemUpdated(updated.CourierId);
                     }
                 }
                 catch
@@ -462,6 +478,12 @@ internal static class OrderManager
                     };
 
                     s_dal.Delivery.Create(newDelivery);
+
+                    // notify observers for newly auto-assigned pending order
+                    Observers.NotifyItemUpdated(order.Id);
+                    Observers.NotifyListUpdated();
+                    if (newDelivery.CourierId > 0)
+                        CourierManager.Observers.NotifyItemUpdated(newDelivery.CourierId);
                 }
                 catch
                 {
@@ -475,6 +497,13 @@ internal static class OrderManager
         }
     }
 
+
+    internal static async Task<IEnumerable<BO.ClosedDeliveryInList>> GetClosedDeliveriesAsync(int courierId, ClosedDeliveryInListFilter? filter, ClosedDeliveryInListFilter? sort)
+    {
+        // reuse the synchronous logic but execute in a Task to avoid blocking callers
+        return await Task.Run(() => GetClosedDeliveries(courierId, filter, sort)).ConfigureAwait(false);
+    }
+
     /// <summary>
     /// Retrieves a collection of closed deliveries for the specified courier, with optional filtering and sorting.
     /// </summary>
@@ -483,8 +512,8 @@ internal static class OrderManager
     /// <param name="sort">An optional sort order to apply to the closed deliveries. If null, the default order is used.</param>
     /// <returns>An enumerable collection of closed deliveries matching the specified criteria. The collection is empty if no
     /// closed deliveries are found for the courier.</returns>
-   
-    internal static IEnumerable<BO.ClosedDeliveryInList> GetClosedDeliveries(int courierId, ClosedDeliveryInListFilter? filter, ClosedDeliveryInListFilter? sort)
+
+    internal static async Task<IEnumerable<BO.ClosedDeliveryInList>> GetClosedDeliveries(int courierId, ClosedDeliveryInListFilter? filter, ClosedDeliveryInListFilter? sort)
     {
         var dalDeliveries = DeliveryManager.GetAllDeliveries()
         .Where(d =>
@@ -524,58 +553,11 @@ internal static class OrderManager
             OrderType = Tools.SwitchOrderTypeTOBO(order) ?? BO.OrderType.Pizza,
             DeliveryAddress = order?.FullAdd ?? string.Empty,
             DeliveryType = Tools.SwitchShippingMethodTOBO(dalDelivery.ShippingMethod) ?? BO.ShippingMethod.Car,
-            ActualDistance = dalDelivery.Distance ?? 0,
+            ActualDistance = Tools.GetTotalDistance(order).GetAwaiter().GetResult(),
             TotalCompletionTime = totalCompletionTime,
             CompletionType = Tools.SwitchCompletionTypeTOBO(dalDelivery.End) ?? BO.CompletionType.Delivered
         };
-    }).ToList();
-    }
-
-    /// <summary>
-    /// Returns the list of deliveries after applying the specified closed delivery filter.
-    /// </summary>
-    /// <param name="deliveries">The list of deliveries to filter. Cannot be null.</param>
-    /// <param name="filter">The filter to apply when selecting closed deliveries.</param>
-    /// <returns>A list of deliveries that match the specified filter. If no deliveries match, the returned list may be empty.</returns>
-  
-    private static List<DO.Delivery> ApplyClosedDeliveryFilter(List<DO.Delivery> deliveries, ClosedDeliveryInListFilter filter)
-    {
-        return filter switch
-        {
-            ClosedDeliveryInListFilter.DeliveryId => deliveries,
-            ClosedDeliveryInListFilter.OrderId => deliveries,
-            ClosedDeliveryInListFilter.OrderType => deliveries,
-            ClosedDeliveryInListFilter.DeliveryAddress => deliveries,
-            ClosedDeliveryInListFilter.DeliveryType => deliveries,
-            ClosedDeliveryInListFilter.ActualDistance => deliveries,
-            ClosedDeliveryInListFilter.TotalCompletionTime => deliveries,
-            ClosedDeliveryInListFilter.CompletionType => deliveries,
-            _ => deliveries
-        };
-    }
-
-    /// <summary>
-    /// Sorts a list of closed deliveries according to the specified filter.
-    /// </summary>
-    /// <remarks>The method does not modify the input list; it returns a new sorted list. Sorting by distance
-    /// treats null values as zero. Sorting by total completion time uses the current time for any missing start or end
-    /// times.</remarks>
-    /// <param name="deliveries">The list of closed deliveries to sort. Cannot be null.</param>
-    /// <param name="sort">The sorting criterion to apply to the deliveries.</param>
-    /// <returns>A new list of deliveries sorted according to the specified filter. If the filter is not recognized, the original
-    /// order is preserved.</returns>
-  
-    private static List<DO.Delivery> ApplyClosedDeliverySort(List<DO.Delivery> deliveries, ClosedDeliveryInListFilter sort)
-    {
-        return sort switch
-        {
-            ClosedDeliveryInListFilter.DeliveryId => deliveries.OrderBy(d => d.Id).ToList(),
-            ClosedDeliveryInListFilter.OrderId => deliveries.OrderBy(d => d.OrderId).ToList(),
-            ClosedDeliveryInListFilter.ActualDistance => deliveries.OrderBy(d => d.Distance ?? 0).ToList(),
-            ClosedDeliveryInListFilter.TotalCompletionTime => deliveries.OrderBy(d =>
-                (d.DeliveryEndTime ?? DateTime.Now) - (d.DeliveryStartTime ?? DateTime.Now)).ToList(),
-            _ => deliveries
-        };
+        }).ToList();
     }
 
     /// <summary>
@@ -671,58 +653,6 @@ internal static class OrderManager
     /// <param name="orders">The list of orders to be filtered.</param>
     /// <param name="filter">The filter criterion to apply to the orders.</param>
     /// <returns>A list of orders that match the specified filter criterion. If no orders match, the returned list may be empty.</returns>
-  
-    private static List<DO.Order> ApplyOpenOrderFilter(List<DO.Order> orders, OpenOrderInListFilter filter)
-    {
-        return filter switch
-        {
-            OpenOrderInListFilter.CourierId => orders,
-            OpenOrderInListFilter.OrderId => orders,
-            OpenOrderInListFilter.TypeOrder => orders,
-            OpenOrderInListFilter.Weight => orders,
-            OpenOrderInListFilter.DeliveryAddress => orders,
-            OpenOrderInListFilter.ArealDistance => orders,
-            OpenOrderInListFilter.ActualDistance => orders,
-            OpenOrderInListFilter.ExpectedActualDeliveryTime => orders,
-            OpenOrderInListFilter.Status => orders,
-            OpenOrderInListFilter.TotalTimeLeft => orders,
-            OpenOrderInListFilter.MaxDeliveryTime => orders,
-            _ => orders
-        };
-    }
-
-    /// <summary>
-    /// Sorts a list of open orders according to the specified sorting criteria.
-    /// </summary>
-    /// <remarks>Sorting by areal distance uses the store's configured latitude and longitude as the reference
-    /// point. Sorting by expected actual delivery time uses the delivery's start time if available; otherwise, orders
-    /// with no delivery information are placed last.</remarks>
-    /// <param name="orders">The list of open orders to sort. Cannot be null.</param>
-    /// <param name="sort">The sorting criteria to apply to the orders.</param>
-    /// <returns>A new list of orders sorted according to the specified criteria. If an unrecognized sort option is provided, the
-    /// original list is returned in its current order.</returns>
-   
-    private static List<DO.Order> ApplyOpenOrderSort(List<DO.Order> orders, OpenOrderInListFilter sort)
-    {
-        var cfg = AdminManager.GetConfig();
-        double storeLat = cfg?.Latitude ?? 0.0;
-        double storeLon = cfg?.Longitude ?? 0.0;
-
-        return sort switch
-        {
-            OpenOrderInListFilter.OrderId => orders.OrderBy(o => o.Id).ToList(),
-            OpenOrderInListFilter.Weight => orders.OrderBy(o => o.Weight).ToList(),
-            OpenOrderInListFilter.ArealDistance => orders.OrderBy(o =>
-                Tools.GetAerialDistanceKm(storeLat, storeLon, o.Latitude, o.Longitude)).ToList(),
-            OpenOrderInListFilter.ExpectedActualDeliveryTime => orders.OrderBy(o =>
-            {
-                var delivery = DeliveryManager.GetDeliveryByOrderId(o.Id);
-                return delivery?.DeliveryStartTime ?? DateTime.MaxValue;
-            }).ToList(),
-            OpenOrderInListFilter.MaxDeliveryTime => orders.OrderBy(o => o.StartTimeForOrdering).ToList(),
-            _ => orders
-        };
-    }
 
     internal static async Task<IEnumerable<BO.OpenOrderInList>> GetOpenOrdersAsync(int courierId, OpenOrderInListFilter? filter, OpenOrderInListFilter? sort)
     {
@@ -765,22 +695,23 @@ internal static class OrderManager
             var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
 
             double airDistance = Tools.GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
-            double routeDistance;
-            try
+            double routeDistance = airDistance;
+            // Compute actual route distance only if aerial distance already passed the availability filter
+            // and we don't have a stored delivery distance yet
+            if (!(delivery?.Distance is double d))
             {
-                // if we already have Distance on delivery use it, otherwise compute using Tools.GetTotalDistance
-                if (delivery?.Distance is double d)
-                {
-                    routeDistance = d;
-                }
-                else
+                try
                 {
                     routeDistance = await Tools.GetTotalDistance(order).ConfigureAwait(false);
                 }
+                catch
+                {
+                    routeDistance = airDistance;
+                }
             }
-            catch
+            else
             {
-                routeDistance = airDistance;
+                routeDistance = d;
             }
 
             var orderPlacedTime = order.StartTimeForOrdering ?? DateTime.Now;
@@ -810,5 +741,114 @@ internal static class OrderManager
 
         var results = await Task.WhenAll(tasks).ConfigureAwait(false);
         return results;
+    }
+
+
+
+
+    /// <summary>
+    /// Returns the list of deliveries after applying the specified closed delivery filter.
+    /// </summary>
+    /// <param name="deliveries">The list of deliveries to filter. Cannot be null.</param>
+    /// <param name="filter">The filter to apply when selecting closed deliveries.</param>
+    /// <returns>A list of deliveries that match the specified filter. If no deliveries match, the returned list may be empty.</returns>
+
+    private static List<DO.Delivery> ApplyClosedDeliveryFilter(List<DO.Delivery> deliveries, ClosedDeliveryInListFilter filter)
+    {
+        return filter switch
+        {
+            ClosedDeliveryInListFilter.DeliveryId => deliveries,
+            ClosedDeliveryInListFilter.OrderId => deliveries,
+            ClosedDeliveryInListFilter.OrderType => deliveries,
+            ClosedDeliveryInListFilter.DeliveryAddress => deliveries,
+            ClosedDeliveryInListFilter.DeliveryType => deliveries,
+            ClosedDeliveryInListFilter.ActualDistance => deliveries,
+            ClosedDeliveryInListFilter.TotalCompletionTime => deliveries,
+            ClosedDeliveryInListFilter.CompletionType => deliveries,
+            _ => deliveries
+        };
+    }
+
+    /// <summary>
+    /// Sorts a list of closed deliveries according to the specified filter.
+    /// </summary>
+    /// <remarks>The method does not modify the input list; it returns a new sorted list. Sorting by distance
+    /// treats null values as zero. Sorting by total completion time uses the current time for any missing start or end
+    /// times.</remarks>
+    /// <param name="deliveries">The list of closed deliveries to sort. Cannot be null.</param>
+    /// <param name="sort">The sorting criterion to apply to the deliveries.</param>
+    /// <returns>A new list of deliveries sorted according to the specified filter. If the filter is not recognized, the original
+    /// order is preserved.</returns>
+
+    private static List<DO.Delivery> ApplyClosedDeliverySort(List<DO.Delivery> deliveries, ClosedDeliveryInListFilter sort)
+    {
+        return sort switch
+        {
+            ClosedDeliveryInListFilter.DeliveryId => deliveries.OrderBy(d => d.Id).ToList(),
+            ClosedDeliveryInListFilter.OrderId => deliveries.OrderBy(d => d.OrderId).ToList(),
+            ClosedDeliveryInListFilter.ActualDistance => deliveries.OrderBy(d => d.Distance ?? 0).ToList(),
+            ClosedDeliveryInListFilter.TotalCompletionTime => deliveries.OrderBy(d =>
+                (d.DeliveryEndTime ?? DateTime.Now) - (d.DeliveryStartTime ?? DateTime.Now)).ToList(),
+            _ => deliveries
+        };
+    }
+
+    /// <summary>
+    /// Filters the specified list of orders according to the given open order filter criteria.
+    /// </summary>
+    /// <param name="orders">The list of orders to be filtered. Cannot be null.</param>
+    /// <param name="filter">The filter criteria to apply when selecting orders from the list.</param>
+    /// <returns>A list of orders that match the specified filter criteria. If no orders match, the returned list may be empty.</returns>
+    
+    private static List<DO.Order> ApplyOpenOrderFilter(List<DO.Order> orders, OpenOrderInListFilter filter)
+    {
+        return filter switch
+        {
+            OpenOrderInListFilter.CourierId => orders,
+            OpenOrderInListFilter.OrderId => orders,
+            OpenOrderInListFilter.TypeOrder => orders,
+            OpenOrderInListFilter.Weight => orders,
+            OpenOrderInListFilter.DeliveryAddress => orders,
+            OpenOrderInListFilter.ArealDistance => orders,
+            OpenOrderInListFilter.ActualDistance => orders,
+            OpenOrderInListFilter.ExpectedActualDeliveryTime => orders,
+            OpenOrderInListFilter.Status => orders,
+            OpenOrderInListFilter.TotalTimeLeft => orders,
+            OpenOrderInListFilter.MaxDeliveryTime => orders,
+            _ => orders
+        };
+    }
+
+    /// <summary>
+    /// Sorts a list of open orders according to the specified sorting criteria.
+    /// </summary>
+    /// <remarks>Sorting by areal distance uses the store's configured latitude and longitude as the reference
+    /// point. Sorting by expected actual delivery time uses the delivery's start time if available; otherwise, orders
+    /// with no delivery information are placed last.</remarks>
+    /// <param name="orders">The list of open orders to sort. Cannot be null.</param>
+    /// <param name="sort">The sorting criteria to apply to the orders.</param>
+    /// <returns>A new list of orders sorted according to the specified criteria. If an unrecognized sort option is provided, the
+    /// original list is returned in its current order.</returns>
+
+    private static List<DO.Order> ApplyOpenOrderSort(List<DO.Order> orders, OpenOrderInListFilter sort)
+    {
+        var cfg = AdminManager.GetConfig();
+        double storeLat = cfg?.Latitude ?? 0.0;
+        double storeLon = cfg?.Longitude ?? 0.0;
+
+        return sort switch
+        {
+            OpenOrderInListFilter.OrderId => orders.OrderBy(o => o.Id).ToList(),
+            OpenOrderInListFilter.Weight => orders.OrderBy(o => o.Weight).ToList(),
+            OpenOrderInListFilter.ArealDistance => orders.OrderBy(o =>
+                Tools.GetAerialDistanceKm(storeLat, storeLon, o.Latitude, o.Longitude)).ToList(),
+            OpenOrderInListFilter.ExpectedActualDeliveryTime => orders.OrderBy(o =>
+            {
+                var delivery = DeliveryManager.GetDeliveryByOrderId(o.Id);
+                return delivery?.DeliveryStartTime ?? DateTime.MaxValue;
+            }).ToList(),
+            OpenOrderInListFilter.MaxDeliveryTime => orders.OrderBy(o => o.StartTimeForOrdering).ToList(),
+            _ => orders
+        };
     }
 }
