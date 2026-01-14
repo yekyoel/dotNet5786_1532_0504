@@ -13,7 +13,7 @@
         Background="{StaticResource MainBackgroundBrush}">
 
     <Grid Margin="10">
-        <Grid.RowDefinitions>
+        <Grid.RowDefinitions>   
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="220"/>
@@ -39,7 +39,13 @@
                 <DataGridTextColumn Binding="{Binding TypeOrder}" Header="Type" Width="110"/>
                 <DataGridTextColumn Binding="{Binding DeliveryAddress}" Header="Address" Width="*"/>
                 <DataGridTextColumn Binding="{Binding Weight, StringFormat=N2}" Header="Weight" Width="90"/>
-                <DataGridTextColumn Binding="{Binding ArealDistance, StringFormat=N2}" Header="Air Dist (km)" Width="120"/>
+                <!-- Was aerial -->
+                <!-- <DataGridTextColumn Binding="{Binding ArealDistance, StringFormat=N2}" Header="Air Dist (km)" Width="120"/> -->
+
+                <!-- Use actual route distance instead -->
+                <DataGridTextColumn Binding="{Binding ActualDistance, StringFormat=N2}"
+                    Header="Dist (km)"
+                    Width="120"/>
                 <DataGridTextColumn Binding="{Binding TotalTimeLeft}" Header="Time Left" Width="120"/>
 
                 <DataGridTemplateColumn Header="Action" Width="110">
@@ -56,7 +62,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Map placeholder -->
+        <!-- Map section with embedded browser and text -->
         <Border Grid.Row="2"
                 Margin="0,10,0,0"
                 Background="#1a2a2e"
@@ -71,14 +77,27 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0"
-                           Text="Map (placeholder)"
+                           Text="Map preview"
                            Foreground="{StaticResource NeonCyanBrush}"
                            FontWeight="Bold"/>
 
-                <StackPanel Grid.Row="1" Margin="0,10,0,0">
-                    <TextBlock Text="{Binding MapStatusText}" Foreground="{StaticResource TextMainBrush}" TextWrapping="Wrap"/>
-                    <TextBlock Text="{Binding MapCoordinatesText}" Foreground="{StaticResource TextSubBrush}" Margin="0,6,0,0" TextWrapping="Wrap"/>
-                </StackPanel>
+                <Grid Grid.Row="1" Margin="0,10,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Simple online map using WebBrowser -->
+                    <WebBrowser x:Name="MapBrowser"
+                                Grid.Column="0"
+                                Margin="0,0,10,0" />
+
+                    <!-- Textual info beside the map -->
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="{Binding MapStatusText}" Foreground="{StaticResource TextMainBrush}" TextWrapping="Wrap"/>
+                        <TextBlock Text="{Binding MapCoordinatesText}" Foreground="{StaticResource TextSubBrush}" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Grid>
             </Grid>
         </Border>
 

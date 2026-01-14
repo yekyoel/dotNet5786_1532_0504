@@ -19,8 +19,6 @@ internal static class AdminManager //stage 4
     internal static event Action? ConfigUpdatedObservers; //stage 5 - for config update observers
     internal static event Action? ClockUpdatedObservers; //stage 5 - for clock update observers
 
-    private static Task? _periodicTask = null; //stage 7
-
     /// <summary>
     /// Method to update application's clock from any BL class as may be required
     /// </summary>
@@ -29,7 +27,7 @@ internal static class AdminManager //stage 4
     {
         var oldClock = s_dal.Config.Clock; //stage 4
         s_dal.Config.Clock = newClock; //stage 4
-        
+
         //Add calls here to any logic method that should be called periodically,
         //after each clock update
         //for example, Periodic students' updates:
@@ -37,18 +35,18 @@ internal static class AdminManager //stage 4
         // - (students become not active after 5 years etc.)
 
         //TO_DO: //stage 4
-       // CourierManager.PeriodicCouriersUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
-       // DeliveryManager.PeriodicDeliveriesUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
+        // CourierManager.PeriodicCouriersUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
+        // DeliveryManager.PeriodicDeliveriesUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
         //OrderManager.PeriodicOrdersUpdates(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
         //OrderManager.PeriodicAutoAssignPendingOrders(oldClock, newClock); //stage 4. to be removed in stage 7 and replaced as below
         //...
 
         //TO_DO: //stage 7
         //if (_periodicTask is null || _periodicTask.IsCompleted) //stage 7
-           Task.Run(() => CourierManager.PeriodicCouriersUpdates(oldClock, newClock));
-           Task.Run(() => DeliveryManager.PeriodicDeliveriesUpdates(oldClock, newClock));
-           Task.Run(() => OrderManager.PeriodicOrdersUpdates(oldClock, newClock));
-           Task.Run(() => OrderManager.PeriodicAutoAssignPendingOrders(oldClock, newClock));
+        _ = Task.Run(() => CourierManager.PeriodicCouriersUpdates(oldClock, newClock));
+        _ = Task.Run(() => DeliveryManager.PeriodicDeliveriesUpdates(oldClock, newClock));
+        _ = Task.Run(() => OrderManager.PeriodicOrdersUpdates(oldClock, newClock));
+        _ =  Task.Run(() => OrderManager.PeriodicAutoAssignPendingOrders(oldClock, newClock));
 
 
         //Calling all the observers of clock update
@@ -237,23 +235,23 @@ internal static class AdminManager //stage 4
         while (!s_stop)
         {
             UpdateClock(Now.AddMinutes(s_interval));
-
             //TO_DO: //stage 7
             //Add calls here to any logic simulation that was required in stage 7
             //for example: course registration simulation
-            if (_simulateTask is null || _simulateTask.IsCompleted)//stage 7
-                _simulateTask = Task.Run(() => StudentManager.SimulateCourseRegistrationAndGrade());
-
-            //etc...
+            //etc…
+            _ = Task.Run(() => CourierManager.PeriodicCouriersUpdates(Now.AddMinutes(-s_interval), Now));
+            _ = Task.Run(() => DeliveryManager.PeriodicDeliveriesUpdates(Now.AddMinutes(-s_interval), Now));
+            _ = Task.Run(() => OrderManager.PeriodicOrdersUpdates(Now.AddMinutes(-s_interval), Now));
 
             try
             {
                 Thread.Sleep(1000); // 1 second
-            }
-            catch (ThreadInterruptedException) { }
+           	}
+
+        catch (ThreadInterruptedException) { }
         }
-    } 
+    }
+
 
     #endregion Stage 7 base
 }
-

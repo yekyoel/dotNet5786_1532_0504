@@ -1,11 +1,16 @@
 ﻿using BO;
 using DalApi;
 using DO;
+using System.Collections.Concurrent;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace Helpers;
 
 internal static class Tools
 {
+
     /// <summary>
     /// Returns the string representation of the specified object, or "null" if the object is null.
     /// </summary>
@@ -177,13 +182,36 @@ internal static class Tools
         return GetAerialDistanceKm(storeLat, storeLon, order.Latitude, order.Longitude);
     }
 
-   /// <summary>
-   /// Maps the preferred shipping method of the specified courier to its corresponding business object shipping method.
-   /// </summary>
-   /// <param name="courier">The courier whose preferred shipping method is to be mapped. Cannot be null.</param>
-   /// <returns>A value of <see cref="BO.ShippingMethod"/> corresponding to the courier's preferred shipping method, or <see
-   /// langword="null"/> if the preferred shipping method is not set or cannot be mapped.</returns>
-   /// <exception cref="ArgumentNullException">Thrown if <paramref name="courier"/> is null.</exception>
+    internal static async Task<double> GetTotalDistance(DO.Order order)
+    {
+        var cfg = AdminManager.GetConfig();
+        if (cfg?.Latitude is null || cfg.Longitude is null)
+            return GetAerialDistanceFromStoreKm(order);
+
+        try
+        {
+            double distance = await LocationServices.GetRouteDistanceKmAsync(
+                cfg.Latitude.Value,
+                cfg.Longitude.Value,
+                order.Latitude,
+                order.Longitude).ConfigureAwait(false);
+
+            return distance;
+        }
+        catch
+        {
+            // fallback to aerial if routing fails
+            return GetAerialDistanceFromStoreKm(order);
+        }
+    }
+
+    /// <summary>
+    /// Maps the preferred shipping method of the specified courier to its corresponding business object shipping method.
+    /// </summary>
+    /// <param name="courier">The courier whose preferred shipping method is to be mapped. Cannot be null.</param>
+    /// <returns>A value of <see cref="BO.ShippingMethod"/> corresponding to the courier's preferred shipping method, or <see
+    /// langword="null"/> if the preferred shipping method is not set or cannot be mapped.</returns>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="courier"/> is null.</exception>
     internal static BO.ShippingMethod? FindType(DO.Courier courier)
     {
         if (courier is null)
@@ -318,13 +346,6 @@ internal static class Tools
 
         // Return zero if already past deadline
         return timeLeft > TimeSpan.Zero ? timeLeft : TimeSpan.Zero;
-    }
-
-    internal static async Task<> GetLocationOfAddressAsync(string address)
-    {
-        //...
-        HttpResponseMessage response = await client.GetAsync(requestUrl);
-        //...
     }
 
 }

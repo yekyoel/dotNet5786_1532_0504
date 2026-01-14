@@ -246,5 +246,20 @@
                 <Button Content="Close" Width="130" Height="45" Click="btnClose_Click"/>
             </StackPanel>
         </Border>
+
+        <!-- Non-blocking busy overlay -->
+        <Grid x:Name="BusyOverlay"
+              Background="#80000000"
+              Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True"
+                             Width="200"
+                             Height="20" />
+                <TextBlock Text="Processing..."
+                           Foreground="White"
+                           HorizontalAlignment="Center"
+                           Margin="0,8,0,0" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

@@ -1,6 +1,10 @@
 ﻿using BlApi;
 using BO;
 using Helpers;
+using System.Collections.Generic;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BlImplementation;
 
@@ -204,9 +208,9 @@ internal class OrderImplementation : IOrder
     /// <param name="userId">The unique identifier of the user for whom the order is being added.</param>
     /// <param name="order">The order to add. Cannot be <see langword="null"/>.</param>
    
-    public void AddOrder(int userId, BO.Order order)
+    public async Task AddOrder(int userId, BO.Order order)
     {
-        Helpers.OrderManager.AddOrder(order);
+        await OrderManager.AddOrder(order).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -286,5 +290,10 @@ internal class OrderImplementation : IOrder
     public IEnumerable<BO.OpenOrderInList> GetAvailableOrdersForCourier(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort)
     {
         return Helpers.OrderManager.GetOpenOrders(courierId, filter, sort);
+    }
+
+    public async Task<IEnumerable<BO.OpenOrderInList>> GetAvailableOrdersForCourierAsync(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort)
+    {
+        return await Helpers.OrderManager.GetOpenOrdersAsync(courierId, filter, sort).ConfigureAwait(false);
     }
 }

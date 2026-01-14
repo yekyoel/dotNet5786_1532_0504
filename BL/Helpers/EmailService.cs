@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Mail;
+using System.Threading.Tasks;
 using DalApi;
 
 namespace Helpers;
@@ -13,7 +14,7 @@ internal static class EmailService
 {
     private static readonly IDal s_dal = Factory.Get;
 
-    internal static void SendNewOrderNotification(DO.Order order)
+    internal static async Task SendNewOrderNotificationAsync(DO.Order order)
     {
         try
         {
@@ -55,7 +56,7 @@ internal static class EmailService
 
                     // NOTE: this assumes a local pickup directory or dev SMTP; adjust as needed.
                     using var client = new SmtpClient("localhost");
-                    client.Send(msg);
+                    await client.SendMailAsync(msg).ConfigureAwait(false);
                 }
                 catch
                 {

@@ -14,7 +14,7 @@ public interface IOrder : IObservable
 
     public void DeleteOrder(int userId, int orderId);
 
-    public void AddOrder(int userId, BO.Order order);
+    public Task AddOrder(int userId, BO.Order order);
 
     public void OrderComplete(int userId , int courierId, int deliveryId);
 
@@ -24,4 +24,5 @@ public interface IOrder : IObservable
 
     public IEnumerable<BO.OpenOrderInList> GetAvailableOrdersForCourier(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort);
 
+    public Task<IEnumerable<BO.OpenOrderInList>> GetAvailableOrdersForCourierAsync(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort);
 }

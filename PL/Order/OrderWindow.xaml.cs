@@ -1,6 +1,7 @@
 ﻿using PL.Courier;
 using System;
 using System.Windows;
+using System.Threading.Tasks;
 
 namespace PL.Order;
 
@@ -46,6 +47,31 @@ public partial class OrderWindow : Window
     public static readonly DependencyProperty IsUpdateModeProperty =
         DependencyProperty.Register("IsUpdateMode", typeof(bool), typeof(OrderWindow), new PropertyMetadata(false));
 
+
+    public bool IsBusy
+    {
+        get => (bool)GetValue(IsBusyProperty);
+        set => SetValue(IsBusyProperty, value);
+    }
+
+    public static readonly DependencyProperty IsBusyProperty =
+        DependencyProperty.Register(
+            "IsBusy",
+            typeof(bool),
+            typeof(OrderWindow),
+            new PropertyMetadata(false, OnIsBusyChanged));
+
+    private static void OnIsBusyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is not OrderWindow window)
+            return;
+
+        bool isBusy = (bool)e.NewValue;
+        if (window.BusyOverlay != null)
+        {
+            window.BusyOverlay.Visibility = isBusy ? Visibility.Visible : Visibility.Collapsed;
+        }
+    }
 
     /// <summary>
     /// Initializes a new instance of the OrderWindow class in update mode.
@@ -137,16 +163,18 @@ public partial class OrderWindow : Window
         }
     }
 
-    private void btnAddUpdate_Click(object sender, RoutedEventArgs e)
+    private async void btnAddUpdate_Click(object sender, RoutedEventArgs e)
     {
         try
         {
+            IsBusy = true;
+
             // Validate order before sending to BL
             ValidateOrderOrThrow(CurrentOrder!);
 
             if (ButtonText == "Add")
             {
-                s_bl.Order.AddOrder(123456789, CurrentOrder!);
+                await s_bl.Order.AddOrder(123456789, CurrentOrder!);
                 MessageBox.Show("Order added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 Close();
             }
@@ -160,6 +188,10 @@ public partial class OrderWindow : Window
         catch (Exception ex)
         {
             MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            IsBusy = false;
         }
     }
 
