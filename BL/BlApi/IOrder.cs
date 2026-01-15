@@ -18,9 +18,7 @@ public interface IOrder : IObservable
 
     public void OrderComplete(int userId , int courierId, int deliveryId);
 
-    public void ChooseOrder(int userId , int courierId, int orderId);
-
-    // Removed sync variant to keep only async path
+    public Task ChooseOrderAsync(int userId , int courierId, int orderId);
     
     public Task<IEnumerable<BO.OpenOrderInList>> GetAvailableOrdersForCourierAsync(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort);
 

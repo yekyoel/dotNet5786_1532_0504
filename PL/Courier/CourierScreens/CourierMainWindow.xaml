@@ -273,5 +273,13 @@
                 <Button Content="Close" Width="140" Height="40" Click="btnClose_Click"/>
             </StackPanel>
         </Border>
+
+        <!-- Loading overlay -->
+        <Grid Background="#66000000" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <ProgressBar IsIndeterminate="True" Width="280" Height="12"/>
+                <TextBlock Text="Loading..." Foreground="White" HorizontalAlignment="Center" Margin="0,8,0,0"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Window>

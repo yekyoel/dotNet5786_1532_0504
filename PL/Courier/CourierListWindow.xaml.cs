@@ -1,4 +1,5 @@
 ﻿using BO;
+using PL.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,6 +27,8 @@ public partial class CourierListWindow : Window
     }
 
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    private readonly int _userId = s_bl.Admin.GetConfig().AdminId;
+    private readonly ObserverMutex _mutex = new(); //stage 7
 
     public BO.CourierInList? SelectedCouriers { get; set; }
 
@@ -40,10 +43,7 @@ public partial class CourierListWindow : Window
 
     public BO.ShippingMethod FilterShippingMethods { get; set; } = BO.ShippingMethod.None;
 
-    private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        queryCourierList();
-    }
+    private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => courierListObserver();
 
     /// <summary>
     /// Private helper method to query and filter the courier list
@@ -52,7 +52,7 @@ public partial class CourierListWindow : Window
     {
         try
         {
-            var allCouriers = s_bl?.Courier.GetListOfCouriers(123456789, null, null)!;
+            var allCouriers = s_bl?.Courier.GetListOfCouriers(_userId, null, null)!;
 
             // Filter by ShippingMethod in UI
             CourierList = (FilterShippingMethods == BO.ShippingMethod.None) ?
@@ -71,15 +71,23 @@ public partial class CourierListWindow : Window
     /// </summary>
     private void courierListObserver()
     {
-        try
+        if (_mutex.CheckAndSetLoadInProgressOrRestartRequired())
+            return;
+        _ = Dispatcher.BeginInvoke(async () =>
         {
-            queryCourierList();
-        }
-        catch (Exception ex)
-        {
-            Dispatcher.Invoke(() =>
-                MessageBox.Show($"Error updating courier list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
-        }
+
+            try
+            {
+                queryCourierList();
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() =>
+                    MessageBox.Show($"Error updating courier list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
+            }
+            if (await _mutex.UnsetLoadInProgressAndCheckRestartRequested())
+                courierListObserver();
+        });
     }
 
     /// <summary>
@@ -157,7 +165,7 @@ public partial class CourierListWindow : Window
         try
         {
             // Attempt to delete the courier
-            s_bl.Courier.DeleteCourier(123456789, courierId);
+            s_bl.Courier.DeleteCourier(_userId, courierId);
             MessageBox.Show("Courier deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
         }
         catch (Exception ex)

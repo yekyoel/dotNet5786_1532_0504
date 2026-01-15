@@ -1,6 +1,7 @@
-﻿    using System.Globalization;
-using PL.Courier;
+﻿using PL.Courier;
+using PL.Helpers;
 using PL.Order;
+    using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -20,6 +21,8 @@ namespace PL;
 public partial class MainWindow : Window
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    private readonly ObserverMutex _clockMutex = new(); //stage 7
+
 
     public MainWindow()
     {
@@ -108,8 +111,17 @@ public partial class MainWindow : Window
     /// </summary>
     private void ClockObserver()
     {
-        CurrentTime = s_bl.Admin.GetClock();
-        LoadOrderSummary();
+        if(_clockMutex.CheckAndSetLoadInProgressOrRestartRequired())
+            return;
+        Dispatcher.BeginInvoke(async () =>
+        {
+            CurrentTime = s_bl.Admin.GetClock();
+            LoadOrderSummary();
+
+            if (await _clockMutex.UnsetLoadInProgressAndCheckRestartRequested())
+                ClockObserver();
+
+        });
     }
 
     /// <summary>
@@ -117,8 +129,17 @@ public partial class MainWindow : Window
     /// </summary>
     private void ConfigObserver()
     {
-       Configuration = s_bl.Admin.GetConfig();
-       LoadOrderSummary();
+        if (_clockMutex.CheckAndSetLoadInProgressOrRestartRequired())
+            return;
+        Dispatcher.BeginInvoke(async () =>
+        {
+            Configuration = s_bl.Admin.GetConfig();
+            LoadOrderSummary();
+
+            if (await _clockMutex.UnsetLoadInProgressAndCheckRestartRequested())
+                ConfigObserver();
+
+        });
     }
 
     /// <summary>

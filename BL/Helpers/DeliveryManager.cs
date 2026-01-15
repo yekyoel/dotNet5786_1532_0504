@@ -8,6 +8,7 @@ internal static class DeliveryManager
 {
     private static IDal s_dal = Factory.Get; //stage 4
     internal static ObserverManager Observers = new(); // stage 5 not sure we need it here
+    private static readonly AsyncMutex s_periodicMutex = new(); //stage 7
 
     /// <summary>
     /// Retrieves the first delivery associated with the specified order ID, if one exists.
@@ -19,8 +20,11 @@ internal static class DeliveryManager
     {
         // Return the newest delivery for this order (by Id).
         // This prevents "random" older records being returned when multiple deliveries exist.
-        return s_dal.Delivery
-            .ReadAll()
+        IEnumerable<DO.Delivery?> deliveries;
+        lock (AdminManager.BlMutex)
+            deliveries = s_dal.Delivery.ReadAll(); // Get list under lock
+
+        return deliveries
             .Where(d => d.OrderId == orderId)
             .OrderByDescending(d => d.Id)
             .FirstOrDefault();
@@ -32,7 +36,8 @@ internal static class DeliveryManager
     /// <returns></returns>
     internal static IEnumerable<DO.Delivery?> GetAllDeliveries()
     {
-        return s_dal.Delivery.ReadAll().ToList();
+        lock (AdminManager.BlMutex)
+            return s_dal.Delivery.ReadAll().ToList();
     }
 
     /// <summary>
@@ -42,6 +47,8 @@ internal static class DeliveryManager
     /// </summary>
     internal static void PeriodicDeliveriesUpdates(DateTime oldClock, DateTime newClock)
     {
+        if (s_periodicMutex.CheckAndSetInProgress())
+             return;
         try
         {
             if (newClock <= oldClock)
@@ -51,10 +58,15 @@ internal static class DeliveryManager
             if (config == null)
                 return;
 
-            var deliveries = s_dal.Delivery.ReadAll();
+            List<DO.Delivery?> deliveries;
+            lock (AdminManager.BlMutex)
+                deliveries = s_dal.Delivery.ReadAll().ToList();
+
+            var updatedDeliveries = new List<DO.Delivery>();
 
             foreach (var d in deliveries)
             {
+                if (d == null) continue;
                 try
                 {
                     // skip already finished deliveries
@@ -66,7 +78,10 @@ internal static class DeliveryManager
                         continue;
 
                     // determine reference start: delivery start, or order ordering time, or config clock
-                    var order = s_dal.Order.Read(d.OrderId);
+                    DO.Order? order;
+                    lock(AdminManager.BlMutex)
+                        order = s_dal.Order.Read(d.OrderId);
+
                     DateTime referenceStart = d.DeliveryStartTime
                                               ?? order?.StartTimeForOrdering
                                               ?? config.Clock;
@@ -81,15 +96,10 @@ internal static class DeliveryManager
                             End = DO.CompletionType.Failed,
                             DeliveryEndTime = newClock
                         };
-                        s_dal.Delivery.Update(updated);
+                        lock (AdminManager.BlMutex)
+                            s_dal.Delivery.Update(updated);
 
-                        // notify observers: delivery, related order, and courier
-                        Observers.NotifyItemUpdated(updated.Id);
-                        Observers.NotifyListUpdated();
-                        OrderManager.Observers.NotifyItemUpdated(updated.OrderId);
-                        OrderManager.Observers.NotifyListUpdated();
-                        if (updated.CourierId > 0)
-                            CourierManager.Observers.NotifyItemUpdated(updated.CourierId);
+                        updatedDeliveries.Add(updated);
                     }
                 }
                 catch
@@ -97,10 +107,28 @@ internal static class DeliveryManager
                     // swallow per-delivery failures and continue
                 }
             }
+
+            foreach (var updated in updatedDeliveries)
+            {
+                 // notify observers: delivery, related order, and courier
+                 Observers.NotifyItemUpdated(updated.Id);
+                 OrderManager.Observers.NotifyItemUpdated(updated.OrderId);
+                 if (updated.CourierId > 0)
+                      CourierManager.Observers.NotifyItemUpdated(updated.CourierId);
+            }
+            if (updatedDeliveries.Count > 0)
+            {
+                 Observers.NotifyListUpdated();
+                 OrderManager.Observers.NotifyListUpdated();
+            }
         }
         catch
         {
             // swallow outer exceptions to avoid breaking clock update caller
+        }
+        finally
+        {
+             s_periodicMutex.UnsetInProgress();
         }
 
     }
@@ -112,15 +140,44 @@ internal static class DeliveryManager
     /// <exception cref="KeyNotFoundException">Thrown if a delivery with the specified deliveryId does not exist.</exception>
     internal static void CompleteDelivery(int deliveryId)
     {
-        var delivery = s_dal.Delivery.Read(deliveryId);
+        DO.Delivery? delivery;
+        lock(AdminManager.BlMutex)
+            delivery = s_dal.Delivery.Read(deliveryId);
+
         if (delivery == null)
             throw new KeyNotFoundException($"Delivery with ID {deliveryId} not found");
-        var updated = delivery with
+        var updated = delivery with 
         {
             End = DO.CompletionType.Delivered,
             DeliveryEndTime = DateTime.Now
         };
-        s_dal.Delivery.Update(updated);
+        lock (AdminManager.BlMutex)
+            s_dal.Delivery.Update(updated);
+
+        // notify observers: delivery, related order, and courier
+        Observers.NotifyItemUpdated(updated.Id);
+        Observers.NotifyListUpdated();
+        OrderManager.Observers.NotifyItemUpdated(updated.OrderId);
+        OrderManager.Observers.NotifyListUpdated();
+        if (updated.CourierId > 0)
+            CourierManager.Observers.NotifyItemUpdated(updated.CourierId);
+    }
+
+    internal static void CompleteDelivery(int deliveryId, DO.CompletionType completionType)
+    {
+        DO.Delivery? delivery;
+        lock (AdminManager.BlMutex)
+            delivery = s_dal.Delivery.Read(deliveryId);
+
+        if (delivery == null)
+            throw new KeyNotFoundException($"Delivery with ID {deliveryId} not found");
+        var updated = delivery with
+        {
+            End = completionType,
+            DeliveryEndTime = DateTime.Now
+        };
+        lock (AdminManager.BlMutex)
+            s_dal.Delivery.Update(updated);
 
         // notify observers: delivery, related order, and courier
         Observers.NotifyItemUpdated(updated.Id);

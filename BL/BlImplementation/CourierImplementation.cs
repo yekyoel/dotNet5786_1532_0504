@@ -21,12 +21,13 @@ internal class CourierImplementation : ICourier
     /// <exception cref="ArgumentNullException">Thrown if <paramref name="courier"/> is <see langword="null"/>.</exception>
     public void AddCourier(int userId, BO.Courier courier) // add a new courier to the system
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         if (courier == null)
             throw new ArgumentNullException(nameof(courier));
 
         // Use manager wrapper
         CourierManager.CreateCourier(courier);
-
     }
 
     /// <summary>
@@ -37,6 +38,8 @@ internal class CourierImplementation : ICourier
     /// <exception cref="UnauthorizedAccessException">Thrown if <paramref name="userId"/> does not match the administrator's user ID.</exception>
     public void DeleteCourier(int userId, int courierId) // delete a courier from the system
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         var adminId = AdminManager.GetConfig().AdminId;
         if (userId != adminId)
             throw new UnauthorizedAccessException("Only admin may delete couriers.");
@@ -54,7 +57,7 @@ internal class CourierImplementation : ICourier
     /// <returns>A <see cref="BO.Courier"/> object containing detailed information about the specified courier.</returns>
     /// <exception cref="ArgumentException">Thrown if <paramref name="courierId"/> is less than or equal to zero.</exception>
     /// <exception cref="UnauthorizedAccessException">Thrown if <paramref name="userId"/> is not the administrator or the courier whose details are being requested.</exception>
-    public BO.Courier GetCourierDetails(int userId, int courierId) // get detailed information about a specific courier
+    public Task <BO.Courier> GetCourierDetails(int userId, int courierId) // get detailed information about a specific courier
     {
         if (courierId <= 0)
             throw new ArgumentException("courierId must be positive", nameof(courierId));
@@ -66,8 +69,9 @@ internal class CourierImplementation : ICourier
             throw new UnauthorizedAccessException("Only admin or the courier may view these details.");
 
         // Use manager wrapper that returns BO.Courier
-        return CourierManager.ReadCourier(courierId);
+        return  CourierManager.ReadCourier(courierId);
     }
+
 
     /// <summary>
     /// Retrieves a collection of couriers with summary information, filtered and sorted according to the specified
@@ -90,9 +94,10 @@ internal class CourierImplementation : ICourier
         foreach (var d in doCouriers)
         {
             // Convert DO->BO then map to CourierInList (uses manager helper)
-            var bo = CourierManager.fromDOToBO(d);
+            var bo = CourierManager.fromDOToBOForOrderInList(d);
             
             // Get the current active order for this courier (if any)
+
             var activeDelivery = DeliveryManager.GetAllDeliveries()
                 .FirstOrDefault(delivery => 
                     delivery.CourierId == d.Id && 
@@ -149,6 +154,8 @@ internal class CourierImplementation : ICourier
     /// <exception cref="UnauthorizedAccessException">Thrown if <paramref name="userId"/> is neither the administrator nor the courier being updated.</exception>
     public void UpdateCourierDetails(int userId, BO.Courier courier)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         if (courier is null)
             throw new ArgumentNullException(nameof(courier));
 

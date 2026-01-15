@@ -39,7 +39,8 @@ class Program
                     AdminMenu(); // Call Admin Menu
                     break;
                 case 2:
-                    CourierMenu(); // Call Courier Menu
+                    // CourierMenu(); // Call Courier Menu
+                    Console.WriteLine("Courier menu temporarily disabled while updating to Async BL.");
                     break;
                 case 3:
                     OrderMenu(); // Call Order Menu
@@ -148,7 +149,7 @@ class Program
     /// obtain details for a specific courier. The method continues to prompt for input until the user chooses to exit
     /// the menu. This method is intended for interactive console applications and blocks execution until the user exits
     /// the menu.</remarks>
-    private static void CourierMenu()
+   /* private static void CourierMenu()
     {
         bool exit = false;
 
@@ -196,6 +197,7 @@ class Program
             }
         }
     }
+   */
 
     /// <summary>
     /// Displays the order management menu and processes user input for viewing orders and order details.

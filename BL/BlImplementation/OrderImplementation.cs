@@ -165,6 +165,8 @@ internal class OrderImplementation : IOrder
     /// <param name="order">The order object containing the updated details. Cannot be <see langword="null"/>.</param>
     public void UpdateOrderDetails(int userId, BO.Order order)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         var adminId = AdminManager.GetConfig().AdminId;
         if (userId != adminId)
             throw new UnauthorizedAccessException("Only admin can update order details.");
@@ -180,6 +182,8 @@ internal class OrderImplementation : IOrder
     /// <param name="orderId">The identifier of the order to cancel.</param>
     public void CancelOrder(int userId, int orderId)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         var adminId = AdminManager.GetConfig().AdminId;
         if (userId != adminId)
             throw new UnauthorizedAccessException("Only admin can update order details.");
@@ -195,6 +199,8 @@ internal class OrderImplementation : IOrder
     /// <param name="orderId">The identifier of the order to delete.</param>
     public void DeleteOrder(int userId, int orderId)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         var adminId = AdminManager.GetConfig().AdminId;
         if (userId != adminId)
             throw new UnauthorizedAccessException("Only admin can update order details.");
@@ -208,9 +214,11 @@ internal class OrderImplementation : IOrder
     /// <param name="userId">The unique identifier of the user for whom the order is being added.</param>
     /// <param name="order">The order to add. Cannot be <see langword="null"/>.</param>
    
-    public async Task AddOrder(int userId, BO.Order order)
+    public  Task AddOrder(int userId, BO.Order order)
     {
-        await OrderManager.AddOrder(order).ConfigureAwait(false);
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
+        return OrderManager.AddOrder(order);
     }
 
     /// <summary>
@@ -224,7 +232,9 @@ internal class OrderImplementation : IOrder
    
     public void OrderComplete(int userId, int courierId, int deliveryId)
     {
-        if(userId == courierId)
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
+        if (userId == courierId)
         {
             Helpers.DeliveryManager.CompleteDelivery(deliveryId);
         }
@@ -232,8 +242,6 @@ internal class OrderImplementation : IOrder
         {
             throw new InvalidOperationException("User is not authorized to complete this delivery.");
         }
-        DeliveryManager.Observers.NotifyItemUpdated(deliveryId);
-        OrderManager.Observers.NotifyListUpdated();
     }
 
     /// <summary>
@@ -246,11 +254,13 @@ internal class OrderImplementation : IOrder
     /// <exception cref="InvalidOperationException">Thrown if <paramref name="userId"/> does not match <paramref name="courierId"/>, indicating the user is not
     /// authorized to assign the order.</exception>
     
-    public void ChooseOrder(int userId, int courierId, int orderId)
+    public Task ChooseOrderAsync(int userId, int courierId, int orderId)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         if (userId == courierId)
         {
-            Helpers.OrderManager.AssignOrderToCourier(orderId, courierId);
+            return Helpers.OrderManager.AssignOrderToCourierAsync(orderId, courierId);
         }
         else
         {
@@ -271,9 +281,9 @@ internal class OrderImplementation : IOrder
     /// <returns>An enumerable collection of <see cref="BO.ClosedDeliveryInList"/> objects representing the completed deliveries
     /// for the specified courier. The collection is empty if no completed deliveries are found.</returns>
    
-    public async Task<IEnumerable<BO.ClosedDeliveryInList>> GetCompletedCourierDeliveriesAsync(int userId, int courierId, BO.ClosedDeliveryInListFilter? filter, BO.ClosedDeliveryInListFilter? sort)
+    public  Task<IEnumerable<BO.ClosedDeliveryInList>> GetCompletedCourierDeliveriesAsync(int userId, int courierId, BO.ClosedDeliveryInListFilter? filter, BO.ClosedDeliveryInListFilter? sort)
     {
-        return await Helpers.OrderManager.GetClosedDeliveriesAsync(courierId, filter, sort).ConfigureAwait(false);
+        return Helpers.OrderManager.GetClosedDeliveriesAsync(courierId, filter, sort);
     }
 
     /// <summary>
@@ -289,10 +299,9 @@ internal class OrderImplementation : IOrder
     /// langword="null"/>, the default sort order is used.</param>
     /// <returns>An enumerable collection of <see cref="BO.OpenOrderInList"/> objects representing the open orders available to
     /// the specified courier. The collection is empty if no matching orders are found.</returns>
-    // Removed sync variant to keep only async path per user request
 
-    public async Task<IEnumerable<BO.OpenOrderInList>> GetAvailableOrdersForCourierAsync(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort)
+    public  Task<IEnumerable<BO.OpenOrderInList>> GetAvailableOrdersForCourierAsync(int userId, int courierId, BO.OpenOrderInListFilter? filter, BO.OpenOrderInListFilter? sort)
     {
-        return await Helpers.OrderManager.GetOpenOrdersAsync(courierId, filter, sort).ConfigureAwait(false);
+        return Helpers.OrderManager.GetOpenOrdersAsync(courierId, filter, sort);
     }
 }

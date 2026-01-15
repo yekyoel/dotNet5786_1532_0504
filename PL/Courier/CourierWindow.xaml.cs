@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PL.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,7 +21,10 @@ namespace PL.Courier;
 public partial class CourierWindow : Window
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    private readonly int _userId = s_bl.Admin.GetConfig().AdminId;
+    private readonly ObserverMutex _mutex = new(); //stage 7
     bool _isObserverRegistered;
+    private int _courierId;
 
     /// <summary>
     /// Initializes a new instance of the CourierWindow class for adding a new courier or updating an existing one.
@@ -33,17 +37,18 @@ public partial class CourierWindow : Window
     {
         ButtonText = id == 0 ? "Add" : "Update";
         IsUpdateMode = id != 0;
+        _courierId = id;
         InitializeComponent();
 
-        try
+       /* try
         {
-            CurrentCourier = (id != 0) ? s_bl.Courier.GetCourierDetails(123456789, id)! : new BO.Courier();
+            CurrentCourier = (id != 0) ? s_bl.Courier.GetCourierDetails(_userId, id)! : new BO.Courier();
         }
         catch (Exception ex)
         {
             MessageBox.Show($"Error loading courier: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             Close();
-        }
+        }*/
     }
 
     /// <summary>
@@ -51,10 +56,15 @@ public partial class CourierWindow : Window
     /// </summary>
     /// <param name="sender">The source of the event, typically the window being loaded.</param>
     /// <param name="e">The event data associated with the Loaded event.</param>
-    private void Window_Loaded(object sender, RoutedEventArgs e)
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
         try
         {
+            if (IsUpdateMode == true)
+            {
+                CurrentCourier = await s_bl.Courier.GetCourierDetails(_userId, _courierId)!;
+            }
+
             var courier = CurrentCourier;
             if (courier?.Id > 0)
             {
@@ -64,7 +74,8 @@ public partial class CourierWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show($"Error while subscribing to updates: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show($"Error loading courier details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            Close();
         }
     }
 
@@ -101,19 +112,26 @@ public partial class CourierWindow : Window
     /// internal use within the class to ensure that courier information remains up to date.</remarks>
     private void courierObserver()
     {
-        try
+        _ = Dispatcher.BeginInvoke(async () =>
         {
-            var courier = CurrentCourier;
-            if (courier is null || courier.Id <= 0)
-                return;
 
-            CurrentCourier = s_bl.Courier.GetCourierDetails(123456789, courier.Id);
-        }
-        catch (Exception ex)
-        {
-            Dispatcher.Invoke(() =>
-                MessageBox.Show($"Error refreshing courier details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
-        }
+            try
+            {
+                var courier = CurrentCourier;
+                if (courier is null || courier.Id <= 0)
+                    return;
+
+                CurrentCourier = await s_bl.Courier.GetCourierDetails(_userId, courier.Id);
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() =>
+                    MessageBox.Show($"Error refreshing courier details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
+            }
+            if (await _mutex.UnsetLoadInProgressAndCheckRestartRequested())
+                courierObserver();
+
+        });
     }
 
     /// <summary>

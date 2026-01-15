@@ -23,11 +23,15 @@ internal static class EmailService
             double storeLon = cfg?.Longitude ?? 0.0;
 
             // Find couriers within max distance requirement
-            var couriers = s_dal.Courier.ReadAll();
+            IEnumerable<DO.Courier?> couriers;
+            lock (AdminManager.BlMutex)
+                couriers = s_dal.Courier.ReadAll().ToList();
+
             var eligible = new List<DO.Courier>();
 
             foreach (var c in couriers)
             {
+                if (c == null) continue;
                 if (!c.IsActive || string.IsNullOrWhiteSpace(c.Email))
                     continue;
 
@@ -56,7 +60,7 @@ internal static class EmailService
 
                     // NOTE: this assumes a local pickup directory or dev SMTP; adjust as needed.
                     using var client = new SmtpClient("localhost");
-                    await client.SendMailAsync(msg).ConfigureAwait(false);
+                    await client.SendMailAsync(msg);
                 }
                 catch
                 {

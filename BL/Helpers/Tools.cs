@@ -194,7 +194,7 @@ internal static class Tools
                 cfg.Latitude.Value,
                 cfg.Longitude.Value,
                 order.Latitude,
-                order.Longitude).ConfigureAwait(false);
+                order.Longitude);
 
             return distance;
         }

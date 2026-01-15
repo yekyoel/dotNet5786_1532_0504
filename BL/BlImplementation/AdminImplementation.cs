@@ -5,6 +5,16 @@ namespace BlImplementation;
 
 internal class AdminImplementation : IAdmin
 {
+    public void StartSimulator(int interval)  //stage 7
+    {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+        AdminManager.Start(interval); //stage 7
+    }
+
+    public void StopSimulator()
+    => AdminManager.Stop(); //stage 7
+
+
     /// <summary>
     /// Advances the system clock by the specified time unit and returns the updated date and time.
     /// </summary>
@@ -15,6 +25,8 @@ internal class AdminImplementation : IAdmin
     /// <exception cref="System.ArgumentOutOfRangeException">Thrown if the specified time unit is not supported.</exception>
     public System.DateTime ForwardClock(BO.Time forward)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         var now = AdminManager.Now;
         System.DateTime newClock = forward switch
         {
@@ -55,6 +67,8 @@ internal class AdminImplementation : IAdmin
     /// method is typically used during application startup to set up required database structures or state.</remarks>
     public void InitializeDB()
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         AdminManager.InitializeDB();
     }
 
@@ -65,6 +79,8 @@ internal class AdminImplementation : IAdmin
     /// recovered. This operation is typically intended for administrative or testing purposes.</remarks>
     public void ResetDB()
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         AdminManager.ResetDB();
     }
 
@@ -75,6 +91,8 @@ internal class AdminImplementation : IAdmin
     /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="config"/> is null.</exception>
     public void SetConfig(BO.Config config)
     {
+        AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
+
         if (config is null) throw new System.ArgumentNullException(nameof(config));
         AdminManager.SetConfig(config);
     }

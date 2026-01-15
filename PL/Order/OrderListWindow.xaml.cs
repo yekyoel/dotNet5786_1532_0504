@@ -1,4 +1,5 @@
 ﻿using BO;
+using PL.Helpers;
 using PL.Order;
 using System;
 using System.Collections.Generic;
@@ -7,6 +8,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -37,6 +39,8 @@ public partial class OrderListWindow : Window
 
     private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
     private readonly int _userId = s_bl.Admin.GetConfig().AdminId;
+    private readonly ObserverMutex _mutex = new(); //stage 7
+
 
     public BO.OrderStatus FilterStatus { get; set; } = BO.OrderStatus.None;
 
@@ -82,10 +86,7 @@ public partial class OrderListWindow : Window
     /// <param name="sender">The source of the event, typically the ComboBox whose selection has changed.</param>
     /// <param name="e">An object that contains event data for the selection change, including information about the items that were
     /// added or removed.</param>
-    private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        LoadOrderList();
-    }
+    private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => OrderListObserver();
 
     /// <summary>
     /// Loads the list of orders for the current user and applies the selected status filter, if any.
@@ -142,15 +143,20 @@ public partial class OrderListWindow : Window
     /// failure.</remarks>
     private void OrderListObserver()
     {
-        try
-        {
-            LoadOrderList();
-        }
-        catch (Exception ex)
-        {
-            Dispatcher.Invoke(() =>
-                MessageBox.Show($"Error updating Order list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
-        }
+        if (_mutex.CheckAndSetLoadInProgressOrRestartRequired())
+            return;
+        _ = Dispatcher.BeginInvoke(async () =>
+        { 
+            try
+            {
+                LoadOrderList();
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() =>
+                    MessageBox.Show($"Error updating Order list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
+            }
+        });
     }
 
     /// <summary>

@@ -13,6 +13,7 @@
     -->
     
     <Application.Resources>
+        <local:BoolToVisibilityConverter x:Key="BoolToVis" />
         <local:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <local:AddUpdateTextConverter x:Key="AddUpdateTextConverter" />
         <local:CanCancelOrderConverter x:Key="CanCancelOrderConverter" />

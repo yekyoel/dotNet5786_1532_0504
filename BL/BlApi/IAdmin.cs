@@ -2,6 +2,9 @@
 
 public interface IAdmin
 {
+    void StartSimulator(int interval); //stage 7
+    void StopSimulator(); //stage 7
+
     public void ResetDB();
     public void InitializeDB();
     public DateTime GetClock();

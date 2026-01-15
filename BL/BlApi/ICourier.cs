@@ -6,7 +6,7 @@ public interface ICourier : IObservable
 
     public IEnumerable<BO.CourierInList> GetListOfCouriers(int userId, bool? mainFilter, BO.CourierInListFilter? secondFilter);
 
-    public BO.Courier GetCourierDetails(int userId, int courierId);
+    public  Task<BO.Courier> GetCourierDetails(int userId, int courierId);
 
     public void UpdateCourierDetails(int userId, BO.Courier courier);
 

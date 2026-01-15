@@ -1,7 +1,8 @@
 ﻿using PL.Courier;
+using PL.Helpers;
 using System;
-using System.Windows;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace PL.Order;
 
@@ -11,6 +12,9 @@ namespace PL.Order;
 public partial class OrderWindow : Window
 {
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    private readonly ObserverMutex _mutex = new(); //stage 7
+    private int adminId= s_bl.Admin.GetConfig().AdminId;
+   
     bool _isObserverRegistered;
 
     /// <summary>
@@ -87,7 +91,7 @@ public partial class OrderWindow : Window
         {
             try
             {
-                CurrentOrder = s_bl.Order.GetOrderDetails(123456789, id)!;
+                CurrentOrder = s_bl.Order.GetOrderDetails(adminId, id)!;
             }
             catch (Exception ex)
             {
@@ -148,19 +152,27 @@ public partial class OrderWindow : Window
     /// <remarks>This method updates the CurrentOrder property with the most recent data for the currently selected order.</remarks>
     private void OrderObserver()
     {
-        try
+        if (_mutex.CheckAndSetLoadInProgressOrRestartRequired())
+            return;
+        _ = Dispatcher.BeginInvoke(async () =>
         {
-            var order = CurrentOrder;
-            if (order is null || order.Id <= 0)
-                return;
+            try
+            {
+                var order = CurrentOrder;
+                if (order is null || order.Id <= 0)
+                    return;
 
-            CurrentOrder = s_bl.Order.GetOrderDetails(123456789, order.Id);
-        }
-        catch (Exception ex)
-        {
-            Dispatcher.Invoke(() =>
-                MessageBox.Show($"Error refreshing order details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
-        }
+                CurrentOrder = s_bl.Order.GetOrderDetails(adminId, order.Id);
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() =>
+                    MessageBox.Show($"Error refreshing order details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
+            }
+
+            if (await _mutex.UnsetLoadInProgressAndCheckRestartRequested())
+                OrderObserver();
+        });
     }
 
     private async void btnAddUpdate_Click(object sender, RoutedEventArgs e)
@@ -174,13 +186,13 @@ public partial class OrderWindow : Window
 
             if (ButtonText == "Add")
             {
-                await s_bl.Order.AddOrder(123456789, CurrentOrder!);
+                await s_bl.Order.AddOrder(adminId, CurrentOrder!);
                 MessageBox.Show("Order added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 Close();
             }
             else
             {
-                s_bl.Order.UpdateOrderDetails(123456789, CurrentOrder!);
+                s_bl.Order.UpdateOrderDetails(adminId, CurrentOrder!);
                 MessageBox.Show("Order updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 Close();
             }

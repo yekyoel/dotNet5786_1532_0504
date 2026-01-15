@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PL.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -11,6 +12,8 @@ namespace PL.Courier.CourierScreens;
 public partial class CourierMainWindow : Window
 {
     private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    private readonly ObserverMutex _mutex = new(); //stage 7
+
 
     private readonly int _courierId;
     private bool _isObserverRegistered;
@@ -34,26 +37,31 @@ public partial class CourierMainWindow : Window
 
     public string LastCompletionTypeText { get; set; } = "N/A";
 
+    public bool IsLoading { get; set; }
+
     public CourierMainWindow(int courierId)
     {
         InitializeComponent();
         _courierId = courierId;
 
-        LoadCourierDetails();
+        //LoadCourierDetails();
         DataContext = this;
     }
 
+    
     private void CompletionType_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
         // Force refresh since the window doesn't implement INotifyPropertyChanged
         DataContext = null;
         DataContext = this;
+        CourierObserver();
     }
 
-    private void Window_Loaded(object sender, RoutedEventArgs e)
+    private async void Window_Loaded(object sender, RoutedEventArgs e)
     {
         try
         {
+            await LoadCourierDetailsAsync();
             s_bl.Courier.AddObserver(_courierId, CourierObserver);
             _isObserverRegistered = true;
         }
@@ -72,27 +80,29 @@ public partial class CourierMainWindow : Window
         {
             s_bl.Courier.RemoveObserver(_courierId, CourierObserver);
         }
-        catch
+        catch( Exception ex)
         {
-            // don't crash on close
+            MessageBox.Show($"Error while unsubscribing from updates: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
 
     private void CourierObserver()
     {
-        try
+        if (_mutex.CheckAndSetLoadInProgressOrRestartRequired())
+            return;
+        _ = Dispatcher.BeginInvoke(async () =>
         {
-            Dispatcher.Invoke(LoadCourierDetails);
-        }
-        catch
-        {
-            // ignore observer exceptions
-        }
+            await LoadCourierDetailsAsync();
+
+            if (await _mutex.UnsetLoadInProgressAndCheckRestartRequested())
+                CourierObserver();
+
+        });
     }
 
-    private void LoadCourierDetails()
+    private async Task LoadCourierDetailsAsync()
     {
-        CurrentCourier = s_bl.Courier.GetCourierDetails(_courierId, _courierId);
+        CurrentCourier = await s_bl.Courier.GetCourierDetails(_courierId, _courierId);
 
         // Reset completion choice when there is no order in progress (so button stays disabled).
         if (!HasOrderInProgress)
@@ -102,9 +112,12 @@ public partial class CourierMainWindow : Window
 
         DataContext = null;
         DataContext = this;
+        
     }
 
-    private void btnUpdate_Click(object sender, RoutedEventArgs e)
+
+
+    private async void btnUpdate_Click(object sender, RoutedEventArgs e)
     {
         if (CurrentCourier is null)
             return;
@@ -112,19 +125,19 @@ public partial class CourierMainWindow : Window
         try
         {
             // Always re-read authoritative record, then copy only allowed fields.
-            var authoritative = s_bl.Courier.GetCourierDetails(_courierId, _courierId);
+            var authoritative = await s_bl.Courier.GetCourierDetails(_courierId, _courierId);
 
             ApplyCourierEditableFieldsOrThrow(authoritative, CurrentCourier);
 
             s_bl.Courier.UpdateCourierDetails(_courierId, authoritative);
             MessageBox.Show("Details updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
 
-            LoadCourierDetails();
+            await LoadCourierDetailsAsync();
         }
         catch (Exception ex)
         {
             MessageBox.Show(ex.Message, "Update Failed", MessageBoxButton.OK, MessageBoxImage.Error);
-            LoadCourierDetails(); // revert UI to authoritative state
+            await LoadCourierDetailsAsync(); // revert UI to authoritative state
         }
     }
 
@@ -161,7 +174,7 @@ public partial class CourierMainWindow : Window
         target.ShippingMethod = source.ShippingMethod;
     }
 
-    private void btnSelectOrder_Click(object sender, RoutedEventArgs e)
+    private async void btnSelectOrder_Click(object sender, RoutedEventArgs e)
     {
         if (!CanSelectOrder)
             return;
@@ -169,7 +182,7 @@ public partial class CourierMainWindow : Window
         try
         {
             new CourierOrderSelectionWindow(_courierId).ShowDialog();
-            LoadCourierDetails();
+            await LoadCourierDetailsAsync();
         }
         catch (Exception ex)
         {
@@ -177,7 +190,7 @@ public partial class CourierMainWindow : Window
         }
     }
 
-    private void btnFinishHandling_Click(object sender, RoutedEventArgs e)
+    private async void btnFinishHandling_Click(object sender, RoutedEventArgs e)
     {
         if (!CanFinishHandling || CurrentCourier is null)
             return;
@@ -191,7 +204,7 @@ public partial class CourierMainWindow : Window
             s_bl.Order.OrderComplete(_courierId, _courierId, deliveryId);
 
             MessageBox.Show("Order completed successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            LoadCourierDetails();
+            await LoadCourierDetailsAsync();
         }
         catch (Exception ex)
         {
@@ -212,14 +225,12 @@ public partial class CourierMainWindow : Window
     /// <summary>
     /// Recomputes the last completion type from courier delivery history.
     /// </summary>
-    private void LoadLastCompletionType()
+    private async void LoadLastCompletionType()
     {
         try
         {
-            var history = s_bl.Order.GetCompletedCourierDeliveriesAsync(_courierId, _courierId, null, null)
-                                  .ConfigureAwait(false)
-                                  .GetAwaiter()
-                                  .GetResult();
+            IsLoading = true; DataContext = null; DataContext = this;
+            var history = await s_bl.Order.GetCompletedCourierDeliveriesAsync(_courierId, _courierId, null, null);
 
             // Take latest by DeliveryId (your DAL uses increasing IDs)
             var last = history
@@ -231,6 +242,10 @@ public partial class CourierMainWindow : Window
         catch
         {
             LastCompletionTypeText = "N/A";
+        }
+        finally
+        {
+            IsLoading = false; DataContext = null; DataContext = this;
         }
     }
 }

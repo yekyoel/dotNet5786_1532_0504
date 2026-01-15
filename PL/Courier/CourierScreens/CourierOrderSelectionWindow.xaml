@@ -16,7 +16,6 @@
         <Grid.RowDefinitions>   
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="220"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
@@ -32,8 +31,7 @@
                   ItemsSource="{Binding OpenOrders}"
                   SelectedItem="{Binding SelectedOrder}"
                   AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  SelectionChanged="DataGrid_SelectionChanged">
+                  IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding OrderId}" Header="ID" Width="70"/>
                 <DataGridTextColumn Binding="{Binding TypeOrder}" Header="Type" Width="110"/>
@@ -62,46 +60,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
-        <!-- Map section with embedded browser and text -->
-        <Border Grid.Row="2"
-                Margin="0,10,0,0"
-                Background="#1a2a2e"
-                BorderBrush="{StaticResource NeonCyanBrush}"
-                BorderThickness="1"
-                CornerRadius="6"
-                Padding="10">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-
-                <TextBlock Grid.Row="0"
-                           Text="Map preview"
-                           Foreground="{StaticResource NeonCyanBrush}"
-                           FontWeight="Bold"/>
-
-                <Grid Grid.Row="1" Margin="0,10,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="2*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <!-- Simple online map using WebBrowser -->
-                    <WebBrowser x:Name="MapBrowser"
-                                Grid.Column="0"
-                                Margin="0,0,10,0" />
-
-                    <!-- Textual info beside the map -->
-                    <StackPanel Grid.Column="1">
-                        <TextBlock Text="{Binding MapStatusText}" Foreground="{StaticResource TextMainBrush}" TextWrapping="Wrap"/>
-                        <TextBlock Text="{Binding MapCoordinatesText}" Foreground="{StaticResource TextSubBrush}" Margin="0,6,0,0" TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Grid>
-            </Grid>
-        </Border>
-
-        <Button Grid.Row="3"
+        <Button Grid.Row="2"
                 Content="Close"
                 Click="btnClose_Click"
                 Width="120"

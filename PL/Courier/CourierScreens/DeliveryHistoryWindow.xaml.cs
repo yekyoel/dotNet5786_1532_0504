@@ -1,7 +1,9 @@
-﻿using System;
+﻿using PL.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,6 +12,8 @@ namespace PL.Courier.CourierScreens;
 public partial class DeliveryHistoryWindow : Window
 {
     private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    private readonly ObserverMutex _mutex = new(); //stage 7
+
 
     private readonly int _courierId;
     private bool _isObserverRegistered;
@@ -33,6 +37,8 @@ public partial class DeliveryHistoryWindow : Window
 
     public string SelectedSortOption { get; set; } = "Delivery ID";
 
+    public bool IsLoading { get; set; }
+
     public DeliveryHistoryWindow(int courierId)
     {
         InitializeComponent();
@@ -41,7 +47,7 @@ public partial class DeliveryHistoryWindow : Window
         _historyObserver = HistoryObserver;
 
         DataContext = this;
-        LoadHistory();
+        _ = LoadHistoryAsync();
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -74,29 +80,31 @@ public partial class DeliveryHistoryWindow : Window
 
     private void HistoryObserver()
     {
-        try
+        if (_mutex.CheckAndSetLoadInProgressOrRestartRequired())
+            return;
+        _ = Dispatcher.BeginInvoke(async () =>
         {
-            Dispatcher.Invoke(LoadHistory);
-        }
-        catch
-        {
-            // ignore
-        }
+            await LoadHistoryAsync();
+
+            if (await _mutex.UnsetLoadInProgressAndCheckRestartRequested())
+                HistoryObserver();
+
+        });
     }
 
     private void FilterSort_Changed(object sender, SelectionChangedEventArgs e)
     {
-        LoadHistory();
+        _ = LoadHistoryAsync();
     }
 
-    private void LoadHistory()
+    private async Task LoadHistoryAsync()
     {
         try
         {
-            var history = s_bl.Order.GetCompletedCourierDeliveriesAsync(_courierId, _courierId, null, null)
-                                  .ConfigureAwait(false)
-                                  .GetAwaiter()
-                                  .GetResult();
+            IsLoading = true;
+           // DataContext = null; DataContext = this;
+
+            var history = await s_bl.Order.GetCompletedCourierDeliveriesAsync(_courierId, _courierId, null, null);
 
             IEnumerable<BO.ClosedDeliveryInList> query = history;
 
@@ -120,6 +128,11 @@ public partial class DeliveryHistoryWindow : Window
         catch (Exception ex)
         {
             MessageBox.Show($"Error loading history: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        finally
+        {
+            IsLoading = false;
+           // DataContext = null; DataContext = this;
         }
     }
 
