@@ -241,7 +241,7 @@ internal static class AdminManager //stage 4
             _ = Task.Run(() => CourierManager.PeriodicCouriersUpdates(Now.AddMinutes(-s_interval), Now));
             _ = Task.Run(() => DeliveryManager.PeriodicDeliveriesUpdates(Now.AddMinutes(-s_interval), Now));
             _ = Task.Run(() => OrderManager.PeriodicOrdersUpdates(Now.AddMinutes(-s_interval), Now));
-
+            _ = Task.Run(() => CourierManager.SimulateCourierActivity());
             try
             {
                 Thread.Sleep(1000); // 1 second

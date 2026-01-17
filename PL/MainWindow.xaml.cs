@@ -101,6 +101,52 @@ public partial class MainWindow : Window
         set => SetValue(CompletedLateTextProperty, value);
     }
 
+    public static readonly DependencyProperty IntervalProperty = 
+        DependencyProperty.Register("Interval", typeof(int), typeof(MainWindow), new PropertyMetadata(1));
+        
+    public int Interval
+    {
+        get => (int)GetValue(IntervalProperty);
+        set => SetValue(IntervalProperty, value);
+    }
+
+    public static readonly DependencyProperty SimulatorStatusProperty =
+       DependencyProperty.Register("SimulatorStatus", typeof(bool), typeof(MainWindow), new PropertyMetadata(false, OnSimulatorStatusChanged));
+
+    public bool SimulatorStatus
+    {
+        get => (bool)GetValue(SimulatorStatusProperty);
+        set => SetValue(SimulatorStatusProperty, value);
+    }
+
+    private static void OnSimulatorStatusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is MainWindow window)
+        {
+            // Sync dependent properties when SimulatorStatus changes
+            window.IsSimulatorStopped = !window.SimulatorStatus;
+            window.SimulatorButtonText = window.SimulatorStatus ? "Stop Simulator" : "Start Simulator";
+        }
+    }
+
+    public static readonly DependencyProperty IsSimulatorStoppedProperty =
+        DependencyProperty.Register("IsSimulatorStopped", typeof(bool), typeof(MainWindow), new PropertyMetadata(true));
+
+    public bool IsSimulatorStopped
+    {
+        get => (bool)GetValue(IsSimulatorStoppedProperty);
+        set => SetValue(IsSimulatorStoppedProperty, value);
+    }
+
+    public static readonly DependencyProperty SimulatorButtonTextProperty =
+        DependencyProperty.Register("SimulatorButtonText", typeof(string), typeof(MainWindow), new PropertyMetadata("Start Simulator"));
+
+    public string SimulatorButtonText
+    {
+        get => (string)GetValue(SimulatorButtonTextProperty);
+        set => SetValue(SimulatorButtonTextProperty, value);
+    }
+
     #endregion
 
 
@@ -178,6 +224,11 @@ public partial class MainWindow : Window
     {
         try
         {
+            if (SimulatorStatus)
+            {
+                s_bl.Admin.StopSimulator();
+            }
+
             s_bl.Admin.RemoveClockObserver(ClockObserver);
             s_bl.Admin.RemoveConfigObserver(ConfigObserver);
 
@@ -277,7 +328,7 @@ public partial class MainWindow : Window
 
 
 
-    #region buttons for clock manipulation
+    #region buttons for clock manipulation and simulation
 
     /// <summary>
     /// Handles the Click event of the Add One Month button, advancing the application clock by one month.
@@ -373,6 +424,29 @@ public partial class MainWindow : Window
             MessageBox.Show($"Error updating clock: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
     }
+
+    private void btnSimStatus_Click(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            if(!SimulatorStatus) // If we are about to start (was false)
+            {
+                s_bl.Admin.StartSimulator(Interval);
+                SimulatorStatus = true; // Updates UI via callback
+            }
+            else // If we are about to stop (was true)
+            {
+                s_bl.Admin.StopSimulator();
+                SimulatorStatus = false; // Updates UI via callback to re-enable controls
+            }
+
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error starting/stopping simulator: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
     #endregion
 
 

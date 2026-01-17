@@ -99,6 +99,8 @@ public partial class OrderWindow : Window
                 Close();
             }
         }
+        else
+            CurrentOrder = new BO.Order();
     }
 
     /// <summary>

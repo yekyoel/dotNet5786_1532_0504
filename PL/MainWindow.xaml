@@ -28,21 +28,32 @@
         <Grid Background="{StaticResource CardBackgroundBrush}" HorizontalAlignment="Stretch" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
             <!-- Time -->
-            <Viewbox Grid.Column="0" Margin="20,0">
+            <Viewbox Grid.Column="0" Margin="20,0,120,0">
                 <Label Content="{Binding CurrentTime}" FontFamily="Segoe UI"  FontWeight="ExtraBlack"  VerticalAlignment="Center"  HorizontalAlignment="Center"/>
             </Viewbox>
             
+            <!--simulator-->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="20,0,120,0">
+                <Button Content="{Binding SimulatorButtonText}" Click="btnSimStatus_Click"  Margin="10,0,10,0" Padding="12,4"
+                        Height="35" MinWidth ="120" FontSize="11" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                
+                <TextBox  Text="{Binding Interval, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" IsEnabled="{Binding IsSimulatorStopped}"
+                         MinWidth="100" Height="35" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,20,0" />
+
+            </StackPanel>
+
+            <!-- mannage clock buttons-->
             <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,30,0">
-                <Button Content="+Minute" Click="btnAddOneMin_Click" MinWidth="90" Height="45" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
-                <Button Content="+Hour"   Click="btnAddOneHr_Click" MinWidth="90" Height="45" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
-                <Button Content="+Day"    Click="btnAddOneDay_Click"  MinWidth="90" Height="45" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
-                <Button Content="+Month"  Click="btnAddOneMon_Click" MinWidth="90" Height="45" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
-                <Button Content="+Year"   Click="btnAddOneYr_Click"  MinWidth="90" Height="45" FontSize="14" Margin="10,0,10,0" Padding="12,4"/>
+                <Button Content="+Minute" Click="btnAddOneMin_Click" IsEnabled="{Binding IsSimulatorStopped}" MinWidth="80" Height="35" FontSize="12" Margin="8,0,8,0" Padding="10,4"/>
+                <Button Content="+Hour"   Click="btnAddOneHr_Click" IsEnabled="{Binding IsSimulatorStopped}" MinWidth="80" Height="35" FontSize="12" Margin="8,0,8,0" Padding="10,4"/>
+                <Button Content="+Day"    Click="btnAddOneDay_Click"  IsEnabled="{Binding IsSimulatorStopped}" MinWidth="80" Height="35" FontSize="12" Margin="8,0,8,0" Padding="10,4"/>
+                <Button Content="+Month"  Click="btnAddOneMon_Click" IsEnabled="{Binding IsSimulatorStopped}" MinWidth="80" Height="35" FontSize="12" Margin="8,0,8,0" Padding="10,4"/>
+                <Button Content="+Year"   Click="btnAddOneYr_Click"  IsEnabled="{Binding IsSimulatorStopped}" MinWidth="80" Height="35" FontSize="12" Margin="8,0,8,0" Padding="10,4"/>
             </StackPanel>
         </Grid>
         
@@ -166,9 +177,11 @@
             </Grid.RowDefinitions>
 
             <Button Content="Initialize" Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnInitialize_Click"
+                    IsEnabled="{Binding IsSimulatorStopped}"
                     MinWidth="140" Height="45" FontSize="16" Margin="10,6,10,0" Padding="12,4"/>
             
             <Button Content="Reset DB"   Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnResetDB_Click"
+                    IsEnabled="{Binding IsSimulatorStopped}"
                     MinWidth="140" Height="45" FontSize="16" Margin="10,6,10,0" Padding="12,4"/>
 
             <Button Content="View CourierLists" Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btnCourierListDisplay_Click"

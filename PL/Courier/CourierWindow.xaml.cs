@@ -40,15 +40,8 @@ public partial class CourierWindow : Window
         _courierId = id;
         InitializeComponent();
 
-       /* try
-        {
-            CurrentCourier = (id != 0) ? s_bl.Courier.GetCourierDetails(_userId, id)! : new BO.Courier();
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Error loading courier: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            Close();
-        }*/
+        if(id == 0)
+            CurrentCourier = new BO.Courier();
     }
 
     /// <summary>
