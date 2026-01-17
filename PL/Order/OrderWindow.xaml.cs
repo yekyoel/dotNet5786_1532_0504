@@ -6,16 +6,28 @@ using System.Windows;
 
 namespace PL.Order;
 
-/// <summary>
-/// Interaction logic for OrderWindow.xaml
-/// </summary>
 public partial class OrderWindow : Window
 {
+    // BL Static Reference properties
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-    private readonly ObserverMutex _mutex = new(); //stage 7
+    private readonly ObserverMutex _mutex = new();
+
+    // PL properties
     private int adminId= s_bl.Admin.GetConfig().AdminId;
-   
     bool _isObserverRegistered;
+
+
+    // DependencyProperties
+    public static readonly DependencyProperty CurrentOrderProperty =
+        DependencyProperty.Register("CurrentOrder", typeof(BO.Order), typeof(OrderWindow), new PropertyMetadata(null));
+
+    public static readonly DependencyProperty IsUpdateModeProperty =
+       DependencyProperty.Register("IsUpdateMode", typeof(bool), typeof(OrderWindow), new PropertyMetadata(false));
+
+    public static readonly DependencyProperty ButtonTextProperty =
+        DependencyProperty.Register("ButtonText", typeof(string), typeof(OrderWindow));
+
+
 
     /// <summary>
     /// Gets or sets the currently selected order.
@@ -26,13 +38,6 @@ public partial class OrderWindow : Window
         set { SetValue(CurrentOrderProperty, value); }
     }
 
-    public static readonly DependencyProperty CurrentOrderProperty =
-        DependencyProperty.Register("CurrentOrder", typeof(BO.Order), typeof(OrderWindow), new PropertyMetadata(null));
-
-    
-    public static readonly DependencyProperty ButtonTextProperty =
-        DependencyProperty.Register("ButtonText", typeof(string), typeof(OrderWindow));
-
     /// <summary>
     /// Gets or sets the text displayed on the action button (Add/Update).
     /// </summary>
@@ -42,16 +47,18 @@ public partial class OrderWindow : Window
         set { SetValue(ButtonTextProperty, value); }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the control is in update mode.
+    /// </summary>
     public bool IsUpdateMode
     {
         get { return (bool)GetValue(IsUpdateModeProperty); }
         set { SetValue(IsUpdateModeProperty, value); }
     }
 
-    public static readonly DependencyProperty IsUpdateModeProperty =
-        DependencyProperty.Register("IsUpdateMode", typeof(bool), typeof(OrderWindow), new PropertyMetadata(false));
-
-
+    /// <summary>
+    /// Gets or sets a value indicating whether the control is currently performing a background operation.
+    /// </summary>
     public bool IsBusy
     {
         get => (bool)GetValue(IsBusyProperty);
@@ -65,6 +72,14 @@ public partial class OrderWindow : Window
             typeof(OrderWindow),
             new PropertyMetadata(false, OnIsBusyChanged));
 
+
+    /// <summary>
+    /// Handles changes to the IsBusy attached property on an OrderWindow instance.
+    /// </summary>
+    /// <remarks>This method updates the visibility of the BusyOverlay element based on the new value of the
+    /// IsBusy property. If the dependency object is not an OrderWindow, the method performs no action.</remarks>
+    /// <param name="d">The dependency object on which the property value has changed. Expected to be an instance of OrderWindow.</param>
+    /// <param name="e">The event data that contains information about the property change.</param>
     private static void OnIsBusyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
     {
         if (d is not OrderWindow window)
@@ -227,26 +242,27 @@ public partial class OrderWindow : Window
         if (string.IsNullOrWhiteSpace(order.OrderAddress))
             throw new ArgumentException("Order Address is required.", nameof(order.OrderAddress));
 
-        // Arial Distance
-        //if (order.AerialDistance < 0)
-        //   throw new ArgumentException("Arial Distance cannot be negative.", nameof(order.AerialDistance));
 
         // Customer Name
         if (string.IsNullOrWhiteSpace(order.CustomerName))
             throw new ArgumentException("Customer Name is required.", nameof(order.CustomerName));
 
-        // Customer Phone
+        // Phone Number Validations
         if (string.IsNullOrWhiteSpace(order.CustomerPhone))
-            throw new ArgumentException("Customer Phone is required.", nameof(order.CustomerPhone));
+            throw new ArgumentException("Phone Number is required.", nameof(order.CustomerPhone));
+
+        if (!order.CustomerPhone.All(char.IsDigit))
+            throw new ArgumentException("Phone Number must contain only digits.", nameof(order.CustomerPhone));
+
+        if (order.CustomerPhone.Length != 10)
+            throw new ArgumentException("Phone Number must be exactly 10 digits long.", nameof(order.CustomerPhone));
+
+        if (!order.CustomerPhone.StartsWith("05"))
+            throw new ArgumentException("Phone Number must start with '05'.", nameof(order.CustomerPhone));
 
         // Weight
         if (order.Weight <= 0)
             throw new ArgumentException("Weight must be a positive number.", nameof(order.Weight));
-
-        // orderTime 
-        // maxDeliveryTime
-        // timeleft 
-
 
     }
 

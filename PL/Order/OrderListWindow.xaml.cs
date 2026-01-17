@@ -32,23 +32,29 @@ namespace PL.Order;
 /// users of any issues encountered during operations.</remarks>
 public partial class OrderListWindow : Window
 {
+    /// <summary>
+    /// Initializes a new instance of the OrderListWindow class.
+    /// </summary>
     public OrderListWindow()
     {
         InitializeComponent();
     }
 
+    // BL/access variables and properties
     private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
     private readonly int _userId = s_bl.Admin.GetConfig().AdminId;
-    private readonly ObserverMutex _mutex = new(); //stage 7
+    private readonly ObserverMutex _mutex = new();
 
+    #region PL properties 
 
+    public BO.OrderInList? SelectedOrders { get; set; }
     public BO.OrderStatus FilterStatus { get; set; } = BO.OrderStatus.None;
-
-    // Optional schedule status filter (null => no schedule filter)
     public BO.ScheduleStatus? FilterScheduleStatus { get; set; }
- 
-    // Toggle from UI: when true, group by OrderType; when false, no grouping
-    private bool _isGrouped;
+    private bool _isGrouped; // Toggle from UI: when true, group by OrderType; when false, no grouping
+
+    /// <summary>
+    /// Gets or sets a value indicating whether items are displayed in groups.
+    /// </summary>
     public bool IsGrouped
     {
         get => _isGrouped;
@@ -60,8 +66,6 @@ public partial class OrderListWindow : Window
             ApplyGrouping();
         }
     }
-
-    public BO.OrderInList? SelectedOrders { get; set; } 
 
     /// <summary>
     /// Gets or sets the collection of orders to be displayed in the list.
@@ -75,9 +79,13 @@ public partial class OrderListWindow : Window
         set { SetValue(OrderListProperty, value); }
     }
 
+
     // DependencyProperty for OrderInList
     public static readonly DependencyProperty OrderListProperty =
         DependencyProperty.Register("OrderInList", typeof(IEnumerable<BO.OrderInList>), typeof(OrderListWindow), new PropertyMetadata(null));
+
+    #endregion
+
 
     /// <summary>
     /// Handles the SelectionChanged event of the ComboBox control and updates the order list based on the new
@@ -121,6 +129,13 @@ public partial class OrderListWindow : Window
         }
     }
     
+    /// <summary>
+    /// Configures the collection view to group items by order type if grouping is enabled.
+    /// </summary>
+    /// <remarks>This method clears any existing group descriptions on the collection view associated with the
+    /// OrderInList collection. If the IsGrouped property is set to <see langword="true"/>, the view will group items
+    /// based on the OrderType property. This affects how items are displayed in UI controls that use the collection
+    /// view, such as data grids or list views.</remarks>
     private void ApplyGrouping()
     {
         var view = CollectionViewSource.GetDefaultView(OrderInList);
@@ -156,6 +171,8 @@ public partial class OrderListWindow : Window
                 Dispatcher.Invoke(() =>
                     MessageBox.Show($"Error updating Order list: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error));
             }
+            if(await _mutex.UnsetLoadInProgressAndCheckRestartRequested())
+                OrderListObserver();
         });
     }
 

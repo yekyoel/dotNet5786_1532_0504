@@ -6,38 +6,77 @@ using System.Windows;
 
 namespace PL.Courier.CourierScreens;
 
-/// <summary>
-/// Interaction logic for CourierMainWindow.xaml
-/// </summary>
 public partial class CourierMainWindow : Window
 {
+    // BL Static Reference properties
     private static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
-    private readonly ObserverMutex _mutex = new(); //stage 7
+    private readonly ObserverMutex _mutex = new();
 
-
+    // PL properties
     private readonly int _courierId;
     private bool _isObserverRegistered;
 
-    public BO.Courier? CurrentCourier { get; set; }
+    public static readonly DependencyProperty CurrentCourierProperty =
+        DependencyProperty.Register(nameof(CurrentCourier), typeof(BO.Courier), typeof(CourierMainWindow), new PropertyMetadata(null));
 
-    public IEnumerable<BO.CompletionType> CompletionTypes { get; } =
-        Enum.GetValues<BO.CompletionType>();
+    public BO.Courier? CurrentCourier
+    {
+        get => (BO.Courier?)GetValue(CurrentCourierProperty);
+        set => SetValue(CurrentCourierProperty, value);
+    }
 
-    public BO.CompletionType SelectedCompletionType { get; set; } = BO.CompletionType.None;
+    public static readonly DependencyProperty LastCompletionTypeTextProperty =
+        DependencyProperty.Register(nameof(LastCompletionTypeText), typeof(string), typeof(CourierMainWindow), new PropertyMetadata("N/A"));
 
-    public bool HasOrderInProgress => (CurrentCourier?.OrderInProg?.OrderId ?? 0) != 0;
+    public string LastCompletionTypeText
+    {
+        get => (string)GetValue(LastCompletionTypeTextProperty);
+        set => SetValue(LastCompletionTypeTextProperty, value);
+    }
 
-    public bool HasNoOrderInProgress => !HasOrderInProgress;
+    public static readonly DependencyProperty IsLoadingProperty =
+        DependencyProperty.Register(nameof(IsLoading), typeof(bool), typeof(CourierMainWindow), new PropertyMetadata(false));
 
-    public bool CanSelectOrder => CurrentCourier is not null && CurrentCourier.IsActive && !HasOrderInProgress;
+    public bool IsLoading
+    {
+        get => (bool)GetValue(IsLoadingProperty);
+        set => SetValue(IsLoadingProperty, value);
+    }
 
-    public bool CanFinishHandling => CurrentCourier is not null
-                                     && HasOrderInProgress
-                                     && SelectedCompletionType != BO.CompletionType.None;
+    public static readonly DependencyProperty SelectedCompletionTypeProperty =
+        DependencyProperty.Register(nameof(SelectedCompletionType), typeof(BO.CompletionType), typeof(CourierMainWindow), new PropertyMetadata(BO.CompletionType.None));
 
-    public string LastCompletionTypeText { get; set; } = "N/A";
+    public BO.CompletionType SelectedCompletionType
+    {
+        get => (BO.CompletionType)GetValue(SelectedCompletionTypeProperty);
+        set => SetValue(SelectedCompletionTypeProperty, value);
+    }
 
-    public bool IsLoading { get; set; }
+    public static readonly DependencyPropertyKey CompletionTypesKey =
+        DependencyProperty.RegisterReadOnly(nameof(CompletionTypes), typeof(IEnumerable<BO.CompletionType>), typeof(CourierMainWindow), new PropertyMetadata(Enum.GetValues<BO.CompletionType>()));
+    public static readonly DependencyProperty CompletionTypesProperty = CompletionTypesKey.DependencyProperty;
+    public IEnumerable<BO.CompletionType> CompletionTypes => (IEnumerable<BO.CompletionType>)GetValue(CompletionTypesProperty);
+
+    // Helper wrappers for logic properties that depend on CurrentCourier
+    private static readonly DependencyPropertyKey HasOrderInProgressKey =
+        DependencyProperty.RegisterReadOnly(nameof(HasOrderInProgress), typeof(bool), typeof(CourierMainWindow), new PropertyMetadata(false));
+    public static readonly DependencyProperty HasOrderInProgressProperty = HasOrderInProgressKey.DependencyProperty;
+    public bool HasOrderInProgress => (bool)GetValue(HasOrderInProgressProperty);
+
+    private static readonly DependencyPropertyKey HasNoOrderInProgressKey =
+        DependencyProperty.RegisterReadOnly(nameof(HasNoOrderInProgress), typeof(bool), typeof(CourierMainWindow), new PropertyMetadata(true));
+    public static readonly DependencyProperty HasNoOrderInProgressProperty = HasNoOrderInProgressKey.DependencyProperty;
+    public bool HasNoOrderInProgress => (bool)GetValue(HasNoOrderInProgressProperty);
+
+    private static readonly DependencyPropertyKey CanSelectOrderKey =
+        DependencyProperty.RegisterReadOnly(nameof(CanSelectOrder), typeof(bool), typeof(CourierMainWindow), new PropertyMetadata(false));
+    public static readonly DependencyProperty CanSelectOrderProperty = CanSelectOrderKey.DependencyProperty;
+    public bool CanSelectOrder => (bool)GetValue(CanSelectOrderProperty);
+
+    private static readonly DependencyPropertyKey CanFinishHandlingKey =
+        DependencyProperty.RegisterReadOnly(nameof(CanFinishHandling), typeof(bool), typeof(CourierMainWindow), new PropertyMetadata(false));
+    public static readonly DependencyProperty CanFinishHandlingProperty = CanFinishHandlingKey.DependencyProperty;
+    public bool CanFinishHandling => (bool)GetValue(CanFinishHandlingProperty);
 
     public CourierMainWindow(int courierId)
     {
@@ -45,16 +84,28 @@ public partial class CourierMainWindow : Window
         _courierId = courierId;
 
         //LoadCourierDetails();
-        DataContext = this;
+       // DataContext = this;
     }
 
     
+    /// <summary>
+    /// Updates all dependent read-only properties based on CurrentCourier state.
+    /// </summary>
+    private void UpdateDependentProperties()
+    {
+        bool hasOrder = (CurrentCourier?.OrderInProg?.OrderId ?? 0) != 0;
+        bool isActive = CurrentCourier?.IsActive ?? false;
+        bool canFinish = hasOrder && SelectedCompletionType != BO.CompletionType.None;
+
+        SetValue(HasOrderInProgressKey, hasOrder);
+        SetValue(HasNoOrderInProgressKey, !hasOrder);
+        SetValue(CanSelectOrderKey, CurrentCourier != null && isActive && !hasOrder);
+        SetValue(CanFinishHandlingKey, canFinish);
+    }
+
     private void CompletionType_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
     {
-        // Force refresh since the window doesn't implement INotifyPropertyChanged
-        DataContext = null;
-        DataContext = this;
-        CourierObserver();
+        UpdateDependentProperties();
     }
 
     private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -109,10 +160,7 @@ public partial class CourierMainWindow : Window
             SelectedCompletionType = BO.CompletionType.None;
 
         LoadLastCompletionType();
-
-        DataContext = null;
-        DataContext = this;
-        
+        UpdateDependentProperties();
     }
 
 
@@ -229,7 +277,7 @@ public partial class CourierMainWindow : Window
     {
         try
         {
-            IsLoading = true; DataContext = null; DataContext = this;
+            IsLoading = true; 
             var history = await s_bl.Order.GetCompletedCourierDeliveriesAsync(_courierId, _courierId, null, null);
 
             // Take latest by DeliveryId (your DAL uses increasing IDs)
@@ -245,7 +293,7 @@ public partial class CourierMainWindow : Window
         }
         finally
         {
-            IsLoading = false; DataContext = null; DataContext = this;
+            IsLoading = false;
         }
     }
 }

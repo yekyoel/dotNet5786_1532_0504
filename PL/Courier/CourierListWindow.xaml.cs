@@ -21,28 +21,44 @@ namespace PL.Courier;
 /// </summary>
 public partial class CourierListWindow : Window
 {
+    /// <summary>
+    /// Initializes a new instance of the CourierListWindow class.
+    /// </summary>
+    /// <remarks>This constructor sets up the window and its components for displaying or managing a list of
+    /// couriers. Use this constructor when creating a new CourierListWindow in your application.</remarks>
     public CourierListWindow()
     {
         InitializeComponent();
     }
 
+    // Static reference to the business logic layer
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
     private readonly int _userId = s_bl.Admin.GetConfig().AdminId;
-    private readonly ObserverMutex _mutex = new(); //stage 7
+    private readonly ObserverMutex _mutex = new(); 
+
 
     public BO.CourierInList? SelectedCouriers { get; set; }
+    public BO.ShippingMethod FilterShippingMethods { get; set; } = BO.ShippingMethod.None;
 
+    public static readonly DependencyProperty CourierListProperty =
+        DependencyProperty.Register("CourierList", typeof(IEnumerable<BO.CourierInList>), typeof(CourierListWindow), new PropertyMetadata(null));
+
+    /// <summary>
+    /// Gets or sets the collection of couriers available for selection or display.
+    /// </summary>
     public IEnumerable<BO.CourierInList> CourierList
     {
         get { return (IEnumerable<BO.CourierInList>)GetValue(CourierListProperty); }
         set { SetValue(CourierListProperty, value); }
     }
 
-    public static readonly DependencyProperty CourierListProperty =
-        DependencyProperty.Register("CourierList", typeof(IEnumerable<BO.CourierInList>), typeof(CourierListWindow), new PropertyMetadata(null));
+    
 
-    public BO.ShippingMethod FilterShippingMethods { get; set; } = BO.ShippingMethod.None;
-
+   /// <summary>
+   /// Handles the SelectionChanged event of the ComboBox control and updates the courier list accordingly.
+   /// </summary>
+   /// <param name="sender">The source of the event, typically the ComboBox whose selection has changed.</param>
+   /// <param name="e">The event data that contains information about the selection change.</param>
     private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e) => courierListObserver();
 
     /// <summary>
@@ -99,7 +115,7 @@ public partial class CourierListWindow : Window
     {
         try
         {
-            s_bl?.Courier.AddObserver(courierListObserver);
+            s_bl?.Courier.AddObserver(_userId, courierListObserver);
             queryCourierList();
         }
         catch (Exception ex)
@@ -125,6 +141,13 @@ public partial class CourierListWindow : Window
         }
     }
 
+    /// <summary>
+    /// Handles the MouseDoubleClick event for the couriers list and opens the details window for the selected courier.
+    /// </summary>
+    /// <remarks>If no courier is selected when the event occurs, no action is taken. An error message is
+    /// displayed if the courier details window cannot be opened.</remarks>
+    /// <param name="sender">The source of the event, typically the couriers list control.</param>
+    /// <param name="e">The event data associated with the mouse double-click action.</param>
     private void lsvCouriersList_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
         try
@@ -138,7 +161,11 @@ public partial class CourierListWindow : Window
         }
     }
 
-    
+    /// <summary>
+    /// Handles the Click event of the Add button by opening a new CourierWindow.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the Add button.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
     private void btnAdd_Click(object sender, RoutedEventArgs e)
     {
         new CourierWindow().Show();

@@ -15,16 +15,56 @@ using System.Windows.Shapes;
 
 namespace PL.Courier;
 
-/// <summary>
-/// Interaction logic for CourierWindow.xaml
-/// </summary>
 public partial class CourierWindow : Window
 {
+    // BL Static Reference properties
     static readonly BlApi.IBl s_bl = BlApi.Factory.Get();
+    private readonly ObserverMutex _mutex = new();
+    
+    // PL properties
     private readonly int _userId = s_bl.Admin.GetConfig().AdminId;
-    private readonly ObserverMutex _mutex = new(); //stage 7
     bool _isObserverRegistered;
     private int _courierId;
+
+    // dependency properties
+    public static readonly DependencyProperty ButtonTextProperty =
+        DependencyProperty.Register("ButtonText", typeof(string), typeof(CourierWindow));
+
+    public static readonly DependencyProperty IsUpdateModeProperty =
+       DependencyProperty.Register("IsUpdateMode", typeof(bool), typeof(CourierWindow), new PropertyMetadata(false));
+
+    public static readonly DependencyProperty CurrentCourierProperty =
+       DependencyProperty.Register("CurrentCourier", typeof(BO.Courier), typeof(CourierWindow), new PropertyMetadata(null));
+
+
+    /// <summary>
+    /// Gets or sets the text displayed on the action button (Add/Update).
+    /// </summary>
+    public string ButtonText
+    {
+        get { return (string)GetValue(ButtonTextProperty); }
+        set { SetValue(ButtonTextProperty, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the control is in update mode.
+    /// </summary>
+    public bool IsUpdateMode
+    {
+        get { return (bool)GetValue(IsUpdateModeProperty); }
+        set { SetValue(IsUpdateModeProperty, value); }
+    }
+
+    /// <summary>
+    /// Gets or sets the currently selected courier.
+    /// </summary>
+    public BO.Courier? CurrentCourier
+    {
+        get { return (BO.Courier?)GetValue(CurrentCourierProperty); }
+        set { SetValue(CurrentCourierProperty, value); }
+    }
+
+   
 
     /// <summary>
     /// Initializes a new instance of the CourierWindow class for adding a new courier or updating an existing one.
@@ -127,44 +167,53 @@ public partial class CourierWindow : Window
         });
     }
 
-    /// <summary>
-    /// Identifies the ButtonText dependency property.
-    /// </summary>
-    /// <remarks>This field is used to register and reference the ButtonText property with the Windows
-    /// Presentation Foundation (WPF) property system. It is typically used when calling methods such as SetValue or
-    /// GetValue on instances of CourierWindow.</remarks>
-    public static readonly DependencyProperty ButtonTextProperty =
-        DependencyProperty.Register("ButtonText", typeof(string), typeof(CourierWindow));
 
     /// <summary>
-    /// Gets or sets the text displayed on the action button (Add/Update).
+    /// Validates the courier data before adding or updating.
     /// </summary>
-    public string ButtonText
+    private static void ValidateCourierOrThrow(BO.Courier courier)
     {
-        get { return (string)GetValue(ButtonTextProperty); }
-        set { SetValue(ButtonTextProperty, value); }
+        if (courier is null)
+            throw new ArgumentNullException(nameof(courier), "Courier cannot be null.");
+
+        // ID validation (if adding, ID should be 0; if updating, ID should be positive)
+        if (courier.Id < 100000000 || courier.Id > 999999999)
+            throw new ArgumentException("Courier ID needs to have 9 digits", nameof(courier.Id));
+
+        // Full Name
+        if (string.IsNullOrWhiteSpace(courier.FullName))
+            throw new ArgumentException("Full Name is required.", nameof(courier.FullName));
+
+        // Phone Number Validations
+        if (string.IsNullOrWhiteSpace(courier.PhoneNumber))
+            throw new ArgumentException("Phone Number is required.", nameof(courier.PhoneNumber));
+
+        if (!courier.PhoneNumber.All(char.IsDigit))
+            throw new ArgumentException("Phone Number must contain only digits.", nameof(courier.PhoneNumber));
+
+        if (courier.PhoneNumber.Length != 10)
+            throw new ArgumentException("Phone Number must be exactly 10 digits long.", nameof(courier.PhoneNumber));
+
+        if (!courier.PhoneNumber.StartsWith("05"))
+            throw new ArgumentException("Phone Number must start with '05'.", nameof(courier.PhoneNumber));
+
+        // Email
+        if (string.IsNullOrWhiteSpace(courier.Email))
+            throw new ArgumentException("Email is required.", nameof(courier.Email));
+
+        // Max Distance
+        if (courier.MaxDist is null || courier.MaxDist <= 0)
+            throw new ArgumentException("Max Distance must be a positive number.", nameof(courier.MaxDist));
+
+        // Employment Start Date
+        if (courier.EmploymentStartDate is null)
+            throw new ArgumentException("Employment Start Date is required.", nameof(courier.EmploymentStartDate));
+
+        // Shipping Method
+        if (courier.ShippingMethod is null || courier.ShippingMethod == BO.ShippingMethod.None)
+            throw new ArgumentException("Shipping Method is required.", nameof(courier.ShippingMethod));
     }
 
-    public bool IsUpdateMode
-    {
-        get { return (bool)GetValue(IsUpdateModeProperty); }
-        set { SetValue(IsUpdateModeProperty, value); }
-    }
-
-    public static readonly DependencyProperty IsUpdateModeProperty =
-        DependencyProperty.Register("IsUpdateMode", typeof(bool), typeof(CourierWindow), new PropertyMetadata(false));
-
-    /// <summary>
-    /// Gets or sets the currently selected courier.
-    /// </summary>
-    public BO.Courier? CurrentCourier
-    {
-        get { return (BO.Courier?)GetValue(CurrentCourierProperty); }
-        set { SetValue(CurrentCourierProperty, value); }
-    }
-
-    public static readonly DependencyProperty CurrentCourierProperty =
-        DependencyProperty.Register("CurrentCourier", typeof(BO.Courier), typeof(CourierWindow), new PropertyMetadata(null));
 
     /// <summary>
     /// Handles both adding and updating courier information.
@@ -193,43 +242,6 @@ public partial class CourierWindow : Window
         {
             MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
-    }
-
-    /// <summary>
-    /// Validates the courier data before adding or updating.
-    /// </summary>
-    private static void ValidateCourierOrThrow(BO.Courier courier)
-    {
-        if (courier is null)
-            throw new ArgumentNullException(nameof(courier), "Courier cannot be null.");
-
-        // ID validation (if adding, ID should be 0; if updating, ID should be positive)
-        if (courier.Id < 0)
-            throw new ArgumentException("Courier ID cannot be negative.", nameof(courier.Id));
-
-        // Full Name
-        if (string.IsNullOrWhiteSpace(courier.FullName))
-            throw new ArgumentException("Full Name is required.", nameof(courier.FullName));
-
-        // Phone Number
-        if (string.IsNullOrWhiteSpace(courier.PhoneNumber))
-            throw new ArgumentException("Phone Number is required.", nameof(courier.PhoneNumber));
-
-        // Email
-        if (string.IsNullOrWhiteSpace(courier.Email))
-            throw new ArgumentException("Email is required.", nameof(courier.Email));
-
-        // Max Distance
-        if (courier.MaxDist is null || courier.MaxDist <= 0)
-            throw new ArgumentException("Max Distance must be a positive number.", nameof(courier.MaxDist));
-
-        // Employment Start Date
-        if (courier.EmploymentStartDate is null)
-            throw new ArgumentException("Employment Start Date is required.", nameof(courier.EmploymentStartDate));
-
-        // Shipping Method
-        if (courier.ShippingMethod is null || courier.ShippingMethod == BO.ShippingMethod.None)
-            throw new ArgumentException("Shipping Method is required.", nameof(courier.ShippingMethod));
     }
 
     /// <summary>

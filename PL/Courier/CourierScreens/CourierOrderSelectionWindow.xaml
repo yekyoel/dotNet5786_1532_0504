@@ -29,7 +29,6 @@
 
         <DataGrid Grid.Row="1"
                   ItemsSource="{Binding OpenOrders}"
-                  SelectedItem="{Binding SelectedOrder}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True">
             <DataGrid.Columns>

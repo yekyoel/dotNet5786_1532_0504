@@ -2,502 +2,172 @@
 <deliveries.xml>
   <Delivery>
     <Id>1</Id>
-    <OrderId>49</OrderId>
-    <CourierId>338678939</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:20:45</DeliveryStartTime>
-    <Distance>0.28</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:24:05.16</DeliveryEndTime>
+    <OrderId>39</OrderId>
+    <CourierId>351697332</CourierId>
+    <ShippingMethod>OnFoot</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:12:45</DeliveryStartTime>
+    <Distance>3.69</Distance>
+    <End>Failed</End>
+    <DeliveryEndTime>2026-01-18T01:57:01.8</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>2</Id>
-    <OrderId>24</OrderId>
-    <CourierId>331811585</CourierId>
-    <ShippingMethod>Car</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:16:45</DeliveryStartTime>
-    <Distance>4.03</Distance>
-    <End>Failed</End>
-    <DeliveryEndTime>2026-01-07T22:26:12.2571428</DeliveryEndTime>
+    <OrderId>35</OrderId>
+    <CourierId>394435170</CourierId>
+    <ShippingMethod>Bike</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:08:45</DeliveryStartTime>
+    <Distance>6.67</Distance>
+    <End>Delivered</End>
+    <DeliveryEndTime>2026-01-18T01:46:25.8</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>3</Id>
-    <OrderId>32</OrderId>
-    <CourierId>338678939</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:25:45</DeliveryStartTime>
+    <OrderId>29</OrderId>
+    <CourierId>224550834</CourierId>
+    <ShippingMethod>Car</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:00:45</DeliveryStartTime>
     <Distance>8.11</Distance>
     <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:50:28.9199999</DeliveryEndTime>
+    <DeliveryEndTime>2026-01-18T01:17:42.0857142</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>4</Id>
-    <OrderId>41</OrderId>
-    <CourierId>207125491</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:25:45</DeliveryStartTime>
-    <Distance>1.53</Distance>
+    <OrderId>44</OrderId>
+    <CourierId>328333189</CourierId>
+    <ShippingMethod>Motorcycle</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:08:45</DeliveryStartTime>
+    <Distance>5.08</Distance>
     <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:48:52.2</DeliveryEndTime>
+    <DeliveryEndTime>2026-01-18T01:31:50.76</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>5</Id>
-    <OrderId>20</OrderId>
-    <CourierId>346510287</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:20:45</DeliveryStartTime>
-    <Distance>6.67</Distance>
+    <OrderId>8</OrderId>
+    <CourierId>235960583</CourierId>
+    <ShippingMethod>Motorcycle</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:10:45</DeliveryStartTime>
+    <Distance>4.03</Distance>
     <End>Refused</End>
     <DeliveryEndTime />
   </Delivery>
   <Delivery>
     <Id>6</Id>
-    <OrderId>34</OrderId>
-    <CourierId>226109281</CourierId>
-    <ShippingMethod>Car</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:26:45</DeliveryStartTime>
-    <Distance>6.67</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:45:28.0285714</DeliveryEndTime>
+    <OrderId>38</OrderId>
+    <CourierId>337206829</CourierId>
+    <ShippingMethod>Bike</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:07:45</DeliveryStartTime>
+    <Distance>3.69</Distance>
+    <End>Cancelled</End>
+    <DeliveryEndTime>2026-01-18T01:22:30.6</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>7</Id>
-    <OrderId>23</OrderId>
-    <CourierId>331811585</CourierId>
-    <ShippingMethod>Car</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:20:45</DeliveryStartTime>
-    <Distance>3.69</Distance>
+    <OrderId>11</OrderId>
+    <CourierId>310232886</CourierId>
+    <ShippingMethod>Motorcycle</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:07:45</DeliveryStartTime>
+    <Distance>1.53</Distance>
     <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:37:54.7714285</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>8</Id>
-    <OrderId>40</OrderId>
-    <CourierId>364458885</CourierId>
-    <ShippingMethod>OnFoot</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:18:45</DeliveryStartTime>
-    <Distance>5.08</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T23:28:42.6</DeliveryEndTime>
+    <DeliveryEndTime>2026-01-18T01:24:35.16</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>9</Id>
-    <OrderId>5</OrderId>
-    <CourierId>346510287</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:14:45</DeliveryStartTime>
-    <Distance>1.53</Distance>
+    <OrderId>32</OrderId>
+    <CourierId>336246202</CourierId>
+    <ShippingMethod>Motorcycle</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:10:45</DeliveryStartTime>
+    <Distance>2.07</Distance>
     <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:32:52.2</DeliveryEndTime>
+    <DeliveryEndTime>2026-01-18T01:31:14.04</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>10</Id>
-    <OrderId>28</OrderId>
-    <CourierId>359608191</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:17:45</DeliveryStartTime>
-    <Distance>1.53</Distance>
+    <OrderId>48</OrderId>
+    <CourierId>217109866</CourierId>
+    <ShippingMethod>OnFoot</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:15:45</DeliveryStartTime>
+    <Distance>4.03</Distance>
     <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:28:52.2</DeliveryEndTime>
+    <DeliveryEndTime>2026-01-18T02:05:06.6</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>11</Id>
-    <OrderId>30</OrderId>
-    <CourierId>300792006</CourierId>
+    <OrderId>4</OrderId>
+    <CourierId>340254271</CourierId>
     <ShippingMethod>Car</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:15:45</DeliveryStartTime>
-    <Distance>2.07</Distance>
+    <DeliveryStartTime>2026-01-18T01:06:45</DeliveryStartTime>
+    <Distance>4.03</Distance>
     <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:30:31.4571428</DeliveryEndTime>
+    <DeliveryEndTime>2026-01-18T01:21:12.2571428</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>12</Id>
-    <OrderId>39</OrderId>
-    <CourierId>297997308</CourierId>
-    <ShippingMethod>OnFoot</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:26:45</DeliveryStartTime>
-    <Distance>2.38</Distance>
+    <OrderId>18</OrderId>
+    <CourierId>247216694</CourierId>
+    <ShippingMethod>Bike</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:08:45</DeliveryStartTime>
+    <Distance>3.69</Distance>
     <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T23:14:18.6</DeliveryEndTime>
+    <DeliveryEndTime>2026-01-18T01:43:30.6</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>13</Id>
-    <OrderId>12</OrderId>
-    <CourierId>247856524</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:22:45</DeliveryStartTime>
+    <OrderId>28</OrderId>
+    <CourierId>320908647</CourierId>
+    <ShippingMethod>OnFoot</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:15:45</DeliveryStartTime>
     <Distance>2.05</Distance>
     <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:35:57</DeliveryEndTime>
+    <DeliveryEndTime>2026-01-18T01:42:21</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>14</Id>
-    <OrderId>31</OrderId>
-    <CourierId>312122784</CourierId>
+    <OrderId>15</OrderId>
+    <CourierId>359276423</CourierId>
     <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:22:45</DeliveryStartTime>
-    <Distance>2.38</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:31:36.3599999</DeliveryEndTime>
+    <DeliveryStartTime>2026-01-18T01:15:45</DeliveryStartTime>
+    <Distance>6.67</Distance>
+    <End>Refused</End>
+    <DeliveryEndTime />
   </Delivery>
   <Delivery>
     <Id>15</Id>
-    <OrderId>14</OrderId>
-    <CourierId>247856524</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:25:45</DeliveryStartTime>
-    <Distance>2.05</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:50:57</DeliveryEndTime>
+    <OrderId>25</OrderId>
+    <CourierId>338173141</CourierId>
+    <ShippingMethod>Car</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:10:45</DeliveryStartTime>
+    <Distance>4.03</Distance>
+    <End>Cancelled</End>
+    <DeliveryEndTime>2026-01-18T01:17:12.2571428</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>16</Id>
-    <OrderId>2</OrderId>
-    <CourierId>383765324</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:18:45</DeliveryStartTime>
-    <Distance>2.05</Distance>
+    <OrderId>36</OrderId>
+    <CourierId>233916523</CourierId>
+    <ShippingMethod>Car</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:05:45</DeliveryStartTime>
+    <Distance>1.53</Distance>
     <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:41:12.5999999</DeliveryEndTime>
+    <DeliveryEndTime>2026-01-18T01:24:03.6857142</DeliveryEndTime>
+  </Delivery>
+  <Delivery>
+    <Id>8</Id>
+    <OrderId>27</OrderId>
+    <CourierId>220754091</CourierId>
+    <ShippingMethod>Motorcycle</ShippingMethod>
+    <DeliveryStartTime>2026-01-18T01:01:45</DeliveryStartTime>
+    <Distance>1.53</Distance>
+    <End>Delivered</End>
+    <DeliveryEndTime>2026-01-18T00:41:02.8019246+02:00</DeliveryEndTime>
   </Delivery>
   <Delivery>
     <Id>17</Id>
-    <OrderId>19</OrderId>
-    <CourierId>331811585</CourierId>
-    <ShippingMethod>Car</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:27:45</DeliveryStartTime>
-    <Distance>0.28</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:47:59.4</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>18</Id>
-    <OrderId>13</OrderId>
-    <CourierId>317375231</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:18:45</DeliveryStartTime>
-    <Distance>4.03</Distance>
-    <End>Refused</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>19</Id>
-    <OrderId>7</OrderId>
-    <CourierId>247856524</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:17:45</DeliveryStartTime>
-    <Distance>8.11</Distance>
-    <End>Pending</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>20</Id>
-    <OrderId>37</OrderId>
-    <CourierId>338678939</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:20:45</DeliveryStartTime>
-    <Distance>2.38</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:37:36.3599999</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>21</Id>
-    <OrderId>43</OrderId>
-    <CourierId>346510287</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:29:45</DeliveryStartTime>
-    <Distance>5.08</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:58:04.2</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>22</Id>
-    <OrderId>3</OrderId>
-    <CourierId>359608191</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:22:45</DeliveryStartTime>
-    <Distance>1.53</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:33:52.2</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>23</Id>
-    <OrderId>29</OrderId>
-    <CourierId>247856524</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:27:45</DeliveryStartTime>
-    <Distance>6.67</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:59:25.8</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>24</Id>
-    <OrderId>10</OrderId>
-    <CourierId>364458885</CourierId>
-    <ShippingMethod>OnFoot</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:17:45</DeliveryStartTime>
-    <Distance>2.07</Distance>
-    <End>Refused</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>25</Id>
-    <OrderId>26</OrderId>
-    <CourierId>346510287</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:14:45</DeliveryStartTime>
-    <Distance>0.28</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:27:52.2</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>26</Id>
-    <OrderId>33</OrderId>
-    <CourierId>300792006</CourierId>
-    <ShippingMethod>Car</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:24:45</DeliveryStartTime>
-    <Distance>6.67</Distance>
-    <End>Refused</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>27</Id>
-    <OrderId>6</OrderId>
-    <CourierId>364458885</CourierId>
-    <ShippingMethod>OnFoot</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:17:45</DeliveryStartTime>
-    <Distance>1.53</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:50:06.6</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>28</Id>
-    <OrderId>38</OrderId>
-    <CourierId>312122784</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:25:45</DeliveryStartTime>
-    <Distance>2.38</Distance>
-    <End>Refused</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>29</Id>
-    <OrderId>11</OrderId>
-    <CourierId>312122784</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:14:45</DeliveryStartTime>
-    <Distance>8.11</Distance>
-    <End>Pending</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>30</Id>
-    <OrderId>18</OrderId>
-    <CourierId>300792006</CourierId>
-    <ShippingMethod>Car</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:28:45</DeliveryStartTime>
-    <Distance>6.67</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:48:28.0285714</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>31</Id>
-    <OrderId>45</OrderId>
-    <CourierId>317375231</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:14:45</DeliveryStartTime>
-    <Distance>2.07</Distance>
-    <End>Pending</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>32</Id>
-    <OrderId>36</OrderId>
-    <CourierId>346510287</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:26:45</DeliveryStartTime>
-    <Distance>3.69</Distance>
-    <End>Refused</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>33</Id>
-    <OrderId>15</OrderId>
-    <CourierId>226109281</CourierId>
-    <ShippingMethod>Car</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:15:45</DeliveryStartTime>
-    <Distance>4.03</Distance>
-    <End>Refused</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>34</Id>
     <OrderId>1</OrderId>
-    <CourierId>275358424</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:23:45</DeliveryStartTime>
-    <Distance>2.38</Distance>
+    <CourierId>220754091</CourierId>
+    <ShippingMethod />
+    <DeliveryStartTime>2026-01-18T00:40:45</DeliveryStartTime>
+    <Distance>1.5315706776719225</Distance>
     <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:40:36.3599999</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>35</Id>
-    <OrderId>9</OrderId>
-    <CourierId>275358424</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:26:45</DeliveryStartTime>
-    <Distance>0.28</Distance>
-    <End>Cancelled</End>
-    <DeliveryEndTime>2026-01-07T22:27:05.16</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>36</Id>
-    <OrderId>47</OrderId>
-    <CourierId>346510287</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:15:45</DeliveryStartTime>
-    <Distance>2.05</Distance>
-    <End>Cancelled</End>
-    <DeliveryEndTime>2026-01-07T22:34:57</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>37</Id>
-    <OrderId>48</OrderId>
-    <CourierId>383765324</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:15:45</DeliveryStartTime>
-    <Distance>2.38</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:29:36.3599999</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>38</Id>
-    <OrderId>25</OrderId>
-    <CourierId>346510287</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:19:45</DeliveryStartTime>
-    <Distance>6.67</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:49:25.8</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>39</Id>
-    <OrderId>44</OrderId>
-    <CourierId>359608191</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:17:45</DeliveryStartTime>
-    <Distance>2.05</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:44:57</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>40</Id>
-    <OrderId>17</OrderId>
-    <CourierId>300792006</CourierId>
-    <ShippingMethod>Car</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:23:45</DeliveryStartTime>
-    <Distance>3.69</Distance>
-    <End>Refused</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>41</Id>
-    <OrderId>16</OrderId>
-    <CourierId>331811585</CourierId>
-    <ShippingMethod>Car</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:28:45</DeliveryStartTime>
-    <Distance>6.67</Distance>
-    <End>Refused</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>42</Id>
-    <OrderId>42</OrderId>
-    <CourierId>346510287</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:15:45</DeliveryStartTime>
-    <Distance>5.08</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:43:04.2</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>43</Id>
-    <OrderId>21</OrderId>
-    <CourierId>317375231</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:27:45</DeliveryStartTime>
-    <Distance>5.08</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:47:50.76</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>44</Id>
-    <OrderId>22</OrderId>
-    <CourierId>300792006</CourierId>
-    <ShippingMethod>Car</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:17:45</DeliveryStartTime>
-    <Distance>5.08</Distance>
-    <End>Refused</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>45</Id>
-    <OrderId>27</OrderId>
-    <CourierId>383765324</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:15:45</DeliveryStartTime>
-    <Distance>2.38</Distance>
-    <End>Pending</End>
-    <DeliveryEndTime />
-  </Delivery>
-  <Delivery>
-    <Id>46</Id>
-    <OrderId>46</OrderId>
-    <CourierId>207125491</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:27:45</DeliveryStartTime>
-    <Distance>8.11</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T23:00:11.4</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>47</Id>
-    <OrderId>8</OrderId>
-    <CourierId>359608191</CourierId>
-    <ShippingMethod>Bike</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:24:45</DeliveryStartTime>
-    <Distance>5.08</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:50:04.2</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>48</Id>
-    <OrderId>4</OrderId>
-    <CourierId>317375231</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:16:45</DeliveryStartTime>
-    <Distance>4.03</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:39:35.16</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>49</Id>
-    <OrderId>35</OrderId>
-    <CourierId>338678939</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:15:45</DeliveryStartTime>
-    <Distance>2.07</Distance>
-    <End>Delivered</End>
-    <DeliveryEndTime>2026-01-07T22:19:14.04</DeliveryEndTime>
-  </Delivery>
-  <Delivery>
-    <Id>50</Id>
-    <OrderId>50</OrderId>
-    <CourierId>338678939</CourierId>
-    <ShippingMethod>Motorcycle</ShippingMethod>
-    <DeliveryStartTime>2026-01-07T22:27:45</DeliveryStartTime>
-    <Distance>5.08</Distance>
-    <End>Failed</End>
-    <DeliveryEndTime>2026-01-07T22:51:50.76</DeliveryEndTime>
+    <DeliveryEndTime>2026-01-18T00:41:59.0162814+02:00</DeliveryEndTime>
   </Delivery>
 </deliveries.xml>

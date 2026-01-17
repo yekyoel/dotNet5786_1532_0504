@@ -252,7 +252,8 @@
               Background="#80000000"
               Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                <ProgressBar IsIndeterminate="True"
+                <ProgressBar IsIndeterminate="False"
+                             Minimum="1" Maximum="100" Value="50"
                              Width="200"
                              Height="20" />
                 <TextBlock Text="Processing..."

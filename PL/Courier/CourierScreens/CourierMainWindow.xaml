@@ -94,8 +94,7 @@
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                             <Label Content="Full Name:" Style="{StaticResource LabelStyle}"/>
                             <TextBox Style="{StaticResource TextBoxStyle}"
-                                     IsReadOnly="True"
-                                     Text="{Binding CurrentCourier.FullName, Mode=OneWay}"/>
+                                     Text="{Binding CurrentCourier.FullName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
