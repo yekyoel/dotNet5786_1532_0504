@@ -217,6 +217,7 @@ public partial class CourierMainWindow : Window
             throw new InvalidOperationException("Cannot change Shipping Method while an order is in progress.");
 
         // Apply allowed fields
+        target.FullName = source.FullName; 
         target.PhoneNumber = source.PhoneNumber;
         target.Email = source.Email;
         target.MaxDist = source.MaxDist;
