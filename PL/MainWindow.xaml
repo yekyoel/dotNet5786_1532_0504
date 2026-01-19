@@ -19,8 +19,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="80*"/>
-            <RowDefinition Height="170*"/>
-            <RowDefinition Height="350*"/>
+            <RowDefinition Height="210*"/>
+            <RowDefinition Height="310*"/>
             <RowDefinition Height="60*"/>
         </Grid.RowDefinitions>
 
@@ -61,22 +61,22 @@
         <Grid Grid.Row="1" Margin="20">
             <Border Style="{StaticResource CardStyle}">
                 <StackPanel>
-                    <TextBlock Text="Order Summary" FontSize="15" FontWeight="Bold" Margin="0,0,0,8"/>
+                    <TextBlock Text="Order Summary" FontSize="16" FontWeight="Bold" Margin="0,0,0,8"/>
 
                     <UniformGrid Columns="4" Rows="3" Margin="0,10,0,0">
-                        <Button Content="{Binding OpenOnTimeText}" Margin="10" Click="BtnOpenOnTime_Click" FontSize="14" Height="20"/>
+                        <Button Content="{Binding OpenOnTimeText}" Margin="6" Click="BtnOpenOnTime_Click" FontSize="11" Height="16"/>
 
-                        <Button Content="{Binding InProgressOnTimeText}" Margin="10" Click="BtnInProgressOnTime_Click" FontSize="14" Height="20"/>
-                        <Button Content="{Binding InProgressLateText}" Margin="10" Click="BtnInProgressLate_Click" FontSize="14" Height="20"/>
+                        <Button Content="{Binding InProgressOnTimeText}" Margin="6" Click="BtnInProgressOnTime_Click" FontSize="11" Height="16"/>
+                        <Button Content="{Binding InProgressLateText}" Margin="6" Click="BtnInProgressLate_Click" FontSize="11" Height="16"/>
 
-                        <Button Content="{Binding CompletedOnTimeText}" Margin="10" Click="BtnCompletedOnTime_Click" FontSize="14" Height="20"/>
-                        <Button Content="{Binding CompletedLateText}" Margin="10" Click="BtnCompletedLate_Click" FontSize="14" Height="20"/>
+                        <Button Content="{Binding CompletedOnTimeText}" Margin="6" Click="BtnCompletedOnTime_Click" FontSize="11" Height="16"/>
+                        <Button Content="{Binding CompletedLateText}" Margin="6" Click="BtnCompletedLate_Click" FontSize="11" Height="16"/>
 
-                        <Button Content="{Binding RejectedOnTimeText}" Margin="10" Click="BtnRejectedOnTime_Click" FontSize="14" Height="20"/>
-                        <Button Content="{Binding RejectedLateText}" Margin="10" Click="BtnRejectedLate_Click" FontSize="14" Height="20"/>
+                        <Button Content="{Binding RejectedOnTimeText}" Margin="6" Click="BtnRejectedOnTime_Click" FontSize="11" Height="16"/>
+                        <Button Content="{Binding RejectedLateText}" Margin="6" Click="BtnRejectedLate_Click" FontSize="11" Height="16"/>
 
-                        <Button Content="{Binding CancelledOnTimeText}" Margin="10" Click="BtnCancelledOnTime_Click" FontSize="14" Height="20"/>
-                        <Button Content="{Binding CancelledLateText}" Margin="10" Click="BtnCancelledLate_Click" FontSize="14" Height="20"/>
+                        <Button Content="{Binding CancelledOnTimeText}" Margin="6" Click="BtnCancelledOnTime_Click" FontSize="11" Height="16"/>
+                        <Button Content="{Binding CancelledLateText}" Margin="6" Click="BtnCancelledLate_Click" FontSize="11" Height="16"/>
                     </UniformGrid>
                 </StackPanel>
             </Border>
