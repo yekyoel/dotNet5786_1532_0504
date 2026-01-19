@@ -343,6 +343,8 @@ internal static class OrderManager
             Observers.NotifyItemUpdated(orderId);
             Observers.NotifyListUpdated();
             CourierManager.Observers.NotifyItemUpdated(courierId);
+            CourierManager.Observers.NotifyListUpdated();
+            OrderManager.Observers.NotifyListUpdated();
             return;
         }
 
@@ -364,6 +366,8 @@ internal static class OrderManager
             Observers.NotifyItemUpdated(orderId);
             Observers.NotifyListUpdated();
             CourierManager.Observers.NotifyItemUpdated(courierId);
+            CourierManager.Observers.NotifyListUpdated();
+            OrderManager.Observers.NotifyListUpdated();
         }
     }
 

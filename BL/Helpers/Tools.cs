@@ -77,19 +77,26 @@ internal static class Tools
         if (delivery == null)
             return BO.OrderStatus.Open; // No delivery = Open
 
-        if (delivery.ShippingMethod == null)
-            return BO.OrderStatus.InProgress; // Delivery exists but not assigned yet
-
-        // Check the completion type for final statuses
-        return delivery.End switch
+        // If delivery is completed, reflect final status regardless of ShippingMethod
+        if (delivery.DeliveryEndTime.HasValue)
         {
-            DO.CompletionType.Pending => BO.OrderStatus.InProgress,
-            DO.CompletionType.Refused => BO.OrderStatus.Rejected,
-            DO.CompletionType.Delivered => BO.OrderStatus.Completed,
-            DO.CompletionType.Cancelled => BO.OrderStatus.Cancelled,
-            DO.CompletionType.Failed => BO.OrderStatus.Rejected,
-            _ => null
-        };
+            return delivery.End switch
+            {
+                DO.CompletionType.Refused => BO.OrderStatus.Rejected,
+                DO.CompletionType.Delivered => BO.OrderStatus.Completed,
+                DO.CompletionType.Cancelled => BO.OrderStatus.Cancelled,
+                DO.CompletionType.Failed => BO.OrderStatus.Rejected,
+                DO.CompletionType.Pending => BO.OrderStatus.InProgress,
+                _ => null
+            };
+        }
+
+        // Not completed yet
+        if (delivery.ShippingMethod == null)
+            return BO.OrderStatus.InProgress; // Exists but not assigned/started
+
+        // Otherwise still in progress (assigned)
+        return BO.OrderStatus.InProgress;
     }
 
     /// <summary>
@@ -107,9 +114,10 @@ internal static class Tools
     {
         var delivery = DeliveryManager.GetDeliveryByOrderId(order.Id);
         
-        if (delivery == null || delivery.ShippingMethod == null)
-            return null; // No delivery or no shipping method assigned yet
-        
+        // If no delivery, cannot determine schedule
+        if (delivery == null)
+            return null;
+
         // Get config for time calculations
         var config = AdminManager.GetConfig();
         if (config == null)
@@ -124,16 +132,15 @@ internal static class Tools
         DateTime expectedDeliveryTime = orderTime.Add(maxDelTime);
         DateTime riskThresholdTime = expectedDeliveryTime.Subtract(riskRange);
         
-        // If delivery is completed, check if it was on time
+        // If delivery is completed, check if it was on time (regardless of ShippingMethod)
         if (delivery.DeliveryEndTime.HasValue)
         {
-            if (delivery.DeliveryEndTime.Value <= expectedDeliveryTime)
-                return BO.ScheduleStatus.OnTime;
-            else
-                return BO.ScheduleStatus.Late;
+            return delivery.DeliveryEndTime.Value <= expectedDeliveryTime
+                ? BO.ScheduleStatus.OnTime
+                : BO.ScheduleStatus.Late;
         }
-        
-        // Delivery is still in progress - check current time against thresholds
+
+        // If shipping method not assigned yet, we still can compute schedule against thresholds
         if (currentTime <= riskThresholdTime)
             return BO.ScheduleStatus.OnTime; // Still within safe window
         else if (currentTime <= expectedDeliveryTime)
@@ -272,6 +279,20 @@ internal static class Tools
         };
     }
 
+    internal static DO.CompletionType? SwitchCompletionTypeTODO(BO.CompletionType? completionType)
+    {
+        return completionType switch
+        {
+            BO.CompletionType.Pending => DO.CompletionType.Pending,
+            BO.CompletionType.Refused => DO.CompletionType.Refused,
+            BO.CompletionType.Delivered => DO.CompletionType.Delivered,
+            BO.CompletionType.Cancelled => DO.CompletionType.Cancelled,
+            BO.CompletionType.Failed => DO.CompletionType.Failed,
+            null => null,
+            _ => null
+        };
+    }
+
     /// <summary>
     /// Calculates expected delivery time based on order placement, distance, and courier shipping method.
     /// Formula: OrderPlacedTime + DeliveryDuration + 10 min buffer
@@ -313,9 +334,9 @@ internal static class Tools
         // Calculate delivery duration in hours
         double durationHours = distanceKm / speedKmh;
 
-        // Expected time = order time + duration + 10 min buffer
+        // Expected time = order time + duration + 5 min buffer
         TimeSpan deliverySpan = TimeSpan.FromHours(durationHours);
-        TimeSpan bufferSpan = TimeSpan.FromMinutes(10);
+        TimeSpan bufferSpan = TimeSpan.FromMinutes(5);
 
         return orderTime.Add(deliverySpan).Add(bufferSpan);
     }

@@ -134,37 +134,16 @@ internal static class DeliveryManager
     }
 
     /// <summary>
-    /// Marks the specified delivery as completed and updates its status to delivered.
+    /// Marks the specified delivery as completed and updates its completion type and end time.
     /// </summary>
+    /// <remarks>This method updates the delivery record and notifies observers of the delivery, related
+    /// order, and courier. The operation is thread-safe.</remarks>
     /// <param name="deliveryId">The unique identifier of the delivery to complete.</param>
+    /// <param name="completionType">The type of completion to assign to the delivery, or null to use the default completion type.</param>
     /// <exception cref="KeyNotFoundException">Thrown if a delivery with the specified deliveryId does not exist.</exception>
-    internal static void CompleteDelivery(int deliveryId)
+    internal static void CompleteDelivery(int deliveryId, BO.CompletionType? completionType)
     {
-        DO.Delivery? delivery;
-        lock(AdminManager.BlMutex)
-            delivery = s_dal.Delivery.Read(deliveryId);
-
-        if (delivery == null)
-            throw new KeyNotFoundException($"Delivery with ID {deliveryId} not found");
-        var updated = delivery with 
-        {
-            End = DO.CompletionType.Delivered,
-            DeliveryEndTime = DateTime.Now
-        };
-        lock (AdminManager.BlMutex)
-            s_dal.Delivery.Update(updated);
-
-        // notify observers: delivery, related order, and courier
-        Observers.NotifyItemUpdated(updated.Id);
-        Observers.NotifyListUpdated();
-        OrderManager.Observers.NotifyItemUpdated(updated.OrderId);
-        OrderManager.Observers.NotifyListUpdated();
-        if (updated.CourierId > 0)
-            CourierManager.Observers.NotifyItemUpdated(updated.CourierId);
-    }
-
-    internal static void CompleteDelivery(int deliveryId, DO.CompletionType completionType)
-    {
+        var compType = Tools.SwitchCompletionTypeTODO(completionType);
         DO.Delivery? delivery;
         lock (AdminManager.BlMutex)
             delivery = s_dal.Delivery.Read(deliveryId);
@@ -173,7 +152,7 @@ internal static class DeliveryManager
             throw new KeyNotFoundException($"Delivery with ID {deliveryId} not found");
         var updated = delivery with
         {
-            End = completionType,
+            End = compType,
             DeliveryEndTime = DateTime.Now
         };
         lock (AdminManager.BlMutex)
@@ -185,7 +164,10 @@ internal static class DeliveryManager
         OrderManager.Observers.NotifyItemUpdated(updated.OrderId);
         OrderManager.Observers.NotifyListUpdated();
         if (updated.CourierId > 0)
+        {
             CourierManager.Observers.NotifyItemUpdated(updated.CourierId);
+            CourierManager.Observers.NotifyListUpdated();
+        }
     }
 
 }

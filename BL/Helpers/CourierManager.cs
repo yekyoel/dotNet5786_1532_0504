@@ -598,7 +598,8 @@ internal static class CourierManager
 
                     try
                     {
-                        DeliveryManager.CompleteDelivery(orderInProg.DeliveryId, completionType);
+                        var compType = Tools.SwitchCompletionTypeTOBO(completionType);
+                        DeliveryManager.CompleteDelivery(orderInProg.DeliveryId, compType);
                     }
                     catch
                     {

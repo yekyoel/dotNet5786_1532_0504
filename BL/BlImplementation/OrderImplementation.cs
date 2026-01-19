@@ -236,13 +236,14 @@ internal class OrderImplementation : IOrder
     /// <exception cref="InvalidOperationException">Thrown if <paramref name="userId"/> does not match <paramref name="courierId"/>, indicating the user is not
     /// authorized to complete the delivery.</exception>
    
-    public void OrderComplete(int userId, int courierId, int deliveryId)
+    public void OrderComplete(int userId, int courierId, int deliveryId ,BO.CompletionType compType)
     {
         AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
 
+        
         if (userId == courierId)
         {
-            Helpers.DeliveryManager.CompleteDelivery(deliveryId);
+            Helpers.DeliveryManager.CompleteDelivery(deliveryId, compType);
         }
         else
         {

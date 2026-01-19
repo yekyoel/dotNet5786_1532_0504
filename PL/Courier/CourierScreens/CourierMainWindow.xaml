@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PL.Courier.CourierScreens"
         mc:Ignorable="d"
-        Title="Courier"
+        Title="Courier Main Window"
         Height="650"
         Width="900"
         DataContext="{Binding RelativeSource={RelativeSource Mode=Self}}"

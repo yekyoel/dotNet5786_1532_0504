@@ -413,7 +413,7 @@ public static  class Initialization
 
             // determine end time if applicable
             DateTime? endTime = null;
-            if (completion == CompletionType.Delivered || completion == CompletionType.Cancelled || completion == CompletionType.Failed ) //|| completion == CompletionType.Refused
+            if (completion == CompletionType.Delivered || completion == CompletionType.Cancelled || completion == CompletionType.Failed || completion == CompletionType.Refused)
             {
                 // finish time = start + estimatedDuration + small random extra minutes
                 endTime = start + estimatedDuration + TimeSpan.FromMinutes(s_rand.Next(0, 3));

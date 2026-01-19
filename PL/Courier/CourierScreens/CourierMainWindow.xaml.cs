@@ -55,6 +55,7 @@ public partial class CourierMainWindow : Window
     public static readonly DependencyPropertyKey CompletionTypesKey =
         DependencyProperty.RegisterReadOnly(nameof(CompletionTypes), typeof(IEnumerable<BO.CompletionType>), typeof(CourierMainWindow), new PropertyMetadata(Enum.GetValues<BO.CompletionType>()));
     public static readonly DependencyProperty CompletionTypesProperty = CompletionTypesKey.DependencyProperty;
+
     public IEnumerable<BO.CompletionType> CompletionTypes => (IEnumerable<BO.CompletionType>)GetValue(CompletionTypesProperty);
 
     // Helper wrappers for logic properties that depend on CurrentCourier
@@ -247,9 +248,8 @@ public partial class CourierMainWindow : Window
         {
             var deliveryId = CurrentCourier.OrderInProg.DeliveryId;
 
-            // BL currently records Delivered regardless of selected type.
-            // This UI allows finishing for any selected completion type.
-            s_bl.Order.OrderComplete(_courierId, _courierId, deliveryId);
+            // Updated to use the selected completion type
+            s_bl.Order.OrderComplete(_courierId, _courierId, deliveryId, SelectedCompletionType);
 
             MessageBox.Show("Order completed successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             await LoadCourierDetailsAsync();

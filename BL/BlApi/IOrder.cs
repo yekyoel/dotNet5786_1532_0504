@@ -16,7 +16,7 @@ public interface IOrder : IObservable
 
     public Task AddOrder(int userId, BO.Order order);
 
-    public void OrderComplete(int userId , int courierId, int deliveryId);
+    public void OrderComplete(int userId , int courierId, int deliveryId, BO.CompletionType compType);
 
     public Task ChooseOrderAsync(int userId , int courierId, int orderId);
     

@@ -115,7 +115,7 @@ public partial class CourierListWindow : Window
     {
         try
         {
-            s_bl?.Courier.AddObserver(_userId, courierListObserver);
+            s_bl?.Courier.AddObserver(courierListObserver);
             queryCourierList();
         }
         catch (Exception ex)
