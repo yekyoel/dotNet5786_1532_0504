@@ -30,29 +30,35 @@ internal class OrderImplementation : IOrder
     public int[] StatusTotal(int userId)
     {
         var adminId = AdminManager.GetConfig().AdminId;
-        if (userId != adminId )
+        if (userId != adminId)
             throw new UnauthorizedAccessException("Only admin can access status totals.");
 
-        var orders = Helpers.OrderManager.GetAllOrders();
+        var orders = Helpers.OrderManager.GetAllOrders(); // get all orders
 
-        int orderStatusCount =
-            Enum.GetValues(typeof(BO.OrderStatus)).Length;
+        var orderStatuses = Enum.GetValues<BO.OrderStatus>(); // get all order statuses
+        var scheduleStatuses = Enum.GetValues<BO.ScheduleStatus>(); // get all schedule statuses
 
-        int scheduleStatusCount =
-            Enum.GetValues(typeof(BO.ScheduleStatus)).Length;
+        int scheduleStatusCount = scheduleStatuses.Length; // number of schedule statuses
+        int[] result = new int[orderStatuses.Length * scheduleStatusCount]; // result array
 
-        int[] result = new int[orderStatusCount * scheduleStatusCount];
+        int Index(BO.OrderStatus os, BO.ScheduleStatus ss) =>
+            (int)os * scheduleStatusCount + (int)ss; // calculate index in result array
 
-        var grouped = orders.GroupBy(o =>
-            (OrderStatus: o.OrderStatus, ScheduleStatus: o.ScheduleStatus));
+        // mandatory grouping
+        var grouped = orders.GroupBy(o => (o.OrderStatus, o.ScheduleStatus))
+            .ToDictionary(g => g.Key, g => g.Count());
 
-        foreach (var group in grouped)
+        // fill all enum combinations (including ones with 0 orders)
+        foreach (var os in orderStatuses)
         {
-            int index =
-                (int)group.Key.OrderStatus * scheduleStatusCount
-              + (int)group.Key.ScheduleStatus;
+            foreach (var ss in scheduleStatuses)
+            {
+                int i = Index(os, ss);
+                if ((uint)i >= (uint)result.Length)
+                    continue;
 
-            result[index] = group.Count();
+                result[i] = grouped.TryGetValue((os, ss), out var count) ? count : 0;
+            }
         }
 
         return result;
