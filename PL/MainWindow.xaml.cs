@@ -65,24 +65,6 @@ public partial class MainWindow : Window
         set => SetValue(OpenOnTimeTextProperty, value);
     }
 
-    public static readonly DependencyProperty OpenInRiskTextProperty =
-        DependencyProperty.Register("OpenInRiskText", typeof(string), typeof(MainWindow));
-
-    public string OpenInRiskText
-    {
-        get => (string)GetValue(OpenInRiskTextProperty);
-        set => SetValue(OpenInRiskTextProperty, value);
-    }
-
-    public static readonly DependencyProperty OpenLateTextProperty =
-        DependencyProperty.Register("OpenLateText", typeof(string), typeof(MainWindow));
-
-    public string OpenLateText
-    {
-        get => (string)GetValue(OpenLateTextProperty);
-        set => SetValue(OpenLateTextProperty, value);
-    }
-
     public static readonly DependencyProperty CompletedOnTimeTextProperty =
         DependencyProperty.Register("CompletedOnTimeText", typeof(string), typeof(MainWindow));
 
@@ -99,6 +81,69 @@ public partial class MainWindow : Window
     {
         get => (string)GetValue(CompletedLateTextProperty);
         set => SetValue(CompletedLateTextProperty, value);
+    }
+
+    public static readonly DependencyProperty InProgressOnTimeTextProperty =
+        DependencyProperty.Register("InProgressOnTimeText", typeof(string), typeof(MainWindow));
+
+    public string InProgressOnTimeText
+    {
+        get => (string)GetValue(InProgressOnTimeTextProperty);
+        set => SetValue(InProgressOnTimeTextProperty, value);
+    }
+
+    public static readonly DependencyProperty InProgressInRiskTextProperty =
+        DependencyProperty.Register("InProgressInRiskText", typeof(string), typeof(MainWindow));
+
+    public string InProgressInRiskText
+    {
+        get => (string)GetValue(InProgressInRiskTextProperty);
+        set => SetValue(InProgressInRiskTextProperty, value);
+    }
+
+    public static readonly DependencyProperty InProgressLateTextProperty =
+        DependencyProperty.Register("InProgressLateText", typeof(string), typeof(MainWindow));
+
+    public string InProgressLateText
+    {
+        get => (string)GetValue(InProgressLateTextProperty);
+        set => SetValue(InProgressLateTextProperty, value);
+    }
+
+    public static readonly DependencyProperty RejectedOnTimeTextProperty =
+        DependencyProperty.Register("RejectedOnTimeText", typeof(string), typeof(MainWindow));
+
+    public string RejectedOnTimeText
+    {
+        get => (string)GetValue(RejectedOnTimeTextProperty);
+        set => SetValue(RejectedOnTimeTextProperty, value);
+    }
+
+    public static readonly DependencyProperty RejectedLateTextProperty =
+        DependencyProperty.Register("RejectedLateText", typeof(string), typeof(MainWindow));
+
+    public string RejectedLateText
+    {
+        get => (string)GetValue(RejectedLateTextProperty);
+        set => SetValue(RejectedLateTextProperty, value);
+    }
+
+    public static readonly DependencyProperty CancelledOnTimeTextProperty =
+        DependencyProperty.Register("CancelledOnTimeText", typeof(string), typeof(MainWindow));
+
+    public string CancelledOnTimeText
+    {
+        get => (string)GetValue(CancelledOnTimeTextProperty);
+        set => SetValue(CancelledOnTimeTextProperty, value);
+    }
+
+    public static readonly DependencyProperty CancelledLateTextProperty =
+        DependencyProperty.Register("CancelledLateText", typeof(string), typeof(MainWindow));
+
+    public string CancelledLateText
+    {
+        get => (string)GetValue(CancelledLateTextProperty);
+        set => SetValue(CancelledLateTextProperty, value);
     }
 
     public static readonly DependencyProperty IntervalProperty = 
@@ -298,31 +343,57 @@ public partial class MainWindow : Window
             int adminId = s_bl.Admin.GetConfig().AdminId;
             int[] totals = s_bl.Order.StatusTotal(adminId);
 
-            int orderStatusCount = Enum.GetValues(typeof(BO.OrderStatus)).Length;
             int scheduleStatusCount = Enum.GetValues(typeof(BO.ScheduleStatus)).Length;
 
             int Index(BO.OrderStatus os, BO.ScheduleStatus ss) =>
                 (int)os * scheduleStatusCount + (int)ss;
 
             int openOnTime = totals[Index(BO.OrderStatus.Open, BO.ScheduleStatus.OnTime)];
-            int openInRisk = totals[Index(BO.OrderStatus.Open, BO.ScheduleStatus.InRisk)];
-            int openLate = totals[Index(BO.OrderStatus.Open, BO.ScheduleStatus.Late)];
+
+            int inProgressOnTime = totals[Index(BO.OrderStatus.InProgress, BO.ScheduleStatus.OnTime)];
+            int inProgressInRisk = totals[Index(BO.OrderStatus.InProgress, BO.ScheduleStatus.InRisk)];
+            int inProgressLate = totals[Index(BO.OrderStatus.InProgress, BO.ScheduleStatus.Late)];
+
             int completedOnTime = totals[Index(BO.OrderStatus.Completed, BO.ScheduleStatus.OnTime)];
             int completedLate = totals[Index(BO.OrderStatus.Completed, BO.ScheduleStatus.Late)];
 
+            int rejectedOnTime = totals[Index(BO.OrderStatus.Rejected, BO.ScheduleStatus.OnTime)];
+            int rejectedLate = totals[Index(BO.OrderStatus.Rejected, BO.ScheduleStatus.Late)];
+
+            int cancelledOnTime = totals[Index(BO.OrderStatus.Cancelled, BO.ScheduleStatus.OnTime)];
+            int cancelledLate = totals[Index(BO.OrderStatus.Cancelled, BO.ScheduleStatus.Late)];
+
             OpenOnTimeText = $"Open / OnTime: {openOnTime}";
-            OpenInRiskText = $"Open / InRisk: {openInRisk}";
-            OpenLateText = $"Open / Late: {openLate}";
+
+            InProgressOnTimeText = $"InProgress / OnTime: {inProgressOnTime}";
+            InProgressInRiskText = $"InProgress / InRisk: {inProgressInRisk}";
+            InProgressLateText = $"InProgress / Late: {inProgressLate}";
+
             CompletedOnTimeText = $"Completed / OnTime: {completedOnTime}";
             CompletedLateText = $"Completed / Late: {completedLate}";
+
+            RejectedOnTimeText = $"Rejected / OnTime: {rejectedOnTime}";
+            RejectedLateText = $"Rejected / Late: {rejectedLate}";
+
+            CancelledOnTimeText = $"Cancelled / OnTime: {cancelledOnTime}";
+            CancelledLateText = $"Cancelled / Late: {cancelledLate}";
         }
         catch
         {
             OpenOnTimeText = "Open / OnTime: -";
-            OpenInRiskText = "Open / InRisk: -";
-            OpenLateText = "Open / Late: -";
+
+            InProgressOnTimeText = "InProgress / OnTime: -";
+            InProgressInRiskText = "InProgress / InRisk: -";
+            InProgressLateText = "InProgress / Late: -";
+
             CompletedOnTimeText = "Completed / OnTime: -";
             CompletedLateText = "Completed / Late: -";
+
+            RejectedOnTimeText = "Rejected / OnTime: -";
+            RejectedLateText = "Rejected / Late: -";
+
+            CancelledOnTimeText = "Cancelled / OnTime: -";
+            CancelledLateText = "Cancelled / Late: -";
         }
     }
 
@@ -579,9 +650,9 @@ public partial class MainWindow : Window
     /// </summary>
     /// <param name="sender">The source of the event, typically the button that was clicked.</param>
     /// <param name="e">The event data associated with the Click event.</param>
-    private void BtnOpenInRisk_Click(object sender, RoutedEventArgs e)
+    private void BtnRejectedOnTime_Click(object sender, RoutedEventArgs e)
     {
-        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Open, FilterScheduleStatus = BO.ScheduleStatus.InRisk };
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Rejected, FilterScheduleStatus = BO.ScheduleStatus.OnTime };
         w.Show();
     }
 
@@ -590,9 +661,9 @@ public partial class MainWindow : Window
     /// </summary>
     /// <param name="sender">The source of the event, typically the button that was clicked.</param>
     /// <param name="e">The event data associated with the Click event.</param>
-    private void BtnOpenLate_Click(object sender, RoutedEventArgs e)
+    private void BtnCancelledOnTime_Click(object sender, RoutedEventArgs e)
     {
-        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Open, FilterScheduleStatus = BO.ScheduleStatus.Late };
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Cancelled, FilterScheduleStatus = BO.ScheduleStatus.OnTime };
         w.Show();
     }
 
@@ -617,6 +688,61 @@ public partial class MainWindow : Window
     private void BtnCompletedLate_Click(object sender, RoutedEventArgs e)
     {
         var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Completed, FilterScheduleStatus = BO.ScheduleStatus.Late };
+        w.Show();
+    }
+
+    /// <summary>
+    /// Handles the Click event of the InProgress On Time button by displaying a window with orders that have an in-progress status.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
+    private void BtnInProgressOnTime_Click(object sender, RoutedEventArgs e)
+    {
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.InProgress, FilterScheduleStatus = BO.ScheduleStatus.OnTime };
+        w.Show();
+    }
+
+    /// <summary>
+    /// Handles the Click event of the InProgress In Risk button by displaying a window with orders that have an in-progress status.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
+    private void BtnInProgressInRisk_Click(object sender, RoutedEventArgs e)
+    {
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.InProgress, FilterScheduleStatus = BO.ScheduleStatus.InRisk };
+        w.Show();
+    }
+
+    /// <summary>
+    /// Handles the Click event of the InProgress Late button by displaying a window with orders that have an in-progress status.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
+    private void BtnInProgressLate_Click(object sender, RoutedEventArgs e)
+    {
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.InProgress, FilterScheduleStatus = BO.ScheduleStatus.Late };
+        w.Show();
+    }
+
+    /// <summary>
+    /// Handles the Click event of the Rejected Late button by displaying a window with orders that have a rejected status.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
+    private void BtnRejectedLate_Click(object sender, RoutedEventArgs e)
+    {
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Rejected, FilterScheduleStatus = BO.ScheduleStatus.Late };
+        w.Show();
+    }
+
+    /// <summary>
+    /// Handles the Click event of the Cancelled Late button by displaying a window with orders that have a cancelled status.
+    /// </summary>
+    /// <param name="sender">The source of the event, typically the button that was clicked.</param>
+    /// <param name="e">The event data associated with the Click event.</param>
+    private void BtnCancelledLate_Click(object sender, RoutedEventArgs e)
+    {
+        var w = new OrderListWindow { FilterStatus = BO.OrderStatus.Cancelled, FilterScheduleStatus = BO.ScheduleStatus.Late };
         w.Show();
     }
 

@@ -34,8 +34,7 @@ public partial class CourierWindow : Window
        DependencyProperty.Register("IsUpdateMode", typeof(bool), typeof(CourierWindow), new PropertyMetadata(false));
 
     public static readonly DependencyProperty CurrentCourierProperty =
-       DependencyProperty.Register("CurrentCourier", typeof(BO.Courier), typeof(CourierWindow), new PropertyMetadata(null));
-
+       DependencyProperty.Register("CurrentCourier", typeof(BO.Courier), typeof(CourierWindow), new PropertyMetadata(null, OnCurrentCourierChanged));
 
     /// <summary>
     /// Gets or sets the text displayed on the action button (Add/Update).
@@ -64,7 +63,53 @@ public partial class CourierWindow : Window
         set { SetValue(CurrentCourierProperty, value); }
     }
 
-   
+    private static void OnCurrentCourierChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+    {
+        if (d is CourierWindow w)
+            w.RefreshDerivedState();
+    }
+
+    // Read-only helper state for the active-order section
+    private static readonly DependencyPropertyKey HasOrderInProgressKey =
+        DependencyProperty.RegisterReadOnly(nameof(HasOrderInProgress), typeof(bool), typeof(CourierWindow), new PropertyMetadata(false));
+    public static readonly DependencyProperty HasOrderInProgressProperty = HasOrderInProgressKey.DependencyProperty;
+    public bool HasOrderInProgress => (bool)GetValue(HasOrderInProgressProperty);
+
+    private static readonly DependencyPropertyKey HasNoOrderInProgressKey =
+        DependencyProperty.RegisterReadOnly(nameof(HasNoOrderInProgress), typeof(bool), typeof(CourierWindow), new PropertyMetadata(true));
+    public static readonly DependencyProperty HasNoOrderInProgressProperty = HasNoOrderInProgressKey.DependencyProperty;
+    public bool HasNoOrderInProgress => (bool)GetValue(HasNoOrderInProgressProperty);
+
+    public static readonly DependencyProperty LastCompletionTypeTextProperty =
+        DependencyProperty.Register(nameof(LastCompletionTypeText), typeof(string), typeof(CourierWindow), new PropertyMetadata("N/A"));
+
+    public string LastCompletionTypeText
+    {
+        get => (string)GetValue(LastCompletionTypeTextProperty);
+        set => SetValue(LastCompletionTypeTextProperty, value);
+    }
+
+    public static readonly DependencyProperty SelectedCompletionTypeProperty =
+        DependencyProperty.Register(nameof(SelectedCompletionType), typeof(BO.CompletionType), typeof(CourierWindow), new PropertyMetadata(BO.CompletionType.None));
+
+    public BO.CompletionType SelectedCompletionType
+    {
+        get => (BO.CompletionType)GetValue(SelectedCompletionTypeProperty);
+        set => SetValue(SelectedCompletionTypeProperty, value);
+    }
+
+    private void RefreshDerivedState()
+    {
+        bool hasOrder = (CurrentCourier?.OrderInProg?.OrderId ?? 0) != 0;
+        SetValue(HasOrderInProgressKey, hasOrder);
+        SetValue(HasNoOrderInProgressKey, !hasOrder);
+
+        if (!hasOrder)
+        {
+            SelectedCompletionType = BO.CompletionType.None;
+            LastCompletionTypeText = "N/A";
+        }
+    }
 
     /// <summary>
     /// Initializes a new instance of the CourierWindow class for adding a new courier or updating an existing one.
@@ -96,6 +141,7 @@ public partial class CourierWindow : Window
             if (IsUpdateMode == true)
             {
                 CurrentCourier = await s_bl.Courier.GetCourierDetails(_userId, _courierId)!;
+                await LoadLastCompletionTypeAsync();
             }
 
             var courier = CurrentCourier;
@@ -155,6 +201,7 @@ public partial class CourierWindow : Window
                     return;
 
                 CurrentCourier = await s_bl.Courier.GetCourierDetails(_userId, courier.Id);
+                await LoadLastCompletionTypeAsync();
             }
             catch (Exception ex)
             {
@@ -167,6 +214,29 @@ public partial class CourierWindow : Window
         });
     }
 
+    private async Task LoadLastCompletionTypeAsync()
+    {
+        try
+        {
+            var courier = CurrentCourier;
+            if (courier is null || courier.Id <= 0)
+            {
+                LastCompletionTypeText = "N/A";
+                return;
+            }
+
+            var history = await s_bl.Order.GetCompletedCourierDeliveriesAsync(_userId, courier.Id, null, null);
+            var last = history
+                .OrderByDescending(h => h.DeliveryId)
+                .FirstOrDefault();
+
+            LastCompletionTypeText = last?.CompletionType.ToString() ?? "N/A";
+        }
+        catch
+        {
+            LastCompletionTypeText = "N/A";
+        }
+    }
 
     /// <summary>
     /// Validates the courier data before adding or updating.

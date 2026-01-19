@@ -19,7 +19,7 @@ public class BoolToVisibilityConverter : IValueConverter
 public class CanDeleteFromMapConverter : IValueConverter
 {
     // value: int courierId
-    // parameter: Dictionary<int, bool> map
+    // parameter: Dictionary<int, bool> mapצ
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is not int id || id <= 0)

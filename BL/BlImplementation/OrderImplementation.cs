@@ -44,6 +44,19 @@ internal class OrderImplementation : IOrder
         int Index(BO.OrderStatus os, BO.ScheduleStatus ss) =>
             (int)os * scheduleStatusCount + (int)ss; // calculate index in result array
 
+        bool IsValidCombo(BO.OrderStatus os, BO.ScheduleStatus ss)
+        {
+            return os switch
+            {
+                BO.OrderStatus.Open => true,
+                BO.OrderStatus.InProgress => true,
+                BO.OrderStatus.Completed => ss != BO.ScheduleStatus.InRisk,
+                BO.OrderStatus.Rejected => ss != BO.ScheduleStatus.InRisk,
+                BO.OrderStatus.Cancelled => ss != BO.ScheduleStatus.InRisk,
+                _ => false
+            };
+        }
+
         // mandatory grouping
         var grouped = orders.GroupBy(o => (o.OrderStatus, o.ScheduleStatus))
             .ToDictionary(g => g.Key, g => g.Count());
@@ -56,6 +69,12 @@ internal class OrderImplementation : IOrder
                 int i = Index(os, ss);
                 if ((uint)i >= (uint)result.Length)
                     continue;
+
+                if (!IsValidCombo(os, ss))
+                {
+                    result[i] = 0;
+                    continue;
+                }
 
                 result[i] = grouped.TryGetValue((os, ss), out var count) ? count : 0;
             }
