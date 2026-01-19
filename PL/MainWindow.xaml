@@ -68,6 +68,8 @@
 
                         <Button Content="{Binding InProgressOnTimeText}" Margin="10" Click="BtnInProgressOnTime_Click" FontSize="14" Height="20"/>
                         <Button Content="{Binding InProgressLateText}" Margin="10" Click="BtnInProgressLate_Click" FontSize="14" Height="20"/>
+                        <Button Content="{Binding InProgressInRiskText}" Margin="10" Click="BtnInProgressInRisk_Click" FontSize="14" Height="20"/>
+
 
                         <Button Content="{Binding CompletedOnTimeText}" Margin="10" Click="BtnCompletedOnTime_Click" FontSize="14" Height="20"/>
                         <Button Content="{Binding CompletedLateText}" Margin="10" Click="BtnCompletedLate_Click" FontSize="14" Height="20"/>
