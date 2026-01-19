@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Globals">
-    <!-- Removed WebView2 properties -->
   </PropertyGroup>
 
   <PropertyGroup>
@@ -17,9 +16,6 @@
 	<UseCommonOutputDirectory>true</UseCommonOutputDirectory>
   </PropertyGroup>
 
-  <ItemGroup>
-    <!-- Removed WebView2 package reference -->
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\BL\BL.csproj" />

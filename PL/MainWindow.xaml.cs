@@ -492,6 +492,7 @@ public partial class MainWindow : Window
                 this.Cursor = System.Windows.Input.Cursors.Wait;
 
                 s_bl.Admin.InitializeDB();
+                Configuration = s_bl.Admin.GetConfig();
 
                 MessageBox.Show("Database initialized successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -522,6 +523,7 @@ public partial class MainWindow : Window
                 this.Cursor = System.Windows.Input.Cursors.Wait;
 
                 s_bl.Admin.ResetDB();
+                Configuration = null;
 
                 MessageBox.Show("Database reset successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }

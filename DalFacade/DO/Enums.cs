@@ -27,9 +27,9 @@ public enum  OrderType
 /// </summary>
 public enum CompletionType
 {
-    Pending,
-    Refused,
-    Delivered,
-    Cancelled,
-    Failed
+    Pending, //( ממתין ,(זה כולל מקרה שבוא השליח הגיע ליעד אבל הלקוח לא היה בבית in this case the order closes and opens again 
+    Refused, // מזמין סירב לקבל
+    Delivered, //סופק
+    Cancelled, //בוטל
+    Failed // the delivery failed casue of the dist calc the delivery closes and the order stays open
 }
