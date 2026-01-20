@@ -12,6 +12,7 @@
         Closed="Window_Closed"
         Background="{StaticResource MainBackgroundBrush}">
 
+    <!-- Main layout: title, orders list, footer actions -->
     <Grid Margin="10">
         <Grid.RowDefinitions>   
             <RowDefinition Height="Auto"/>
@@ -19,6 +20,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Header title -->
         <TextBlock Grid.Row="0"
                    Text="Select Order for Handling"
                    FontSize="24"
@@ -27,24 +29,26 @@
                    HorizontalAlignment="Center"
                    Margin="0,0,0,10"/>
 
+        <!-- Open orders available to collect -->
         <DataGrid Grid.Row="1"
                   ItemsSource="{Binding OpenOrders}"
                   AutoGenerateColumns="False"
                   IsReadOnly="True">
             <DataGrid.Columns>
+                <!-- Basic order info -->
                 <DataGridTextColumn Binding="{Binding OrderId}" Header="ID" Width="70"/>
                 <DataGridTextColumn Binding="{Binding TypeOrder}" Header="Type" Width="110"/>
                 <DataGridTextColumn Binding="{Binding DeliveryAddress}" Header="Address" Width="*"/>
                 <DataGridTextColumn Binding="{Binding Weight, StringFormat=N2}" Header="Weight" Width="90"/>
-                <!-- Was aerial -->
-                <!-- <DataGridTextColumn Binding="{Binding ArealDistance, StringFormat=N2}" Header="Air Dist (km)" Width="120"/> -->
+                
 
-                <!-- Use actual route distance instead -->
+                <!-- Calculated route distance and remaining time -->
                 <DataGridTextColumn Binding="{Binding ActualDistance, StringFormat=N2}"
                     Header="Dist (km)"
                     Width="120"/>
                 <DataGridTextColumn Binding="{Binding TotalTimeLeft}" Header="Time Left" Width="120"/>
 
+                <!-- Per-row action: assign the order to this courier -->
                 <DataGridTemplateColumn Header="Action" Width="110">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -59,6 +63,7 @@
             </DataGrid.Columns>
         </DataGrid>
 
+        <!-- Close dialog -->
         <Button Grid.Row="2"
                 Content="Close"
                 Click="btnClose_Click"

@@ -15,7 +15,7 @@ internal static class LocationServices
     private static readonly ConcurrentDictionary<string, double> s_routeCache = new();
     private static readonly SemaphoreSlim s_throttle = new(2, 2);
 
-    // TODO: Replace with your actual LocationIQ API Key
+
     private const string LocationIqKey = "6967dfd261d30293942658ejgca76f1";
 
     static LocationServices()
@@ -23,32 +23,24 @@ internal static class LocationServices
         s_httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("DotNetClient/1.0");
     }
 
-    internal static async Task<Location?> GetLocationOfAddressAsync(string address)
-    {
-        if (string.IsNullOrWhiteSpace(address)) return null;
 
-        // Using LocationIQ Geocoding API
-        var url = $"https://us1.locationiq.com/v1/search.php?key={LocationIqKey}&q={Uri.EscapeDataString(address)}&format=json";
-
-        try
-        {
-            var results = await s_httpClient.GetFromJsonAsync<List<NominatimResult>>(url);
-
-            if (results?.FirstOrDefault() is not { } first) return null;
-
-            return new Location
-            {
-                Latitude = double.TryParse(first.Lat, out var lat) ? lat : (double?)null,
-                Longitude = double.TryParse(first.Lon, out var lon) ? lon : (double?)null
-            };
-        }
-        catch
-        {
-            // If LocationIQ fails (e.g. invalid key, limit reached), fallback or return null
-            return null;
-        }
-    }
-
+    /// <summary>
+    /// Asynchronously calculates the estimated route distance, in kilometers, between two geographic coordinates using
+    /// the specified travel profile.
+    /// </summary>
+    /// <remarks>The method uses a cached value if available and otherwise queries the LocationIQ Directions
+    /// API. If the API call fails or required origin coordinates are not provided, the method returns <see
+    /// cref="double.PositiveInfinity"/> to indicate that a valid route distance could not be determined.</remarks>
+    /// <param name="fromLat">The latitude of the starting location. If <paramref name="fromLat"/> is <see langword="null"/>, the method
+    /// returns <see cref="double.PositiveInfinity"/>.</param>
+    /// <param name="fromLon">The longitude of the starting location. If <paramref name="fromLon"/> is <see langword="null"/>, the method
+    /// returns <see cref="double.PositiveInfinity"/>.</param>
+    /// <param name="toLat">The latitude of the destination location.</param>
+    /// <param name="toLon">The longitude of the destination location.</param>
+    /// <param name="profile">The travel profile to use for route calculation, such as "driving" or "walking". Defaults to "driving" if not
+    /// specified.</param>
+    /// <returns>A <see cref="double"/> value representing the route distance in kilometers. Returns <see
+    /// cref="double.PositiveInfinity"/> if the route cannot be calculated.</returns>
     internal static async Task<double> GetRouteDistanceKmAsync(
         double? fromLat, double? fromLon, double toLat, double toLon, string profile = "driving")
     {
@@ -86,15 +78,17 @@ internal static class LocationServices
         }
     }
 
-    // Simple DTO for coordinates used by this helper
-    internal sealed class Location
-    {
-        public double? Latitude { get; init; }
-        public double? Longitude { get; init; }
-    }
 
-    // Minimal DTOs to make GetFromJsonAsync work
-    public record NominatimResult(string Lat, string Lon);
+    /// <summary>
+    /// Represents the response from an OSRM routing query, containing one or more calculated routes.
+    /// </summary>
+    /// <param name="Routes">A list of <see cref="OsrmRoute"/> objects representing the possible routes returned by the OSRM service. Cannot
+    /// be null.</param>
     public record OsrmResponse(List<OsrmRoute> Routes);
+
+    /// <summary>
+    /// Represents a route calculated by OSRM, including the total distance of the route.
+    /// </summary>
+    /// <param name="Distance">The total length of the route, in meters.</param>
     public record OsrmRoute(double Distance);
 }

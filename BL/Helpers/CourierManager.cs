@@ -361,7 +361,13 @@ internal static class CourierManager
         Observers.NotifyListUpdated(); //stage 5
     }
 
-    // Read courier by id
+    /// <summary>
+    /// Asynchronously retrieves a courier by its unique identifier.
+    /// </summary>
+    /// <param name="id">The unique identifier of the courier to retrieve.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the courier with the specified
+    /// identifier.</returns>
+    /// <exception cref="KeyNotFoundException">Thrown when a courier with the specified identifier does not exist.</exception>
     internal static async Task<BO.Courier> ReadCourier(int id)
     {
         DO.Courier? doCourier;
@@ -372,7 +378,12 @@ internal static class CourierManager
         return await fromDOToBO(doCourier);
     }
 
-    // Read all couriers with optional filtering
+    /// <summary>
+    /// Asynchronously retrieves all couriers, optionally filtering the results based on a specified predicate.
+    /// </summary>
+    /// <param name="filter">A predicate function to filter the couriers. If null, all couriers are returned.</param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains an enumerable collection of couriers
+    /// that match the specified filter, or all couriers if no filter is provided.</returns>
     internal static async Task<IEnumerable<BO.Courier>> ReadAllCouriers(Func<BO.Courier, bool>? filter = null)
     {
         IEnumerable<DO.Courier?> doList;
@@ -395,7 +406,13 @@ internal static class CourierManager
         return filtered;
     }
 
-    // Update existing courier
+    /// <summary>
+    /// Updates the specified courier's information in the data store and notifies observers of the change.
+    /// </summary>
+    /// <remarks>This method acquires a lock to ensure thread safety during the update operation. After
+    /// updating the courier, it notifies observers that the courier and the courier list have been updated.</remarks>
+    /// <param name="courier">The courier whose information is to be updated. Cannot be null.</param>
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="courier"/> is null.</exception>
     internal static void UpdateCourier(BO.Courier courier)
     {
         if (courier is null)
@@ -408,7 +425,12 @@ internal static class CourierManager
         Observers.NotifyListUpdated();  //stage 5
     }
 
-    // Delete courier by id
+    /// <summary>
+    /// Deletes the courier with the specified identifier and notifies observers of the update.
+    /// </summary>
+    /// <remarks>This method notifies all registered observers after the courier is deleted and the list of
+    /// couriers is updated. The operation is thread-safe.</remarks>
+    /// <param name="id">The unique identifier of the courier to delete.</param>
     internal static void DeleteCourier(int id)
     {
         lock (AdminManager.BlMutex)
@@ -526,7 +548,16 @@ internal static class CourierManager
         }
     }
 
-
+    /// <summary>
+    /// Simulates courier activity by randomly assigning available orders to active couriers and progressing or
+    /// completing orders in progress based on elapsed time and probabilistic outcomes.
+    /// </summary>
+    /// <remarks>This method is intended for use in testing or simulation scenarios to mimic real-world
+    /// courier behavior. It does not throw exceptions for individual courier actions; errors during assignment,
+    /// completion, or cancellation are ignored to ensure the simulation continues uninterrupted. The simulation uses
+    /// randomization to determine courier actions and order outcomes, so results will vary between
+    /// executions.</remarks>
+    /// <returns>A task that represents the asynchronous simulation operation.</returns>
     internal static async Task SimulateCourierActivity()
     {
 
@@ -536,7 +567,7 @@ internal static class CourierManager
 
         foreach (var courier in activeCouriers)
         {
-            // Case 1: Courier has NO order in progress
+            // Courier has NO order in progress
             if (courier.OrderInProg == null || courier.OrderInProg.OrderId == 0)
             {
                 // Probability 0.15 to be available/check for orders
@@ -544,7 +575,6 @@ internal static class CourierManager
                 {
                     try
                     {
-                        // Get available orders for this courier
                         var potentialOrders = await OrderManager.GetOpenOrdersAsync(courier.Id, null, null);
                         var ordersList = potentialOrders.ToList();
 
@@ -553,7 +583,7 @@ internal static class CourierManager
                             // Randomly choose one order
                             var selectedOrder = ordersList[Random.Shared.Next(ordersList.Count)];
 
-                            // Probability 50% to actually pick (assign) the order
+                            // Probability 50% to actually pick the order
                             if (Random.Shared.NextDouble() < 0.5)
                             {
                                 await OrderManager.AssignOrderToCourierAsync(selectedOrder.OrderId, courier.Id);
@@ -562,11 +592,11 @@ internal static class CourierManager
                     }
                     catch
                     {
-                        // Ignore errors during simulation to keep it running
+                       
                     }
                 }
             }
-            // Case 2: Courier HAS an order in progress
+            // Courier HAS an order in progress
             else
             {
                 var orderInProg = courier.OrderInProg;
@@ -577,24 +607,24 @@ internal static class CourierManager
 
 
                 double dist = orderInProg.ActualDistance ?? orderInProg.ArealDistance;
-                if (dist <= 0) dist = 5; // fallback min distance
+                if (dist <= 0) dist = 5; 
 
                 double estimatedMinutes = (dist / 40.0) * 60.0; 
-                // Random buffer: 10 to 30 minutes
+               
                 double bufferMinutes = Random.Shared.Next(5, 10);
                 
                 double thresholdMinutes = estimatedMinutes + bufferMinutes;
 
                 if (timePassed.TotalMinutes >= thresholdMinutes)
                 {
-                    // "Enough time" passed -> Complete the order
+                    //Complete the order
                     // Vary completion type
                     double rnd = Random.Shared.NextDouble();
                     DO.CompletionType completionType;
                     
-                    if (rnd < 0.90) completionType = DO.CompletionType.Delivered; // Most likely
+                    if (rnd < 0.90) completionType = DO.CompletionType.Delivered; 
                     else if (rnd < 0.95) completionType = DO.CompletionType.Refused;
-                    else completionType = DO.CompletionType.Failed; // Rare
+                    else completionType = DO.CompletionType.Failed; 
 
                     try
                     {
@@ -603,7 +633,7 @@ internal static class CourierManager
                     }
                     catch
                     {
-                         // Ignore errors
+                        
                     }
                 }
                 else
@@ -617,7 +647,7 @@ internal static class CourierManager
                         }
                         catch
                         {
-                             // Ignore errors
+
                         }
                     }
                 }

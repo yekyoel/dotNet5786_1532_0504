@@ -5,15 +5,20 @@ namespace BlImplementation;
 
 internal class AdminImplementation : IAdmin
 {
-    public void StartSimulator(int interval)  //stage 7
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="interval"></param>
+    public void StartSimulator(int interval)  
     {
         AdminManager.ThrowOnSimulatorIsRunning();  //stage 7
         AdminManager.Start(interval); //stage 7
     }
 
-    public void StopSimulator()
-    => AdminManager.Stop(); //stage 7
-
+    /// <summary>
+    /// Stops the simulator if it is currently running.
+    /// </summary>
+    public void StopSimulator() => AdminManager.Stop();
 
     /// <summary>
     /// Advances the system clock by the specified time unit and returns the updated date and time.
@@ -97,12 +102,37 @@ internal class AdminImplementation : IAdmin
         AdminManager.SetConfig(config);
     }
 
+    /// <summary>
+    /// Registers an observer callback to be invoked when the clock is updated.
+    /// </summary>
+    /// <remarks>Observers are notified each time the clock is updated. To stop receiving notifications,
+    /// unregister the observer using the appropriate removal method.</remarks>
+    /// <param name="clockObserver">The callback method to execute when the clock update event occurs. Cannot be null.</param>
     public void AddClockObserver(Action clockObserver) =>
     AdminManager.ClockUpdatedObservers += clockObserver;
+
+    /// <summary>
+    /// Removes a previously registered observer from receiving clock update notifications.
+    /// </summary>
+    /// <param name="clockObserver">The delegate to remove from the list of clock update observers. Cannot be null.</param>
     public void RemoveClockObserver(Action clockObserver) =>
     AdminManager.ClockUpdatedObservers -= clockObserver;
+
+    /// <summary>
+    /// Registers an observer callback to be invoked when the configuration is updated.
+    /// </summary>
+    /// <remarks>Observers are notified each time the configuration changes. The provided callback will be
+    /// invoked on the thread that triggers the configuration update. To unregister an observer, remove the callback
+    /// from the observer list.</remarks>
+    /// <param name="configObserver">The action to execute when a configuration update occurs. Cannot be null.</param>
     public void AddConfigObserver(Action configObserver) =>
    AdminManager.ConfigUpdatedObservers += configObserver;
+
+    /// <summary>
+    /// Removes the specified configuration observer from the list of observers notified when the configuration is
+    /// updated.
+    /// </summary>
+    /// <param name="configObserver">The delegate to remove from the configuration update notification list. Cannot be null.</param>
     public void RemoveConfigObserver(Action configObserver) =>
     AdminManager.ConfigUpdatedObservers -= configObserver;
 }

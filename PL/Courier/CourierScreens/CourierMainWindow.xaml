@@ -12,6 +12,7 @@
         Loaded="Window_Loaded"
         Closed="Window_Closed">
 
+    <!-- Shared styles and converters for this window -->
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
 
@@ -62,6 +63,7 @@
         </Style>
     </Window.Resources>
 
+    <!-- Page layout: header, profile section, current order panel, footer actions -->
     <Grid Background="{StaticResource MainBackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -70,10 +72,12 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Header -->
         <Border Grid.Row="0" Style="{StaticResource MainSectionBorderStyle}" Margin="10,10,10,5">
             <TextBlock Text="Courier" FontSize="24" FontWeight="Bold" Foreground="{StaticResource NeonCyanBrush}"/>
         </Border>
 
+        <!-- Profile and preferences -->
         <Border Grid.Row="1" Style="{StaticResource MainSectionBorderStyle}" Margin="10,5,10,5">
             <StackPanel Margin="20">
                 <Grid>
@@ -176,6 +180,7 @@
                         </Grid.ColumnDefinitions>
 
                         <!-- Left column -->
+                        <!-- Left column: identity and contact -->
                         <StackPanel Grid.Column="0">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                 <Label Content="Order ID:" Style="{StaticResource LabelStyle}"/>
@@ -214,6 +219,7 @@
                         </StackPanel>
 
                         <!-- Right column -->
+                        <!-- Right column: preferences and stats -->
                         <StackPanel Grid.Column="2">
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
                                 <Label Content="Time Left:" Style="{StaticResource LabelStyle}"/>
@@ -258,6 +264,7 @@
             </ScrollViewer>
         </Border>
 
+        <!-- Footer actions -->
         <Border Grid.Row="3" Style="{StaticResource MainSectionBorderStyle}" Margin="10,5,10,10">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Update" Width="140" Height="40" Click="btnUpdate_Click" Margin="0,0,10,0"/>

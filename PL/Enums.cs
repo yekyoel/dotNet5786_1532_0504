@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 namespace PL
 {
 
+    /// <summary>
+    /// Provides an enumerable collection of all values defined in the BO.ShippingMethod enumeration.
+    /// </summary>
     internal class VehicleTypeCollections : IEnumerable
     {
         static readonly IEnumerable<BO.ShippingMethod> s_enums =
@@ -16,6 +19,9 @@ namespace PL
         public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
     }
 
+    /// <summary>
+    /// Provides an enumerable collection of all values defined in the OrderStatus enumeration.
+    /// </summary>
     internal class OrderStatusCollections : IEnumerable
     {
         static readonly IEnumerable<BO.OrderStatus> s_enums =
@@ -24,6 +30,11 @@ namespace PL
         public IEnumerator GetEnumerator() => s_enums.GetEnumerator();
     }
 
+    /// <summary>
+    /// Provides an enumerable collection of all values defined in the OrderType enumeration.
+    /// </summary>
+    /// <remarks>This class enables iteration over the OrderType values using standard collection iteration
+    /// patterns. It is intended for internal use within the assembly.</remarks>
     internal class OrderTypeCollections : IEnumerable
     {
         static readonly IEnumerable<BO.OrderType> s_enums =

@@ -1,5 +1,4 @@
-﻿
-namespace Dal;
+﻿namespace Dal;
 using DalApi;
 
 /// <summary>
@@ -8,7 +7,8 @@ using DalApi;
 
 sealed internal class DalList : IDal
 {
-    public static IDal Instance { get; } = new DalList();
+    private static readonly Lazy<IDal> s_instance = new(() => new DalList(), isThreadSafe: true);
+    public static IDal Instance => s_instance.Value;
     private DalList() { }
 
     public ICourier Courier { get; } =  new CourierImplementation();

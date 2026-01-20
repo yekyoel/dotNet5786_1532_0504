@@ -165,7 +165,7 @@ internal static class OrderManager
     /// <exception cref="InvalidOperationException">Thrown if the order is in progress but has no associated delivery, or if the order cannot be cancelled because
     /// it is already completed or cancelled.</exception>
     
-    internal static void TryToCancelOrder(int orderId)
+    internal static async Task TryToCancelOrder(int orderId)
     {
         Delivery? delivery;
         DO.Order? dalOrder;
@@ -206,7 +206,11 @@ internal static class OrderManager
             };
             lock (AdminManager.BlMutex)
                 s_dal.Delivery.Update(dalDelivery);
-        }
+
+            // Email the courier handling the order about the cancellation
+            if (delivery.CourierId > 0)
+                await EmailService.SendDeliveryCancelledNotificationAsync(dalOrder, delivery.CourierId);
+         }
         else  // completed or cancelled
             throw new InvalidOperationException($"Order with ID {orderId} cannot be cancelled as it is already completed or cancelled.");
 
@@ -344,7 +348,10 @@ internal static class OrderManager
             Observers.NotifyListUpdated();
             CourierManager.Observers.NotifyItemUpdated(courierId);
             CourierManager.Observers.NotifyListUpdated();
-            OrderManager.Observers.NotifyListUpdated();
+            
+            // Send assignment email to the courier
+            if (dalOrder != null)
+                await EmailService.SendOrderAssignedToCourierAsync(dalOrder, courierId);
             return;
         }
 
@@ -367,7 +374,13 @@ internal static class OrderManager
             Observers.NotifyListUpdated();
             CourierManager.Observers.NotifyItemUpdated(courierId);
             CourierManager.Observers.NotifyListUpdated();
-            OrderManager.Observers.NotifyListUpdated();
+            
+            // Send assignment email to the courier
+            DO.Order? updatedOrder;
+            lock (AdminManager.BlMutex)
+                updatedOrder = s_dal.Order.Read(orderId);
+            if (updatedOrder != null)
+                await EmailService.SendOrderAssignedToCourierAsync(updatedOrder, courierId);
         }
     }
 

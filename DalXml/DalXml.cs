@@ -7,7 +7,8 @@ namespace Dal;
 /// </summary>
 sealed internal class DalXml : IDal
 {
-    public static IDal Instance { get; } = new DalXml();
+    private static readonly Lazy<IDal> s_instance = new(() => new DalXml(), isThreadSafe: true);
+    public static IDal Instance => s_instance.Value;
     private DalXml() { }
 
     // Singleton pattern implementation

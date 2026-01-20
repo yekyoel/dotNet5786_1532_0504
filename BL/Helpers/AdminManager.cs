@@ -56,7 +56,7 @@ internal static class AdminManager //stage 4
     /// <summary>
     /// Method for providing current configuration variables values for any BL class that may need it
     /// </summary>
-    [MethodImpl(MethodImplOptions.Synchronized)] //stage 7
+    [MethodImpl(MethodImplOptions.Synchronized)] // its like locking this function 
     internal static BO.Config GetConfig() //stage 4
     => new BO.Config()
     {
@@ -153,6 +153,13 @@ internal static class AdminManager //stage 4
             ConfigUpdatedObservers?.Invoke(); // stage 5
     }
 
+    /// <summary>
+    /// Resets the application database to its initial state and notifies observers of configuration updates.
+    /// </summary>
+    /// <remarks>This method is intended for internal use and should be called only when a complete reset of
+    /// the database and related configuration is required. All registered configuration update observers are notified
+    /// after the reset completes. This operation is not thread-safe beyond the internal locking and may have
+    /// significant side effects, including loss of all current data.</remarks>
     internal static void ResetDB() //stage 4-7
     {
         lock (BlMutex) //stage 7
@@ -164,6 +171,12 @@ internal static class AdminManager //stage 4
         }
     }
 
+    /// <summary>
+    /// Initializes the database and updates related administrative state in a thread-safe manner.
+    /// </summary>
+    /// <remarks>This method acquires a lock to ensure that database initialization and related updates are
+    /// performed atomically. It also notifies observers of configuration updates. This method is intended for internal
+    /// use and should not be called directly by external code.</remarks>
     internal static void InitializeDB() //stage 4-7
     {
         lock (BlMutex) //stage 7
@@ -197,6 +210,11 @@ internal static class AdminManager //stage 4
     /// 
     private static volatile bool s_stop = false;
 
+
+    /// <summary>
+    /// Throws an exception if the simulator is currently running.
+    /// </summary>
+    /// <exception cref="BO.BLTemporaryNotAvailableException">Thrown if the simulator is running, indicating that the requested operation cannot be performed at this time.</exception>
     [MethodImpl(MethodImplOptions.Synchronized)] //stage 7                                                 
     public static void ThrowOnSimulatorIsRunning()
     {
@@ -204,6 +222,13 @@ internal static class AdminManager //stage 4
             throw new BO.BLTemporaryNotAvailableException("Cannot perform the operation since Simulator is running");
     }
 
+
+    /// <summary>
+    /// Starts the background clock runner thread if it is not already running.
+    /// </summary>
+    /// <remarks>If the clock runner thread is already running, this method has no effect. This method is
+    /// thread-safe.</remarks>
+    /// <param name="interval">The interval, in milliseconds, at which the clock runner operates. Must be a positive integer.</param>
     [MethodImpl(MethodImplOptions.Synchronized)] //stage 7                                                 
     internal static void Start(int interval)
     {
@@ -216,6 +241,12 @@ internal static class AdminManager //stage 4
         }
     }
 
+
+    /// <summary>
+    /// Stops the background clock runner thread if it is currently running.
+    /// </summary>
+    /// <remarks>This method is thread-safe and has no effect if the clock runner thread is not active. After
+    /// calling this method, the clock runner cannot be restarted unless reinitialized by other means.</remarks>
     [MethodImpl(MethodImplOptions.Synchronized)] //stage 7                                                 
     internal static void Stop()
     {
@@ -228,7 +259,14 @@ internal static class AdminManager //stage 4
         }
     }
 
-
+    /// <summary>
+    /// Advances the system clock and triggers periodic updates for couriers, deliveries, and orders while the service
+    /// is running.
+    /// </summary>
+    /// <remarks>This method runs in a loop, updating the simulated clock and initiating background tasks to
+    /// process time-based updates for couriers, deliveries, and orders. It is intended to be called as part of the
+    /// application's background processing and will continue running until the stop condition is signaled. The method
+    /// is not intended to be called directly by user code.</remarks>
     private static void clockRunner()
     {
         while (!s_stop)
