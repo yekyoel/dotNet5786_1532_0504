@@ -51,6 +51,15 @@ internal static class AdminManager //stage 4
 
         //Calling all the observers of clock update
         ClockUpdatedObservers?.Invoke(); //prepared for stage 5
+
+        // Immediately notify list observers so PL updates without waiting
+        try
+        {
+            OrderManager.Observers.NotifyListUpdated();
+            CourierManager.Observers.NotifyListUpdated();
+            DeliveryManager.Observers.NotifyListUpdated();
+        }
+        catch { }
     }
 
     /// <summary>

@@ -115,6 +115,8 @@ public partial class CourierMainWindow : Window
         {
             await LoadCourierDetailsAsync();
             s_bl.Courier.AddObserver(_courierId, CourierObserver);
+            // Also listen to order list updates (clock changes affect schedule/availability)
+            s_bl.Order.AddObserver(CourierObserver);
             _isObserverRegistered = true;
         }
         catch (Exception ex)
@@ -131,6 +133,7 @@ public partial class CourierMainWindow : Window
         try
         {
             s_bl.Courier.RemoveObserver(_courierId, CourierObserver);
+            s_bl.Order.RemoveObserver(CourierObserver);
         }
         catch( Exception ex)
         {
