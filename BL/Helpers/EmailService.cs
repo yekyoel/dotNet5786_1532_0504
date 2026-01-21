@@ -11,8 +11,10 @@ internal static class EmailService
     private static readonly IDal s_dal = Factory.Get;
     // Configure these with your Gmail address and an App Password (not your normal password)
     // Create an App Password in Google Account > Security > App passwords.
-    private const string GmailUser = "yoelmoshey@gmail.com";
-    private const string GmailAppPassword = "ipmu nqqq risi qxvo";
+    //private const string GmailUser = "yoelmoshey@gmail.com";
+    //private const string GmailAppPassword = "ipmu nqqq risi qxvo";
+    private const string GmailUser = "someone@gmail.com";
+    private const string GmailAppPassword = "123 456 789";
 
     // Simple diagnostics: write failures to a temp log file
     private static readonly string s_logPath = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "EmailService.log");
